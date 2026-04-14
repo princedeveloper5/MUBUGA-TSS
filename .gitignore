@@ -1,0 +1,13 @@
+# PHP / Backend
+vendor/
+.env
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/

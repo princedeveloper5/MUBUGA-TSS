@@ -76,6 +76,7 @@ label span {
 }
 
 input,
+select,
 textarea,
 button {
     width: 100%;
@@ -189,9 +190,29 @@ button,
     border: 1px solid var(--line);
 }
 
+.table-item-layout {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.table-item-content {
+    min-width: 0;
+    flex: 1;
+}
+
 .table-item strong,
 .table-item span {
     display: block;
+}
+
+.table-thumb {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 16px;
+    background: #f2ede2;
+    flex-shrink: 0;
 }
 
 .item-actions {
@@ -213,6 +234,12 @@ button,
     font-weight: 700;
 }
 
+.action-button {
+    width: auto;
+    border: 0;
+    cursor: pointer;
+}
+
 .inline-form {
     margin: 0;
 }
@@ -221,6 +248,164 @@ button,
     width: auto;
     padding: 0.7rem 1rem;
     background: linear-gradient(135deg, #b53d20 0%, #8d2a12 100%);
+}
+
+.table-paragraph {
+    margin: 10px 0 0;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.editor-wrapper {
+    display: grid;
+    gap: 8px;
+}
+
+.editor-button {
+    width: auto;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(35, 67, 50, 0.08);
+    color: var(--green);
+    cursor: pointer;
+    box-shadow: none;
+}
+
+.editor-area {
+    min-height: 180px;
+    font-family: Consolas, "Courier New", monospace;
+    line-height: 1.5;
+}
+
+.editor-preview {
+    min-height: 180px;
+    padding: 1rem;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: #fff;
+    line-height: 1.7;
+}
+
+.editor-preview h2,
+.editor-preview h3 {
+    margin-top: 0;
+}
+
+.editor-preview ul {
+    padding-left: 20px;
+}
+
+.editor-preview-empty {
+    margin: 0;
+    color: var(--muted);
+    font-style: italic;
+}
+
+.image-preview-card {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.image-preview {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 14px;
+    background: #f2ede2;
+}
+
+.image-preview-card.is-empty .image-preview {
+    display: none;
+}
+
+.image-preview-caption {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    word-break: break-word;
+}
+
+.upload-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0.1px;
+    height: 0.1px;
+    overflow: hidden;
+}
+
+.upload-dropzone {
+    display: grid;
+    gap: 4px;
+    padding: 1rem;
+    border: 1px dashed rgba(35, 67, 50, 0.28);
+    border-radius: 18px;
+    background: rgba(35, 67, 50, 0.05);
+    color: var(--green);
+    text-align: center;
+    box-shadow: none;
+}
+
+.upload-dropzone span {
+    color: var(--muted);
+    font-weight: 400;
+}
+
+.upload-dropzone.is-dragging {
+    border-color: var(--gold);
+    background: rgba(213, 138, 31, 0.1);
+}
+
+.upload-dropzone.has-file {
+    border-style: solid;
+    background: rgba(35, 67, 50, 0.1);
+}
+
+.status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-pending {
+    background: rgba(213, 138, 31, 0.1);
+    color: #d58a1f;
+}
+
+.status-reviewed {
+    background: rgba(35, 67, 50, 0.1);
+    color: #234332;
+}
+
+.status-accepted {
+    background: rgba(46, 125, 50, 0.1);
+    color: #2e7d32;
+}
+
+.status-rejected {
+    background: rgba(211, 47, 47, 0.1);
+    color: #d32f2f;
+}
+
+.status-draft {
+    background: rgba(117, 117, 117, 0.12);
+    color: #616161;
 }
 
 @media (max-width: 960px) {

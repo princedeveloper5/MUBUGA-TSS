@@ -10,13 +10,25 @@ require_once __DIR__ . '/includes/site_data.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($schoolName); ?> | Technical Secondary School</title>
     <meta name="description" content="Official website of Mubuga TSS, featuring Software Development and Electrical Technology programs.">
+    <link rel="icon" type="image/png" href="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/site.css">
 </head>
 <body>
+    <?php
+    $formStatus = (string) ($_GET['form_status'] ?? '');
+    $formMessage = (string) ($_GET['form_message'] ?? '');
+    $logoPath = (string) ($siteMeta['logo_path'] ?? '');
+    $facebookUrl = (string) ($siteMeta['facebook_url'] ?? '#');
+    $instagramUrl = (string) ($siteMeta['instagram_url'] ?? '#');
+    ?>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <div class="site-shell">
+        <div class="scroll-progress" aria-hidden="true">
+            <span class="scroll-progress-bar"></span>
+        </div>
         <header class="topbar">
             <div class="container topbar-inner">
                 <div class="topbar-meta">
@@ -25,17 +37,28 @@ require_once __DIR__ . '/includes/site_data.php';
                     <span>Open: 7AM - 5PM</span>
                 </div>
                 <div class="topbar-links">
-                    <a href="#">Facebook</a>
-                    <a href="#">Instagram</a>
+                    <a href="<?php echo htmlspecialchars($facebookUrl); ?>">Facebook</a>
+                    <a href="<?php echo htmlspecialchars($instagramUrl); ?>">Instagram</a>
                     <a href="/MUBUGA-TSS/admin/">Login</a>
                 </div>
             </div>
         </header>
+        <?php if ($formStatus !== '' && $formMessage !== ''): ?>
+            <div class="container form-feedback-wrap">
+                <div class="form-feedback form-feedback-<?php echo htmlspecialchars($formStatus); ?>">
+                    <?php echo htmlspecialchars($formMessage); ?>
+                </div>
+            </div>
+        <?php endif; ?>
 
         <header class="main-header">
             <div class="container nav-wrap">
                 <a class="brand" href="/MUBUGA-TSS/" aria-label="Mubuga TSS home">
-                    <span class="brand-mark">MT</span>
+                    <?php if ($logoPath !== ''): ?>
+                        <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="brand-logo">
+                    <?php else: ?>
+                        <span class="brand-mark">MT</span>
+                    <?php endif; ?>
                     <span class="brand-text">
                         <strong><?php echo htmlspecialchars($schoolName); ?></strong>
                         <small>Technical Secondary School</small>
@@ -61,13 +84,17 @@ require_once __DIR__ . '/includes/site_data.php';
             </div>
         </header>
 
-        <main>
+        <main id="main-content">
             <section class="hero" id="home">
                 <div class="container hero-grid">
-                    <div class="hero-copy">
+                    <div class="hero-copy" data-hero-slider>
                         <div class="brand-ribbon">
                             <div class="brand-seal">
-                                <span>MT</span>
+                                <?php if ($logoPath !== ''): ?>
+                                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> emblem" class="brand-seal-logo">
+                                <?php else: ?>
+                                    <span>MT</span>
+                                <?php endif; ?>
                             </div>
                             <div>
                                 <strong><?php echo htmlspecialchars($schoolName); ?></strong>
@@ -76,40 +103,81 @@ require_once __DIR__ . '/includes/site_data.php';
                         </div>
 
                         <div class="hero-intro">
-                            <p class="eyebrow"><?php echo htmlspecialchars($heroSlides[0]['eyebrow']); ?></p>
-                            <h1><?php echo htmlspecialchars($heroSlides[0]['title']); ?></h1>
-                            <p class="hero-text"><?php echo htmlspecialchars($tagline); ?></p>
+                            <p class="eyebrow" data-hero-eyebrow><?php echo htmlspecialchars($heroSlides[0]['eyebrow']); ?></p>
+                            <h1 data-hero-title><?php echo htmlspecialchars($heroSlides[0]['title']); ?></h1>
+                            <p class="hero-text" data-hero-text><?php echo htmlspecialchars($heroSlides[0]['text']); ?></p>
                             <div class="hero-actions">
-                                <a href="#admissions" class="button button-primary"><?php echo htmlspecialchars($heroSlides[0]['button']); ?></a>
+                                <a href="#admissions" class="button button-primary" data-hero-button><?php echo htmlspecialchars($heroSlides[0]['button']); ?></a>
                                 <a href="#about" class="button button-secondary">Learn About Us</a>
                             </div>
                         </div>
 
-                        <div class="hero-slider-mock">
-                            <?php foreach ($heroSlides as $slide): ?>
-                                <article class="slide-card">
+                        <div class="hero-slider-mock" role="tablist" aria-label="Homepage highlights">
+                            <?php foreach ($heroSlides as $index => $slide): ?>
+                                <button
+                                    type="button"
+                                    class="slide-card<?php echo $index === 0 ? ' is-active' : ''; ?>"
+                                    data-hero-trigger
+                                    data-index="<?php echo $index; ?>"
+                                    data-eyebrow="<?php echo htmlspecialchars($slide['eyebrow']); ?>"
+                                    data-title="<?php echo htmlspecialchars($slide['title']); ?>"
+                                    data-text="<?php echo htmlspecialchars($slide['text']); ?>"
+                                    data-button="<?php echo htmlspecialchars($slide['button']); ?>"
+                                    data-image="<?php echo htmlspecialchars($slide['image'] ?? 'assets/images/mb1.jfif'); ?>"
+                                    data-spotlight="<?php echo htmlspecialchars($slide['spotlight'] ?? $slide['eyebrow']); ?>"
+                                    aria-selected="<?php echo $index === 0 ? 'true' : 'false'; ?>"
+                                >
                                     <p class="card-label"><?php echo htmlspecialchars($slide['eyebrow']); ?></p>
                                     <h3><?php echo htmlspecialchars($slide['title']); ?></h3>
                                     <p><?php echo htmlspecialchars($slide['text']); ?></p>
-                                    <a href="#admissions"><?php echo htmlspecialchars($slide['button']); ?></a>
-                                </article>
+                                    <span><?php echo htmlspecialchars($slide['button']); ?></span>
+                                </button>
                             <?php endforeach; ?>
                         </div>
                     </div>
 
                     <div class="hero-panel">
-                        <div class="hero-photo">
-                            <img src="assets/images/mb1.jfif" alt="Mubuga TSS students and staff in front of the school building">
+                        <div class="hero-photo hero-photo-slider">
+                            <?php foreach ($heroSlides as $index => $slide): ?>
+                                <img
+                                    src="<?php echo htmlspecialchars($slide['image'] ?? 'assets/images/mb1.jfif'); ?>"
+                                    alt="<?php echo htmlspecialchars($slide['title']); ?>"
+                                    class="hero-slide-image<?php echo $index === 0 ? ' is-active' : ''; ?>"
+                                    data-hero-image
+                                >
+                            <?php endforeach; ?>
+                            <div class="hero-photo-controls" aria-label="Hero slide controls">
+                                <button type="button" class="hero-photo-control" data-hero-prev aria-label="Previous slide">&#10094;</button>
+                                <button type="button" class="hero-photo-control" data-hero-next aria-label="Next slide">&#10095;</button>
+                            </div>
+                            <div class="hero-photo-overlay">
+                                <p class="card-label">Featured View</p>
+                                <h2 data-hero-spotlight><?php echo htmlspecialchars($heroSlides[0]['spotlight'] ?? 'Campus and school community'); ?></h2>
+                            </div>
                         </div>
-                        <div class="hero-card hero-card-accent">
-                            <p class="card-label">Core Trades</p>
-                            <h2>Software Development</h2>
-                            <p>Programming, web systems, digital projects, and modern technical thinking.</p>
+                        <div class="hero-slider-dots" aria-label="Hero slide pagination">
+                            <?php foreach ($heroSlides as $index => $slide): ?>
+                                <button
+                                    type="button"
+                                    class="hero-dot<?php echo $index === 0 ? ' is-active' : ''; ?>"
+                                    data-hero-dot
+                                    data-index="<?php echo $index; ?>"
+                                    aria-label="Show slide <?php echo $index + 1; ?>"
+                                    aria-pressed="<?php echo $index === 0 ? 'true' : 'false'; ?>"
+                                ></button>
+                            <?php endforeach; ?>
                         </div>
-                        <div class="hero-card">
-                            <p class="card-label">Core Trades</p>
-                            <h2>Electrical Technology</h2>
-                            <p>Electrical installation, maintenance, workshop practice, and safe technical execution.</p>
+                        <div class="hero-panel-grid">
+                            <div class="hero-card hero-card-accent">
+                                <p class="card-label">Core Trades</p>
+                                <h2>Software Development</h2>
+                                <p>Programming, web systems, digital projects, and modern technical thinking.</p>
+                            </div>
+                            <div class="hero-card">
+                                <p class="card-label">Core Trades</p>
+                                <h2>Electrical Technology</h2>
+                                <p>Electrical installation, maintenance, workshop practice, and safe technical execution.</p>
+                            </div>
                         </div>
                         <div class="hero-badge">Competence. Discipline. Innovation.</div>
                         <ul class="hero-points">
@@ -141,15 +209,55 @@ require_once __DIR__ . '/includes/site_data.php';
                     <article class="quick-info-card">
                         <span>School Type</span>
                         <strong>TVET / Technical Secondary School</strong>
+                        <p>Structured technical education with practical training and clear learner pathways.</p>
                     </article>
                     <article class="quick-info-card">
                         <span>Main Trades</span>
                         <strong>Software Development and Electrical Technology</strong>
+                        <p>Focused technical departments designed around current skills and hands-on learning.</p>
                     </article>
                     <article class="quick-info-card">
                         <span>Learning Style</span>
                         <strong>Competency-based and practical</strong>
+                        <p>Students build confidence through projects, workshop practice, and guided instruction.</p>
                     </article>
+                </div>
+            </section>
+
+            <section class="section institutional-overview">
+                <div class="container institutional-grid">
+                    <div class="welcome-panel">
+                        <p class="eyebrow">Welcome Message</p>
+                        <h2>A school environment built to form capable and responsible technicians.</h2>
+                        <p><?php echo htmlspecialchars($leadership[0]['name'] ?? 'Mubuga TSS Administration'); ?> welcomes learners and families to a school community that values practical competence, discipline, and a strong sense of purpose.</p>
+                        <p><?php echo htmlspecialchars($leadership[0]['text'] ?? 'Mubuga TSS is committed to giving learners strong technical foundations, discipline, and confidence for the future.'); ?></p>
+                        <div class="welcome-signature">
+                            <img src="<?php echo htmlspecialchars($leadership[0]['photo'] ?? 'assets/images/master.jpeg'); ?>" alt="<?php echo htmlspecialchars($leadership[0]['name'] ?? 'Mubuga TSS Administration'); ?>" class="welcome-avatar">
+                            <div>
+                                <strong><?php echo htmlspecialchars($leadership[0]['name'] ?? 'Mubuga TSS Administration'); ?></strong>
+                                <span><?php echo htmlspecialchars($leadership[0]['role'] ?? 'School Leadership'); ?></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="institutional-side">
+                        <div class="institution-card-grid">
+                            <?php foreach ($institutionCards as $card): ?>
+                                <article class="institution-card">
+                                    <span><?php echo htmlspecialchars($card['label']); ?></span>
+                                    <h3><?php echo htmlspecialchars($card['title']); ?></h3>
+                                    <p><?php echo htmlspecialchars($card['text']); ?></p>
+                                </article>
+                            <?php endforeach; ?>
+                        </div>
+                        <article class="school-profile-card">
+                            <p class="eyebrow">School Profile</p>
+                            <ul class="profile-list">
+                                <?php foreach ($welcomeHighlights as $highlight): ?>
+                                    <li><?php echo htmlspecialchars($highlight); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </article>
+                    </div>
                 </div>
             </section>
 
@@ -166,11 +274,21 @@ require_once __DIR__ . '/includes/site_data.php';
 
             <section class="section about" id="about">
                 <div class="container section-grid">
-                    <div>
+                    <div class="about-copy">
                         <p class="eyebrow">About The School</p>
                         <h2>Welcome to Mubuga TSS.</h2>
                         <p><?php echo htmlspecialchars($schoolName); ?> is a TVET-focused school committed to practical education, student discipline, and career-ready technical skills. The school is centered on two specialized trades: Software Development and Electrical Technology.</p>
                         <p>We aim to help learners grow into capable professionals and responsible citizens by connecting theory, workshop practice, digital projects, and strong school values in one focused environment.</p>
+                        <div class="about-facts">
+                            <article class="about-fact">
+                                <span>School Direction</span>
+                                <strong>Competency-based learning</strong>
+                            </article>
+                            <article class="about-fact">
+                                <span>Training Focus</span>
+                                <strong>Practical trades for modern careers</strong>
+                            </article>
+                        </div>
                         <a href="#programs" class="inline-link">Read more about our programs</a>
                     </div>
                     <div class="feature-stack">
@@ -211,14 +329,17 @@ require_once __DIR__ . '/includes/site_data.php';
                                 <?php if (!empty($program['image'])): ?>
                                     <img src="<?php echo htmlspecialchars($program['image']); ?>" alt="<?php echo htmlspecialchars($program['title']); ?>" class="program-image">
                                 <?php endif; ?>
-                                <h3><?php echo htmlspecialchars($program['title']); ?></h3>
-                                <p><?php echo htmlspecialchars($program['summary']); ?></p>
-                                <ul>
-                                    <?php foreach ($program['focus'] as $item): ?>
-                                        <li><?php echo htmlspecialchars($item); ?></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                                <a href="<?php echo htmlspecialchars($program['link'] ?? '#admissions'); ?>" class="inline-link">View More</a>
+                                <div class="program-card-body">
+                                    <p class="card-label">Technical Trade</p>
+                                    <h3><?php echo htmlspecialchars($program['title']); ?></h3>
+                                    <p><?php echo htmlspecialchars($program['summary']); ?></p>
+                                    <ul>
+                                        <?php foreach ($program['focus'] as $item): ?>
+                                            <li><?php echo htmlspecialchars($item); ?></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                    <a href="<?php echo htmlspecialchars($program['link'] ?? '#admissions'); ?>" class="inline-link">View More</a>
+                                </div>
                             </article>
                         <?php endforeach; ?>
                     </div>
@@ -340,7 +461,10 @@ require_once __DIR__ . '/includes/site_data.php';
                         <?php foreach ($admissions as $index => $step): ?>
                             <article class="admission-step">
                                 <span>0<?php echo $index + 1; ?></span>
-                                <p><?php echo htmlspecialchars($step); ?></p>
+                                <div class="admission-step-copy">
+                                    <strong>Step <?php echo $index + 1; ?></strong>
+                                    <p><?php echo htmlspecialchars($step); ?></p>
+                                </div>
                             </article>
                         <?php endforeach; ?>
                     </div>
@@ -360,10 +484,12 @@ require_once __DIR__ . '/includes/site_data.php';
                                 <?php if (!empty($item['image'])): ?>
                                     <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="news-image">
                                 <?php endif; ?>
-                                <p class="news-tag">Mubuga TSS</p>
-                                <h3><?php echo htmlspecialchars($item['title']); ?></h3>
-                                <p><?php echo htmlspecialchars($item['text']); ?></p>
-                                <a href="<?php echo htmlspecialchars($item['link'] ?? '#contact'); ?>" class="inline-link">Read More</a>
+                                <div class="news-card-body">
+                                    <p class="news-tag">Mubuga TSS</p>
+                                    <h3><?php echo htmlspecialchars($item['title']); ?></h3>
+                                    <p><?php echo htmlspecialchars($item['text']); ?></p>
+                                    <a href="<?php echo htmlspecialchars($item['link'] ?? '#contact'); ?>" class="inline-link">Read More</a>
+                                </div>
                             </article>
                         <?php endforeach; ?>
                     </div>
@@ -376,7 +502,7 @@ require_once __DIR__ . '/includes/site_data.php';
             <section class="section cta" id="contact">
                 <div class="container contact-grid">
                     <div class="cta-panel">
-                        <div>
+                        <div class="cta-copy">
                             <p class="eyebrow">Join Mubuga TSS</p>
                             <h2>Ready to study Software Development or Electrical Technology?</h2>
                             <p>We can continue by adding your real school contacts, photos, leadership names, location details, and application information.</p>
@@ -398,28 +524,47 @@ require_once __DIR__ . '/includes/site_data.php';
                                 </div>
                             <?php endforeach; ?>
                         </div>
+                        <div class="contact-extra">
+                            <div class="contact-extra-item">
+                                <strong>Office Hours</strong>
+                                <span>Monday to Friday, 7AM - 5PM</span>
+                            </div>
+                            <div class="contact-extra-item">
+                                <strong>Admissions Help</strong>
+                                <span>Contact the school office for guidance on reporting and requirements.</span>
+                            </div>
+                        </div>
                         <p class="contact-note">Replace the placeholder phone number and location with the exact school details when you are ready.</p>
                     </aside>
                 </div>
             </section>
         </main>
 
+        <div class="floating-actions">
+            <a href="/MUBUGA-TSS/pages/admissions.php" class="floating-link">Apply</a>
+            <a href="/MUBUGA-TSS/pages/contact.php" class="floating-link floating-link-secondary">Contact</a>
+        </div>
+        <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
         <footer class="site-footer">
             <div class="container footer-grid">
-                <div>
+                <div class="footer-column footer-brand-column">
                     <div class="footer-brand">
-                        <span class="brand-mark">MT</span>
+                        <?php if ($logoPath !== ''): ?>
+                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="brand-logo">
+                        <?php else: ?>
+                            <span class="brand-mark">MT</span>
+                        <?php endif; ?>
                         <strong><?php echo htmlspecialchars($schoolName); ?></strong>
                     </div>
                     <p>Technical Secondary School focused on Software Development and Electrical Technology.</p>
                     <p>Mubuga, Rwanda</p>
                 </div>
-                <div>
+                <div class="footer-column">
                     <p><strong>Programs</strong></p>
                     <p>Software Development</p>
                     <p>Electrical Technology</p>
                 </div>
-                <div>
+                <div class="footer-column">
                     <p><strong>Quick Links</strong></p>
                     <p><a href="#about">About us</a></p>
                     <p><a href="#leadership">Staff</a></p>
@@ -428,12 +573,15 @@ require_once __DIR__ . '/includes/site_data.php';
                     <p><a href="#admissions">Fees &amp; Requirements</a></p>
                     <p><a href="#contact">Contacts</a></p>
                 </div>
-                <div>
+                <div class="footer-column">
                     <p><strong>Mailing List</strong></p>
                     <p>Sign up for our mailing list to get latest updates and offers.</p>
-                    <form class="mailing-form">
-                        <input type="email" placeholder="Your email address">
-                        <button type="button">Subscribe</button>
+                    <form class="mailing-form" method="post" action="/MUBUGA-TSS/handlers/site_forms.php">
+                        <input type="hidden" name="form_action" value="newsletter_subscribe">
+                        <input type="hidden" name="source" value="footer">
+                        <input type="hidden" name="redirect_to" value="/MUBUGA-TSS/">
+                        <input type="email" name="email" placeholder="Your email address" required>
+                        <button type="submit">Subscribe</button>
                     </form>
                 </div>
             </div>

@@ -2,24 +2,202 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/site_data.php';
 require_once __DIR__ . '/../includes/site_layout.php';
+require_once __DIR__ . '/../includes/admin_upload.php';
+
+$message = '';
+$messageType = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $pdo = getDatabaseConnection();
+    $filePath = '';
+
+    if ($pdo instanceof PDO) {
+        if (!empty($_FILES['results_report']) && isset($_FILES['results_report']['tmp_name']) && is_uploaded_file($_FILES['results_report']['tmp_name'])) {
+            $file = $_FILES['results_report'];
+            $allowedExtensions = ['jpg', 'jpeg', 'png'];
+            $extension = strtolower(pathinfo((string) ($file['name'] ?? ''), PATHINFO_EXTENSION));
+            if (in_array($extension, $allowedExtensions, true)) {
+                $uploadDir = dirname(__DIR__) . '/assets/uploads';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+                $baseName = preg_replace('/[^a-zA-Z0-9_-]+/', '-', pathinfo((string) ($file['name'] ?? ''), PATHINFO_FILENAME));
+                $baseName = trim((string) $baseName, '-');
+                if ($baseName === '') {
+                    $baseName = 'report';
+                }
+                $targetName = $baseName . '-' . date('YmdHis') . '.' . $extension;
+                $targetPath = $uploadDir . '/' . $targetName;
+                if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                    $filePath = 'assets/uploads/' . $targetName;
+                }
+            }
+        }
+
+        try {
+            $applicantName = trim(sprintf('%s %s', $_POST['first_name'] ?? '', $_POST['last_name'] ?? ''));
+            $notesParts = [];
+            $notesParts[] = 'Program level: ' . trim((string) ($_POST['program_level'] ?? ''));
+            $notesParts[] = 'Father: ' . trim((string) ($_POST['father_name'] ?? ''));
+            $notesParts[] = 'Mother: ' . trim((string) ($_POST['mother_name'] ?? ''));
+            $notesParts[] = 'Sponsor: ' . trim((string) ($_POST['sponsor'] ?? ''));
+            $notesParts[] = 'Sponsor detail: ' . trim((string) ($_POST['sponsor_other'] ?? ''));
+            if ($filePath !== '') {
+                $notesParts[] = 'Results report: ' . $filePath;
+            }
+            $notes = implode(' | ', array_filter($notesParts));
+
+            $stmt = $pdo->prepare(
+                'INSERT INTO admissions (applicant_name, gender, date_of_birth, parent_name, parent_phone, email, address, previous_school, preferred_program_id, intake_year, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            );
+            $stmt->execute([
+                $applicantName,
+                $_POST['gender'] ?? null,
+                $_POST['date_of_birth'] ?? null,
+                $_POST['guardian_name'] ?? '',
+                $_POST['guardian_phone'] ?? '',
+                $_POST['email'] ?? '',
+                '',
+                '',
+                $_POST['preferred_program_id'] ?? null,
+                null,
+                $notes,
+            ]);
+
+            $message = 'Your registration has been submitted successfully. We will contact you soon.';
+            $messageType = 'success';
+        } catch (PDOException $e) {
+            $message = 'There was an error submitting your registration. Please try again.';
+            $messageType = 'error';
+        }
+    } else {
+        $message = 'Database connection error. Please try again later.';
+        $messageType = 'error';
+    }
+}
+
 renderSiteHeader('Admissions', $schoolName, $contacts, 'admissions');
 renderInnerHero('ADMISSION', 'Start your journey at Mubuga TSS', 'Find the basic requirements and simple admission pathway for joining one of our technical trades.', 'assets/images/IM8.jpg');
 ?>
 <main>
-    <section class="section">
-        <div class="container admissions-grid">
-            <div>
-                <p class="eyebrow">Fees & Requirements</p>
-                <h2>What you need to begin.</h2>
-                <p>Contact the school for official fees, required documents, and current reporting dates. We recommend choosing the trade that best fits your interests and long-term goals.</p>
-            </div>
-            <div class="admission-steps">
-                <?php foreach ($admissions as $index => $step): ?>
-                    <article class="admission-step">
-                        <span>0<?php echo $index + 1; ?></span>
-                        <p><?php echo htmlspecialchars($step); ?></p>
+    <section class="section admission-form-section">
+        <div class="container">
+            <div class="admission-layout">
+            <aside class="admission-side-panel">
+                <p class="eyebrow">Admission Guide</p>
+                <h2>Join Mubuga TSS with a clear, simple process.</h2>
+                <p>Admissions are organized to help students and families understand the trade options, registration steps, and follow-up support.</p>
+                <div class="admission-side-points">
+                    <article class="admission-side-item">
+                        <strong>Choose a trade</strong>
+                        <span>Select the program that matches your interest and career direction.</span>
                     </article>
-                <?php endforeach; ?>
+                    <article class="admission-side-item">
+                        <strong>Prepare details</strong>
+                        <span>Fill in your learner and guardian information carefully before submission.</span>
+                    </article>
+                    <article class="admission-side-item">
+                        <strong>Wait for response</strong>
+                        <span>The school office can contact you with the next guidance and reporting steps.</span>
+                    </article>
+                </div>
+            </aside>
+            <div class="admission-card">
+                <div class="form-heading">
+                    <h1>Student Registration Form</h1>
+                    <p>Fill all form fields to go to the next step</p>
+                </div>
+
+                <?php if ($message): ?>
+                    <div class="message <?php echo $messageType; ?>">
+                        <?php echo htmlspecialchars($message); ?>
+                    </div>
+                <?php endif; ?>
+
+                <form method="POST" action="" class="admission-form" id="admissionForm" enctype="multipart/form-data">
+                    <div class="form-grid form-grid--two">
+                        <div class="form-group">
+                            <label for="first_name">First Name</label>
+                            <input type="text" id="first_name" name="first_name" placeholder="Your First Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="last_name">Last Name</label>
+                            <input type="text" id="last_name" name="last_name" placeholder="Your Last Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="preferred_program_id">Select The Program</label>
+                            <select id="preferred_program_id" name="preferred_program_id" required>
+                                <option value="">Choose a program</option>
+                                <?php
+                                $pdo = getDatabaseConnection();
+                                $programOptions = [];
+                                if ($pdo instanceof PDO) {
+                                    $programOptions = $pdo->query('SELECT id, title FROM programs WHERE status = "active" ORDER BY title ASC')->fetchAll();
+                                } else {
+                                    $programOptions = $programs;
+                                }
+                                foreach ($programOptions as $program) {
+                                    $optionValue = $pdo instanceof PDO ? htmlspecialchars((string) $program['id']) : htmlspecialchars($program['title']);
+                                    $optionLabel = htmlspecialchars((string) ($program['title'] ?? $program['title']));
+                                    echo '<option value="' . $optionValue . '">' . $optionLabel . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="program_level">Please Select Level</label>
+                            <select id="program_level" name="program_level">
+                                <option value="">Select Level</option>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="guardian_name">Guardian's Names</label>
+                            <input type="text" id="guardian_name" name="guardian_name" placeholder="Your Guardian's Names">
+                        </div>
+                        <div class="form-group">
+                            <label for="guardian_phone">Guardian's Phone No</label>
+                            <input type="tel" id="guardian_phone" name="guardian_phone" placeholder="Guardian's Contact">
+                        </div>
+                        <div class="form-group">
+                            <label for="father_name">Father's Names</label>
+                            <input type="text" id="father_name" name="father_name" placeholder="Your Father's Names">
+                        </div>
+                        <div class="form-group">
+                            <label for="mother_name">Mother's Names</label>
+                            <input type="text" id="mother_name" name="mother_name" placeholder="Your Mother's Names">
+                        </div>
+                    </div>
+
+                    <div class="form-grid form-grid--three">
+                        <div class="form-group">
+                            <label for="sponsor">Please select your sponsor</label>
+                            <select id="sponsor" name="sponsor">
+                                <option value="">Select sponsor</option>
+                                <option value="Parent">Parent</option>
+                                <option value="Guardian">Guardian</option>
+                                <option value="Self">Self</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sponsor_other">If not listed, please specify</label>
+                            <input type="text" id="sponsor_other" name="sponsor_other" placeholder="Who will pay for you?">
+                        </div>
+                        <div class="form-group file-group">
+                            <label for="results_report">Upload your previous results report</label>
+                            <input type="file" id="results_report" name="results_report" accept="image/jpeg,image/png">
+                            <span class="file-note">Only JPG, PNG</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">SUBMIT</button>
+                    </div>
+                </form>
+            </div>
             </div>
         </div>
     </section>

@@ -2,8 +2,14 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/site_data.php';
 require_once __DIR__ . '/../includes/site_layout.php';
-renderSiteHeader('Our Team', $schoolName, $contacts, 'team');
-renderInnerHero('OUR TEAM', 'Meet our school leaders', 'The Mubuga TSS team is committed to student growth, technical excellence, and strong school management.', 'assets/images/master.jpeg');
+$page = sitePageContent('our-team', [
+    'title' => 'Our Team',
+    'excerpt' => 'The Mubuga TSS team is committed to student growth, technical excellence, and strong school management.',
+    'content' => 'Meet our school leaders.',
+    'image' => 'assets/images/master.jpeg',
+]);
+renderSiteHeader($page['title'], $schoolName, $contacts, 'team');
+renderInnerHero('OUR TEAM', $page['content'], $page['excerpt'], $page['image']);
 ?>
 <main>
     <section class="section leadership">

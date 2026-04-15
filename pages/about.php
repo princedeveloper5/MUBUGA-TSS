@@ -2,17 +2,33 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/site_data.php';
 require_once __DIR__ . '/../includes/site_layout.php';
-renderSiteHeader('About Us', $schoolName, $contacts, 'about');
-renderInnerHero('WELCOME TO', $schoolName, 'Learn the story, mission, vision, and values that shape Mubuga TSS.', 'assets/images/mb1.jfif');
+$page = sitePageContent('about-us', [
+    'title' => 'About Us',
+    'excerpt' => 'Learn the story, mission, vision, and values that shape Mubuga TSS.',
+    'content' => $schoolName . ' is committed to helping learners grow into capable professionals and responsible citizens through strong technical education and a disciplined school culture.',
+    'image' => 'assets/images/mb1.jfif',
+]);
+renderSiteHeader($page['title'], $schoolName, $contacts, 'about');
+renderInnerHero('WELCOME TO', $schoolName, $page['excerpt'], $page['image']);
 ?>
 <main>
     <section class="section">
         <div class="container section-grid">
-            <div>
+            <div class="about-copy">
                 <p class="eyebrow">Our Story</p>
                 <h2>A focused TVET school with practical ambition.</h2>
-                <p><?php echo htmlspecialchars($schoolName); ?> is committed to helping learners grow into capable professionals and responsible citizens through strong technical education and a disciplined school culture.</p>
+                <p><?php echo htmlspecialchars($page['content']); ?></p>
                 <p>Our school centers learning around Software Development and Electrical Technology, with a strong emphasis on practical application, teamwork, and career readiness.</p>
+                <div class="about-facts">
+                    <article class="about-fact">
+                        <span>School Character</span>
+                        <strong>Disciplined, practical, and future-focused learning</strong>
+                    </article>
+                    <article class="about-fact">
+                        <span>Main Priority</span>
+                        <strong>Technical growth with strong student values</strong>
+                    </article>
+                </div>
             </div>
             <div class="feature-stack">
                 <article class="feature-card">

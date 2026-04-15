@@ -142,6 +142,14 @@ CREATE TABLE IF NOT EXISTS downloads (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    source VARCHAR(100) NULL,
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 INSERT INTO settings (setting_key, setting_value) VALUES
     ('school_name', 'Mubuga TSS'),
     ('school_motto', 'Excellence in technical education'),

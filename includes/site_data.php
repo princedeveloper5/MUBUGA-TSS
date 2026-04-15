@@ -43,18 +43,24 @@ $heroSlides = [
         'title' => 'Excellence in technical education',
         'text' => 'A disciplined and practical learning environment where students prepare for modern careers through focused training.',
         'button' => 'Register',
+        'image' => 'assets/images/mb1.jfif',
+        'spotlight' => 'Campus and school community',
     ],
     [
         'eyebrow' => 'Software Development',
         'title' => 'Build digital solutions that solve real problems',
         'text' => 'Students learn programming, systems thinking, web development, and project delivery with a strong practical mindset.',
         'button' => 'Register Now',
+        'image' => 'assets/images/mb3.jfif',
+        'spotlight' => 'Coding labs and digital projects',
     ],
     [
         'eyebrow' => 'Electrical Technology',
         'title' => 'Learn through workshop-based technical practice',
         'text' => 'From installation to maintenance and safety, learners build the confidence to work with real electrical systems.',
         'button' => 'Register Now',
+        'image' => 'assets/images/IM4.jpg',
+        'spotlight' => 'Workshop practice and electrical systems',
     ],
 ];
 
@@ -139,6 +145,36 @@ $contacts = [
     ['label' => 'Location', 'value' => 'Mubuga, Rwanda'],
 ];
 
+$institutionCards = [
+    [
+        'label' => 'School Identity',
+        'title' => 'Government-aligned technical secondary school',
+        'text' => 'Mubuga TSS is positioned as a focused technical school preparing learners through practical trades and disciplined study.',
+    ],
+    [
+        'label' => 'Campus Focus',
+        'title' => 'Training shaped by workshops and digital practice',
+        'text' => 'Learning combines classroom instruction, guided projects, and practical sessions that build real technical confidence.',
+    ],
+    [
+        'label' => 'Student Pathway',
+        'title' => 'Preparation for work, entrepreneurship, and growth',
+        'text' => 'Students are guided toward employability, self-reliance, and continued professional development after graduation.',
+    ],
+];
+
+$welcomeHighlights = [
+    'Clear school values centered on discipline, integrity, and responsibility',
+    'A practical curriculum that connects study directly to real technical work',
+    'A student experience shaped by mentorship, teamwork, and future readiness',
+];
+
+$siteMeta = [
+    'logo_path' => 'assets/images/MUBUGA LOGO SN.PNG',
+    'facebook_url' => '#',
+    'instagram_url' => '#',
+];
+
 $values = [
     'Discipline',
     'Integrity',
@@ -217,7 +253,7 @@ $gallery = [
     [
         'title' => 'Innovation in education',
         'text' => 'Modern teaching methods combining theory with practical application.',
-        'image' => 'assets/images/IM10.jpeg',
+        'image' => 'assets/images/IM9.jpg',
     ],
 ];
 
@@ -236,12 +272,15 @@ if ($pdo instanceof PDO) {
         ['label' => 'Phone', 'value' => $settings['school_phone'] ?? $contacts[1]['value']],
         ['label' => 'Location', 'value' => $settings['school_address'] ?? $contacts[2]['value']],
     ];
+    $siteMeta['logo_path'] = $settings['school_logo'] ?? $siteMeta['logo_path'];
+    $siteMeta['facebook_url'] = $settings['school_facebook'] ?? $siteMeta['facebook_url'];
+    $siteMeta['instagram_url'] = $settings['school_instagram'] ?? $siteMeta['instagram_url'];
 
     if (!empty($settings['school_motto'])) {
         $heroSlides[0]['title'] = $settings['school_motto'];
     }
 
-    $programRows = $pdo->query('SELECT title, short_description FROM programs WHERE status = "active" ORDER BY id ASC')->fetchAll();
+    $programRows = $pdo->query('SELECT title, short_description, cover_image FROM programs WHERE status = "active" ORDER BY id ASC')->fetchAll();
     if ($programRows) {
         $programImages = [
             'Software Development' => 'assets/images/mb3.jfif',
@@ -257,7 +296,7 @@ if ($pdo instanceof PDO) {
                 'title' => $title,
                 'summary' => $row['short_description'] ?: 'Technical learning pathway for Mubuga TSS students.',
                 'focus' => $programFocus[$title] ?? ['Technical skills', 'Practical learning', 'Career readiness'],
-                'image' => $programImages[$title] ?? 'assets/images/mb1.jfif',
+                'image' => $row['cover_image'] ?: ($programImages[$title] ?? 'assets/images/mb1.jfif'),
                 'link' => '/MUBUGA-TSS/pages/programs.php',
             ];
         }, $programRows);
@@ -275,14 +314,16 @@ if ($pdo instanceof PDO) {
         }, $staffRows);
     }
 
-    $newsRows = $pdo->query('SELECT title, summary, featured_image FROM news WHERE status = "published" ORDER BY published_at DESC, id DESC LIMIT 6')->fetchAll();
+    $newsRows = $pdo->query('SELECT title, slug, summary, content, featured_image FROM news WHERE status = "published" ORDER BY published_at DESC, id DESC LIMIT 6')->fetchAll();
     if ($newsRows) {
         $news = array_map(static function (array $row): array {
             return [
                 'title' => $row['title'],
+                'slug' => $row['slug'] ?? '',
                 'text' => $row['summary'] ?: 'Latest update from Mubuga TSS.',
+                'content' => $row['content'] ?: $row['summary'] ?: 'Latest update from Mubuga TSS.',
                 'image' => $row['featured_image'] ?: 'assets/images/mb1.jfif',
-                'link' => '/MUBUGA-TSS/pages/news.php',
+                'link' => '/MUBUGA-TSS/pages/news.php' . (!empty($row['slug']) ? '?slug=' . urlencode((string) $row['slug']) : ''),
             ];
         }, $newsRows);
     }
@@ -297,4 +338,28 @@ if ($pdo instanceof PDO) {
             ];
         }, $galleryRows);
     }
+}
+
+function sitePageContent(string $slug, array $defaults): array
+{
+    $pdo = getDatabaseConnection();
+
+    if (!$pdo instanceof PDO) {
+        return $defaults;
+    }
+
+    $stmt = $pdo->prepare('SELECT title, excerpt, content, banner_image, status FROM pages WHERE slug = :slug LIMIT 1');
+    $stmt->execute(['slug' => $slug]);
+    $page = $stmt->fetch();
+
+    if (!$page || ($page['status'] ?? 'draft') !== 'published') {
+        return $defaults;
+    }
+
+    return [
+        'title' => $page['title'] ?: $defaults['title'],
+        'excerpt' => $page['excerpt'] ?: $defaults['excerpt'],
+        'content' => $page['content'] ?: $defaults['content'],
+        'image' => $page['banner_image'] ?: $defaults['image'],
+    ];
 }

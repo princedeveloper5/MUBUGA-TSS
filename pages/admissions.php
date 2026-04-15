@@ -148,9 +148,9 @@ renderInnerHero('ADMISSION', 'Start your journey at Mubuga TSS', 'Find the basic
                             <label for="program_level">Please Select Level</label>
                             <select id="program_level" name="program_level">
                                 <option value="">Select Level</option>
-                                <option value="Beginner">Beginner</option>
-                                <option value="Intermediate">Intermediate</option>
-                                <option value="Advanced">Advanced</option>
+                                <option value="Level 3">Level 3</option>
+                                <option value="Level 4">Level 4</option>
+                                <option value="Level 5">Level 5</option>
                             </select>
                         </div>
                         <div class="form-group">

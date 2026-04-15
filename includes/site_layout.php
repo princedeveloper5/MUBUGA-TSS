@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts, string $active = ''): void
 {
+    global $siteMeta;
+    $formStatus = (string) ($_GET['form_status'] ?? '');
+    $formMessage = (string) ($_GET['form_message'] ?? '');
+    $logoPath = (string) ($siteMeta['logo_path'] ?? '');
+    $facebookUrl = (string) ($siteMeta['facebook_url'] ?? '#');
+    $instagramUrl = (string) ($siteMeta['instagram_url'] ?? '#');
     ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,13 +18,18 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle . ' | ' . $schoolName); ?></title>
     <meta name="description" content="<?php echo htmlspecialchars($schoolName); ?> official website.">
+    <link rel="icon" type="image/png" href="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/site.css">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <div class="site-shell">
+        <div class="scroll-progress" aria-hidden="true">
+            <span class="scroll-progress-bar"></span>
+        </div>
         <header class="topbar">
             <div class="container topbar-inner">
                 <div class="topbar-meta">
@@ -27,8 +38,8 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
                     <span>Open: 7AM - 5PM</span>
                 </div>
                 <div class="topbar-links">
-                    <a href="#">Facebook</a>
-                    <a href="#">Instagram</a>
+                    <a href="<?php echo htmlspecialchars($facebookUrl); ?>">Facebook</a>
+                    <a href="<?php echo htmlspecialchars($instagramUrl); ?>">Instagram</a>
                     <a href="/MUBUGA-TSS/admin/">Login</a>
                 </div>
             </div>
@@ -37,7 +48,11 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
         <header class="main-header">
             <div class="container nav-wrap">
                 <a class="brand" href="/MUBUGA-TSS/" aria-label="<?php echo htmlspecialchars($schoolName); ?> home">
-                    <span class="brand-mark">MT</span>
+                    <?php if ($logoPath !== ''): ?>
+                        <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="brand-logo">
+                    <?php else: ?>
+                        <span class="brand-mark">MT</span>
+                    <?php endif; ?>
                     <span class="brand-text">
                         <strong><?php echo htmlspecialchars($schoolName); ?></strong>
                         <small>Technical Secondary School</small>
@@ -63,6 +78,13 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
                 </nav>
             </div>
         </header>
+        <?php if ($formStatus !== '' && $formMessage !== ''): ?>
+            <div class="container form-feedback-wrap">
+                <div class="form-feedback form-feedback-<?php echo htmlspecialchars($formStatus); ?>">
+                    <?php echo htmlspecialchars($formMessage); ?>
+                </div>
+            </div>
+        <?php endif; ?>
 <?php
 }
 
@@ -71,13 +93,22 @@ function renderInnerHero(string $eyebrow, string $title, string $text, string $i
     ?>
         <section class="inner-hero">
             <div class="container inner-hero-grid">
-                <div>
+                <div class="inner-hero-copy">
                     <p class="eyebrow"><?php echo htmlspecialchars($eyebrow); ?></p>
                     <h1 class="inner-title"><?php echo htmlspecialchars($title); ?></h1>
                     <p class="hero-text"><?php echo htmlspecialchars($text); ?></p>
+                    <div class="inner-hero-badges">
+                        <span>Technical Excellence</span>
+                        <span>Student Growth</span>
+                        <span>Practical Learning</span>
+                    </div>
                 </div>
                 <div class="inner-hero-photo">
                     <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($image); ?>" alt="<?php echo htmlspecialchars($title); ?>">
+                    <div class="inner-hero-photo-badge">
+                        <strong><?php echo htmlspecialchars($title); ?></strong>
+                        <span><?php echo htmlspecialchars($eyebrow); ?></span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -86,12 +117,23 @@ function renderInnerHero(string $eyebrow, string $title, string $text, string $i
 
 function renderSiteFooter(string $schoolName): void
 {
+    global $siteMeta;
+    $logoPath = (string) ($siteMeta['logo_path'] ?? '');
     ?>
+        <div class="floating-actions">
+            <a href="/MUBUGA-TSS/pages/admissions.php" class="floating-link">Apply</a>
+            <a href="/MUBUGA-TSS/pages/contact.php" class="floating-link floating-link-secondary">Contact</a>
+        </div>
+        <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
         <footer class="site-footer">
             <div class="container footer-grid">
                 <div>
                     <div class="footer-brand">
-                        <span class="brand-mark">MT</span>
+                        <?php if ($logoPath !== ''): ?>
+                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="brand-logo">
+                        <?php else: ?>
+                            <span class="brand-mark">MT</span>
+                        <?php endif; ?>
                         <strong><?php echo htmlspecialchars($schoolName); ?></strong>
                     </div>
                     <p>Technical Secondary School focused on Software Development and Electrical Technology.</p>
@@ -108,9 +150,12 @@ function renderSiteFooter(string $schoolName): void
                 <div>
                     <p><strong>Mailing List</strong></p>
                     <p>Sign up for our mailing list to get latest updates and offers.</p>
-                    <form class="mailing-form">
-                        <input type="email" placeholder="Your email address">
-                        <button type="button">Subscribe</button>
+                    <form class="mailing-form" method="post" action="/MUBUGA-TSS/handlers/site_forms.php">
+                        <input type="hidden" name="form_action" value="newsletter_subscribe">
+                        <input type="hidden" name="source" value="footer">
+                        <input type="hidden" name="redirect_to" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? '/MUBUGA-TSS/'); ?>">
+                        <input type="email" name="email" placeholder="Your email address" required>
+                        <button type="submit">Subscribe</button>
                     </form>
                 </div>
             </div>

@@ -2,8 +2,14 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/site_data.php';
 require_once __DIR__ . '/../includes/site_layout.php';
-renderSiteHeader('Gallery', $schoolName, $contacts, 'gallery');
-renderInnerHero('GALLERY', 'Pictures from school life and training', 'See Mubuga TSS through classroom, workshop, campus, and student activity images.', 'assets/images/mb1.jfif');
+$page = sitePageContent('gallery', [
+    'title' => 'Gallery',
+    'excerpt' => 'See Mubuga TSS through classroom, workshop, campus, and student activity images.',
+    'content' => 'Pictures from school life and training.',
+    'image' => 'assets/images/mb1.jfif',
+]);
+renderSiteHeader($page['title'], $schoolName, $contacts, 'gallery');
+renderInnerHero('GALLERY', $page['content'], $page['excerpt'], $page['image']);
 ?>
 <main>
     <section class="section gallery-section">

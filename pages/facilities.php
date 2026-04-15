@@ -2,8 +2,14 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/site_data.php';
 require_once __DIR__ . '/../includes/site_layout.php';
-renderSiteHeader('Facilities', $schoolName, $contacts, 'facilities');
-renderInnerHero('FACILITIES', 'Learning spaces built for practical growth', 'Our campus supports real training through classrooms, labs, workshops, and a disciplined school environment.', 'assets/images/mb2.jfif');
+$page = sitePageContent('facilities', [
+    'title' => 'Facilities',
+    'excerpt' => 'Our campus supports real training through classrooms, labs, workshops, and a disciplined school environment.',
+    'content' => 'Learning spaces built for practical growth.',
+    'image' => 'assets/images/mb2.jfif',
+]);
+renderSiteHeader($page['title'], $schoolName, $contacts, 'facilities');
+renderInnerHero('FACILITIES', $page['content'], $page['excerpt'], $page['image']);
 ?>
 <main>
     <section class="section facilities">

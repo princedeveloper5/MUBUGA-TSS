@@ -2,15 +2,29 @@ const navToggle = document.querySelector('.nav-toggle');
 const nav = document.querySelector('.site-nav');
 const backToTop = document.querySelector('.back-to-top');
 const progressBar = document.querySelector('.scroll-progress-bar');
+const projectLoader = document.querySelector('[data-project-loader]');
 
-if (navToggle && nav) {
-    navToggle.addEventListener('click', () => {
-        const isOpen = nav.classList.toggle('is-open');
-        navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    });
-}
+let loaderTimeout = null;
 
-function updateScrollUI() {
+const hideLoader = () => {
+    if (projectLoader) {
+        projectLoader.classList.add('is-hidden');
+    }
+};
+
+const showLoader = () => {
+    if (!projectLoader) {
+        return;
+    }
+
+    projectLoader.classList.remove('is-hidden');
+    clearTimeout(loaderTimeout);
+    loaderTimeout = window.setTimeout(() => {
+        projectLoader.classList.add('is-hidden');
+    }, 5000);
+};
+
+const updateScrollUI = () => {
     const scrollTop = window.scrollY;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
     const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
@@ -22,104 +36,146 @@ function updateScrollUI() {
     if (backToTop) {
         backToTop.classList.toggle('is-visible', scrollTop > 420);
     }
-}
+};
 
-window.addEventListener('scroll', updateScrollUI, { passive: true });
-updateScrollUI();
+const initSite = () => {
+    hideLoader();
 
-if (backToTop) {
-    backToTop.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-}
-
-const revealTargets = document.querySelectorAll('.section, .stat-card, .featured-card, .program-card, .value-card, .leader-card, .news-card, .facility-card, .gallery-card, .admission-step, .contact-card');
-
-if ('IntersectionObserver' in window && revealTargets.length > 0) {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('reveal-in');
-                observer.unobserve(entry.target);
-            }
+    if (navToggle && nav) {
+        navToggle.addEventListener('click', () => {
+            const isOpen = nav.classList.toggle('is-open');
+            navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         });
-    }, { threshold: 0.12 });
+    }
 
-    revealTargets.forEach((target) => {
-        target.classList.add('reveal-ready');
-        observer.observe(target);
+    window.addEventListener('scroll', updateScrollUI, { passive: true });
+    updateScrollUI();
+
+    if (backToTop) {
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    const revealTargets = document.querySelectorAll('.section, .stat-card, .featured-card, .program-card, .value-card, .leader-card, .news-card, .facility-card, .gallery-card, .admission-step, .contact-card');
+
+    if ('IntersectionObserver' in window && revealTargets.length > 0) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+
+        revealTargets.forEach((target) => {
+            target.classList.add('reveal-ready');
+            observer.observe(target);
+        });
+    }
+
+    document.querySelectorAll('form').forEach((form) => {
+        form.addEventListener('submit', () => {
+            showLoader();
+        });
     });
-}
 
-document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('a[href]').forEach((link) => {
+        const href = link.getAttribute('href') || '';
+
+        if (
+            href === '' ||
+            href.startsWith('#') ||
+            href.startsWith('mailto:') ||
+            href.startsWith('tel:') ||
+            href.startsWith('javascript:')
+        ) {
+            return;
+        }
+
+        link.addEventListener('click', (event) => {
+            if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+                return;
+            }
+
+            if (link.target === '_blank' || link.hasAttribute('download')) {
+                return;
+            }
+
+            showLoader();
+        });
+    });
+
     const heroSlider = document.querySelector('[data-hero-slider]');
     const galleryCards = document.querySelectorAll('.gallery-card');
     const mailingForm = document.querySelector('.mailing-form');
     const body = document.body;
 
     if (heroSlider) {
-        const eyebrow = heroSlider.querySelector('[data-hero-eyebrow]');
-        const title = heroSlider.querySelector('[data-hero-title]');
-        const text = heroSlider.querySelector('[data-hero-text]');
-        const button = heroSlider.querySelector('[data-hero-button]');
-        const spotlight = document.querySelector('[data-hero-spotlight]');
-        const triggers = Array.from(heroSlider.querySelectorAll('[data-hero-trigger]'));
-        const images = Array.from(document.querySelectorAll('[data-hero-image]'));
-        const dots = Array.from(document.querySelectorAll('[data-hero-dot]'));
+        const triggers = heroSlider.querySelectorAll('[data-hero-trigger]');
+        const images = document.querySelectorAll('[data-hero-image]');
+        const dots = document.querySelectorAll('[data-hero-dot]');
         const prevButton = document.querySelector('[data-hero-prev]');
         const nextButton = document.querySelector('[data-hero-next]');
-        let currentIndex = Math.max(0, triggers.findIndex((trigger) => trigger.classList.contains('is-active')));
+        const heroEyebrow = document.querySelector('[data-hero-eyebrow]');
+        const heroTitle = document.querySelector('[data-hero-title]');
+        const heroText = document.querySelector('[data-hero-text]');
+        const heroButton = document.querySelector('[data-hero-button]');
+        const heroSpotlight = document.querySelector('[data-hero-spotlight]');
+
+        let currentIndex = 0;
         let sliderTimer = null;
 
         const setSlide = (index) => {
-            const trigger = triggers[index];
-            if (!trigger) {
-                return;
-            }
-
             currentIndex = index;
 
-            triggers.forEach((item, itemIndex) => {
-                const isActive = itemIndex === index;
+            triggers.forEach((item, i) => {
+                const isActive = i === index;
                 item.classList.toggle('is-active', isActive);
                 item.setAttribute('aria-selected', isActive ? 'true' : 'false');
             });
 
-            images.forEach((image, imageIndex) => {
-                image.classList.toggle('is-active', imageIndex === index);
+            images.forEach((img, i) => {
+                img.classList.toggle('is-active', i === index);
             });
 
-            dots.forEach((dot, dotIndex) => {
-                const isActive = dotIndex === index;
+            dots.forEach((dot, i) => {
+                const isActive = i === index;
                 dot.classList.toggle('is-active', isActive);
                 dot.setAttribute('aria-pressed', isActive ? 'true' : 'false');
             });
 
-            if (eyebrow) {
-                eyebrow.textContent = trigger.dataset.eyebrow || '';
+            const activeTrigger = triggers[index];
+            if (!activeTrigger) {
+                return;
             }
-            if (title) {
-                title.textContent = trigger.dataset.title || '';
+
+            if (heroEyebrow) {
+                heroEyebrow.textContent = activeTrigger.dataset.eyebrow || '';
             }
-            if (text) {
-                text.textContent = trigger.dataset.text || '';
+
+            if (heroTitle) {
+                heroTitle.textContent = activeTrigger.dataset.title || '';
             }
-            if (button) {
-                button.textContent = trigger.dataset.button || 'Register';
+
+            if (heroText) {
+                heroText.textContent = activeTrigger.dataset.text || '';
             }
-            if (spotlight) {
-                spotlight.textContent = trigger.dataset.spotlight || '';
+
+            if (heroButton) {
+                heroButton.textContent = activeTrigger.dataset.button || 'Learn More';
+            }
+
+            if (heroSpotlight) {
+                heroSpotlight.textContent = activeTrigger.dataset.spotlight || '';
             }
         };
 
         const restartSlider = () => {
-            if (sliderTimer) {
-                window.clearInterval(sliderTimer);
-            }
-
+            clearInterval(sliderTimer);
             sliderTimer = window.setInterval(() => {
-                const nextIndex = (currentIndex + 1) % triggers.length;
-                setSlide(nextIndex);
+                setSlide((currentIndex + 1) % triggers.length);
             }, 4500);
         };
 
@@ -139,22 +195,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (prevButton) {
             prevButton.addEventListener('click', () => {
-                const nextIndex = (currentIndex - 1 + triggers.length) % triggers.length;
-                setSlide(nextIndex);
+                setSlide((currentIndex - 1 + triggers.length) % triggers.length);
                 restartSlider();
             });
         }
 
         if (nextButton) {
             nextButton.addEventListener('click', () => {
-                const nextIndex = (currentIndex + 1) % triggers.length;
-                setSlide(nextIndex);
+                setSlide((currentIndex + 1) % triggers.length);
                 restartSlider();
             });
         }
 
         if (triggers.length > 1) {
-            setSlide(currentIndex >= 0 ? currentIndex : 0);
+            setSlide(0);
             restartSlider();
         }
     }
@@ -163,245 +217,79 @@ document.addEventListener('DOMContentLoaded', () => {
         const button = mailingForm.querySelector('button');
         const input = mailingForm.querySelector('input[type="email"]');
 
-        if (button && input) {
-            mailingForm.addEventListener('submit', () => {
-                if (input.value.trim() === '') {
+        mailingForm.addEventListener('submit', () => {
+            if (!input || !button || !input.value.trim()) {
+                if (input) {
                     input.focus();
-                    return;
                 }
+                return;
+            }
 
-                button.textContent = 'Submitting...';
-                button.disabled = true;
-            });
-        }
+            button.textContent = 'Submitting...';
+            button.disabled = true;
+        });
     }
 
-    if (galleryCards.length === 0) {
-        return;
-    }
-
-    const lightbox = document.createElement('div');
-    lightbox.className = 'gallery-lightbox';
-    lightbox.innerHTML = `
-        <div class="lightbox-overlay"></div>
-        <div class="lightbox-content">
-            <button class="lightbox-close" aria-label="Close gallery">&times;</button>
-            <button class="lightbox-prev" aria-label="Previous image">&#10094;</button>
-            <button class="lightbox-next" aria-label="Next image">&#10095;</button>
-            <img class="lightbox-image" src="" alt="">
-            <div class="lightbox-caption">
-                <h3 class="lightbox-title"></h3>
-                <p class="lightbox-text"></p>
+    if (galleryCards.length > 0) {
+        const lightbox = document.createElement('div');
+        lightbox.className = 'gallery-lightbox';
+        lightbox.innerHTML = `
+            <div class="lightbox-overlay"></div>
+            <div class="lightbox-content">
+                <button class="lightbox-close">&times;</button>
+                <img class="lightbox-image">
             </div>
-        </div>
-    `;
+        `;
 
-    body.appendChild(lightbox);
+        body.appendChild(lightbox);
 
-    const overlay = lightbox.querySelector('.lightbox-overlay');
-    const image = lightbox.querySelector('.lightbox-image');
-    const title = lightbox.querySelector('.lightbox-title');
-    const text = lightbox.querySelector('.lightbox-text');
-    const closeBtn = lightbox.querySelector('.lightbox-close');
-    const prevBtn = lightbox.querySelector('.lightbox-prev');
-    const nextBtn = lightbox.querySelector('.lightbox-next');
+        const image = lightbox.querySelector('.lightbox-image');
+        const overlay = lightbox.querySelector('.lightbox-overlay');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
 
-    let currentIndex = 0;
-    const galleryItems = [];
+        galleryCards.forEach((card) => {
+            const img = card.querySelector('img');
+            if (!img) {
+                return;
+            }
 
-    galleryCards.forEach((card, index) => {
-        const img = card.querySelector('.gallery-image');
-        const cardTitle = card.querySelector('h3');
-        const cardText = card.querySelector('p');
-
-        if (!img || !cardTitle || !cardText) {
-            return;
-        }
-
-        galleryItems.push({
-            src: img.src,
-            alt: img.alt,
-            title: cardTitle.textContent,
-            text: cardText.textContent,
+            card.addEventListener('click', () => {
+                image.src = img.src;
+                lightbox.classList.add('active');
+                body.style.overflow = 'hidden';
+            });
         });
 
-        card.addEventListener('click', () => openLightbox(index));
-    });
+        const closeLightbox = () => {
+            lightbox.classList.remove('active');
+            body.style.overflow = '';
+        };
 
-    function updateLightbox() {
-        const item = galleryItems[currentIndex];
-        if (!item) {
-            return;
+        if (overlay) {
+            overlay.addEventListener('click', closeLightbox);
         }
 
-        image.src = item.src;
-        image.alt = item.alt;
-        title.textContent = item.title;
-        text.textContent = item.text;
-        prevBtn.style.display = currentIndex > 0 ? 'block' : 'none';
-        nextBtn.style.display = currentIndex < galleryItems.length - 1 ? 'block' : 'none';
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeLightbox);
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeLightbox();
+            }
+        });
     }
+};
 
-    function openLightbox(index) {
-        currentIndex = index;
-        updateLightbox();
-        lightbox.classList.add('active');
-        body.style.overflow = 'hidden';
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSite);
+} else {
+    initSite();
+}
+
+window.addEventListener('load', hideLoader);
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        hideLoader();
     }
-
-    function closeLightbox() {
-        lightbox.classList.remove('active');
-        body.style.overflow = '';
-    }
-
-    function showPrev() {
-        if (currentIndex > 0) {
-            currentIndex -= 1;
-            updateLightbox();
-        }
-    }
-
-    function showNext() {
-        if (currentIndex < galleryItems.length - 1) {
-            currentIndex += 1;
-            updateLightbox();
-        }
-    }
-
-    overlay.addEventListener('click', closeLightbox);
-    closeBtn.addEventListener('click', closeLightbox);
-    prevBtn.addEventListener('click', showPrev);
-    nextBtn.addEventListener('click', showNext);
-
-    document.addEventListener('keydown', (event) => {
-        if (!lightbox.classList.contains('active')) {
-            return;
-        }
-
-        if (event.key === 'Escape') {
-            closeLightbox();
-        }
-        if (event.key === 'ArrowLeft') {
-            showPrev();
-        }
-        if (event.key === 'ArrowRight') {
-            showNext();
-        }
-    });
 });
-
-const admissionForm = document.getElementById('admissionForm');
-
-if (admissionForm) {
-    const phoneInput = document.getElementById('parent_phone');
-    const emailInput = document.getElementById('email');
-    const dobInput = document.getElementById('date_of_birth');
-
-    if (phoneInput) {
-        phoneInput.addEventListener('input', (event) => {
-            let value = event.target.value.replace(/\D/g, '');
-            if (value.startsWith('250')) {
-                value = '+250 ' + value.slice(3);
-            } else if (value.length >= 3) {
-                value = value.slice(0, 3) + ' ' + value.slice(3);
-            }
-            if (value.length > 12) {
-                value = value.slice(0, 12);
-            }
-            event.target.value = value;
-        });
-    }
-
-    if (emailInput) {
-        emailInput.addEventListener('blur', (event) => {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (event.target.value && !emailRegex.test(event.target.value)) {
-                showFieldError(event.target, 'Please enter a valid email address');
-            } else {
-                clearFieldError(event.target);
-            }
-        });
-    }
-
-    if (dobInput) {
-        const maxDate = new Date();
-        maxDate.setFullYear(maxDate.getFullYear() - 14);
-        dobInput.max = maxDate.toISOString().split('T')[0];
-
-        const minDate = new Date();
-        minDate.setFullYear(minDate.getFullYear() - 25);
-        dobInput.min = minDate.toISOString().split('T')[0];
-    }
-
-    admissionForm.addEventListener('submit', (event) => {
-        let isValid = true;
-        const requiredFields = admissionForm.querySelectorAll('[required]');
-
-        requiredFields.forEach((field) => {
-            if (!field.value.trim()) {
-                showFieldError(field, 'This field is required');
-                isValid = false;
-            } else {
-                clearFieldError(field);
-            }
-        });
-
-        if (emailInput && emailInput.value) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(emailInput.value)) {
-                showFieldError(emailInput, 'Please enter a valid email address');
-                isValid = false;
-            }
-        }
-
-        if (!isValid) {
-            event.preventDefault();
-            const firstError = admissionForm.querySelector('.field-error');
-            if (firstError) {
-                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-    });
-
-    const requiredInputs = admissionForm.querySelectorAll('[required]');
-    requiredInputs.forEach((input) => {
-        input.addEventListener('blur', function () {
-            if (!this.value.trim()) {
-                showFieldError(this, 'This field is required');
-            } else {
-                clearFieldError(this);
-            }
-        });
-
-        input.addEventListener('input', function () {
-            if (this.value.trim()) {
-                clearFieldError(this);
-            }
-        });
-    });
-}
-
-function showFieldError(field, message) {
-    clearFieldError(field);
-    field.style.borderColor = '#c53838';
-
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'field-error';
-    errorDiv.textContent = message;
-    errorDiv.style.cssText = `
-        color: #c53838;
-        font-size: 0.85rem;
-        margin-top: 4px;
-        font-weight: 500;
-    `;
-
-    field.parentNode.appendChild(errorDiv);
-}
-
-function clearFieldError(field) {
-    field.style.borderColor = '';
-    const existingError = field.parentNode.querySelector('.field-error');
-    if (existingError) {
-        existingError.remove();
-    }
-}

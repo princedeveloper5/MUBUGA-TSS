@@ -30,13 +30,30 @@ if ($requestMethod === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mubuga TSS Admin Login</title>
+    <link rel="icon" type="image/png" href="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG">
     <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/admin.css">
 </head>
 <body class="admin-login-page">
+    <div class="admin-loader" data-admin-loader>
+        <div class="admin-loader-card">
+            <img src="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG" alt="Mubuga TSS logo" class="admin-loader-logo">
+            <div class="project-spinner" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <strong>Loading Mubuga TSS Admin</strong>
+            <span>Please wait...</span>
+        </div>
+    </div>
     <main class="login-shell">
         <section class="login-card">
-            <p class="admin-eyebrow">Mubuga TSS</p>
-            <h1>Admin Login</h1>
+            <div class="admin-brand-block">
+                <img src="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG" alt="Mubuga TSS logo" class="admin-brand-logo">
+                <div>
+                    <p class="admin-eyebrow">Mubuga TSS</p>
+                    <h1>Admin Login</h1>
+                </div>
+            </div>
             <p class="login-text">Use the school admin account to manage homepage content.</p>
 
             <?php if ($error !== ''): ?>
@@ -62,5 +79,6 @@ if ($requestMethod === 'POST') {
             </div>
         </section>
     </main>
+    <script src="/MUBUGA-TSS/assets/js/admin.js"></script>
 </body>
 </html>

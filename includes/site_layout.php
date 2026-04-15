@@ -8,8 +8,13 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
     $formStatus = (string) ($_GET['form_status'] ?? '');
     $formMessage = (string) ($_GET['form_message'] ?? '');
     $logoPath = (string) ($siteMeta['logo_path'] ?? '');
+    // Use fallback to the default logo if no custom logo is set
+    if ($logoPath === '') {
+        $logoPath = 'assets/images/MUBUGA%20LOGO%20SN.PNG';
+    }
     $facebookUrl = (string) ($siteMeta['facebook_url'] ?? '#');
     $instagramUrl = (string) ($siteMeta['instagram_url'] ?? '#');
+    $twitterUrl = (string) ($siteMeta['twitter_url'] ?? '#');
     ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +30,16 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
     <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/site.css">
 </head>
 <body>
+    <div class="project-loader" data-project-loader>
+        <div class="project-loader-card">
+            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="project-loader-logo">
+            <div class="project-spinner" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <strong>Loading <?php echo htmlspecialchars($schoolName); ?></strong>
+        </div>
+    </div>
     <a href="#main-content" class="skip-link">Skip to content</a>
     <div class="site-shell">
         <div class="scroll-progress" aria-hidden="true">
@@ -38,8 +53,15 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
                     <span>Open: 7AM - 5PM</span>
                 </div>
                 <div class="topbar-links">
-                    <a href="<?php echo htmlspecialchars($facebookUrl); ?>">Facebook</a>
-                    <a href="<?php echo htmlspecialchars($instagramUrl); ?>">Instagram</a>
+                    <a href="<?php echo htmlspecialchars($facebookUrl); ?>" class="topbar-social-link" aria-label="Follow us on Facebook" title="Facebook">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
+                    <a href="<?php echo htmlspecialchars($instagramUrl); ?>" class="topbar-social-link" aria-label="Follow us on Instagram" title="Instagram">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 21.6c-5.3 0-9.6-4.3-9.6-9.6s4.3-9.6 9.6-9.6 9.6 4.3 9.6 9.6-4.3 9.6-9.6 9.6zm0-15.6c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm5.6-1.8c0 .79.64 1.43 1.43 1.43s1.43-.64 1.43-1.43-.64-1.43-1.43-1.43-1.43.64-1.43 1.43z"/></svg>
+                    </a>
+                    <a href="<?php echo htmlspecialchars($twitterUrl); ?>" class="topbar-social-link" aria-label="Follow us on Twitter" title="Twitter">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.6l-5.165-6.75-5.97 6.75h-3.315l7.73-8.835L.42 2.25h6.75l4.678 6.017L17.474 2.25zM16.6 20.47h1.832L7.06 3.88H5.063L16.6 20.47z"/></svg>
+                    </a>
                     <a href="/MUBUGA-TSS/admin/">Login</a>
                 </div>
             </div>
@@ -48,11 +70,7 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
         <header class="main-header">
             <div class="container nav-wrap">
                 <a class="brand" href="/MUBUGA-TSS/" aria-label="<?php echo htmlspecialchars($schoolName); ?> home">
-                    <?php if ($logoPath !== ''): ?>
-                        <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="brand-logo">
-                    <?php else: ?>
-                        <span class="brand-mark">MT</span>
-                    <?php endif; ?>
+                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="brand-logo">
                     <span class="brand-text">
                         <strong><?php echo htmlspecialchars($schoolName); ?></strong>
                         <small>Technical Secondary School</small>
@@ -90,10 +108,19 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
 
 function renderInnerHero(string $eyebrow, string $title, string $text, string $image): void
 {
+    global $siteMeta, $schoolName;
+    $logoPath = (string) ($siteMeta['logo_path'] ?? '');
+    // Use fallback to the default logo if no custom logo is set
+    if ($logoPath === '') {
+        $logoPath = 'assets/images/MUBUGA%20LOGO%20SN.PNG';
+    }
     ?>
         <section class="inner-hero">
             <div class="container inner-hero-grid">
                 <div class="inner-hero-copy">
+                    <div class="inner-hero-seal">
+                        <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> emblem" class="inner-hero-seal-logo">
+                    </div>
                     <p class="eyebrow"><?php echo htmlspecialchars($eyebrow); ?></p>
                     <h1 class="inner-title"><?php echo htmlspecialchars($title); ?></h1>
                     <p class="hero-text"><?php echo htmlspecialchars($text); ?></p>
@@ -117,8 +144,17 @@ function renderInnerHero(string $eyebrow, string $title, string $text, string $i
 
 function renderSiteFooter(string $schoolName): void
 {
-    global $siteMeta;
+    global $siteMeta, $contacts;
     $logoPath = (string) ($siteMeta['logo_path'] ?? '');
+    // Use fallback to the default logo if no custom logo is set
+    if ($logoPath === '') {
+        $logoPath = 'assets/images/MUBUGA%20LOGO%20SN.PNG';
+    }
+    $facebookUrl = (string) ($siteMeta['facebook_url'] ?? '#');
+    $instagramUrl = (string) ($siteMeta['instagram_url'] ?? '#');
+    $emailAddress = (string) ($contacts[0]['value'] ?? '');
+    $phoneNumber = (string) ($contacts[1]['value'] ?? '');
+    $locationText = (string) ($contacts[2]['value'] ?? 'Mubuga, Rwanda');
     ?>
         <div class="floating-actions">
             <a href="/MUBUGA-TSS/pages/admissions.php" class="floating-link">Apply</a>
@@ -126,37 +162,104 @@ function renderSiteFooter(string $schoolName): void
         </div>
         <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
         <footer class="site-footer">
-            <div class="container footer-grid">
-                <div>
-                    <div class="footer-brand">
-                        <?php if ($logoPath !== ''): ?>
-                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="brand-logo">
-                        <?php else: ?>
-                            <span class="brand-mark">MT</span>
-                        <?php endif; ?>
-                        <strong><?php echo htmlspecialchars($schoolName); ?></strong>
+            <div class="container footer-main">
+                <div class="footer-topline">
+                    <div>
+                        <p class="eyebrow">Mubuga TSS</p>
+                        <h2>Technical training for a confident future.</h2>
                     </div>
-                    <p>Technical Secondary School focused on Software Development and Electrical Technology.</p>
-                    <p>Mubuga, Rwanda</p>
+                    <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Apply Now</a>
                 </div>
-                <div>
-                    <p><strong>Useful Links</strong></p>
-                    <p><a href="/MUBUGA-TSS/pages/about.php">About us</a></p>
-                    <p><a href="/MUBUGA-TSS/pages/team.php">Staff</a></p>
-                    <p><a href="/MUBUGA-TSS/pages/facilities.php">Facilities</a></p>
-                    <p><a href="/MUBUGA-TSS/pages/admissions.php">Fees &amp; Requirements</a></p>
-                    <p><a href="/MUBUGA-TSS/pages/contact.php">Contacts</a></p>
+                <div class="footer-grid">
+                    <!-- Brand Section -->
+                    <div class="footer-section footer-brand-section">
+                        <div class="footer-brand">
+                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="footer-brand-logo">
+                            <div>
+                                <strong><?php echo htmlspecialchars($schoolName); ?></strong>
+                                <span>Technical Secondary School</span>
+                            </div>
+                        </div>
+                        <p class="footer-description">Focused technical education in Software Development and Electrical Technology.</p>
+                        <div class="footer-social">
+                            <a href="<?php echo htmlspecialchars($facebookUrl); ?>" class="social-link" aria-label="Follow us on Facebook" title="Facebook">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                            </a>
+                            <a href="<?php echo htmlspecialchars($instagramUrl); ?>" class="social-link" aria-label="Follow us on Instagram" title="Instagram">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 21.6c-5.3 0-9.6-4.3-9.6-9.6s4.3-9.6 9.6-9.6 9.6 4.3 9.6 9.6-4.3 9.6-9.6 9.6zm0-15.6c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm5.6-1.8c0 .79.64 1.43 1.43 1.43s1.43-.64 1.43-1.43-.64-1.43-1.43-1.43-1.43.64-1.43 1.43z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="footer-section">
+                        <h3 class="footer-heading">Quick Links</h3>
+                        <ul class="footer-links">
+                            <li><a href="/MUBUGA-TSS/pages/about.php">About Us</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/programs.php">Our Programs</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/facilities.php">Facilities</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/team.php">Our Team</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/gallery.php">Gallery</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/news.php">News &amp; Updates</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Admissions -->
+                    <div class="footer-section">
+                        <h3 class="footer-heading">Programs</h3>
+                        <ul class="footer-links">
+                            <li><a href="/MUBUGA-TSS/pages/programs.php">Software Development</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/programs.php">Electrical Technology</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/programs.php">View All Programs</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Contact Info & Newsletter -->
+                    <div class="footer-section">
+                        <h3 class="footer-heading">Contact</h3>
+                        <div class="footer-contact-info">
+                            <?php if ($phoneNumber): ?>
+                                <a href="tel:<?php echo htmlspecialchars($phoneNumber); ?>" class="contact-link">
+                                    <span class="contact-icon">📞</span>
+                                    <span><?php echo htmlspecialchars($phoneNumber); ?></span>
+                                </a>
+                            <?php endif; ?>
+                            <?php if ($emailAddress): ?>
+                                <a href="mailto:<?php echo htmlspecialchars($emailAddress); ?>" class="contact-link">
+                                    <span class="contact-icon">✉️</span>
+                                    <span><?php echo htmlspecialchars($emailAddress); ?></span>
+                                </a>
+                            <?php endif; ?>
+                            <div class="contact-link">
+                                <span class="contact-icon">📍</span>
+                                <span><?php echo htmlspecialchars($locationText); ?></span>
+                            </div>
+                        </div>
+                        
+                        <h3 class="footer-heading footer-heading-newsletter">Newsletter</h3>
+                        <p class="footer-newsletter-desc">Get updates on admissions and school news.</p>
+                        <form class="footer-newsletter-form" method="post" action="/MUBUGA-TSS/handlers/site_forms.php">
+                            <input type="hidden" name="form_action" value="newsletter_subscribe">
+                            <input type="hidden" name="source" value="footer">
+                            <input type="hidden" name="redirect_to" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? '/MUBUGA-TSS/'); ?>">
+                            <div class="newsletter-input-group">
+                                <input type="email" name="email" placeholder="Your email address" required aria-label="Email address">
+                                <button type="submit" aria-label="Subscribe to newsletter">Send</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div>
-                    <p><strong>Mailing List</strong></p>
-                    <p>Sign up for our mailing list to get latest updates and offers.</p>
-                    <form class="mailing-form" method="post" action="/MUBUGA-TSS/handlers/site_forms.php">
-                        <input type="hidden" name="form_action" value="newsletter_subscribe">
-                        <input type="hidden" name="source" value="footer">
-                        <input type="hidden" name="redirect_to" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? '/MUBUGA-TSS/'); ?>">
-                        <input type="email" name="email" placeholder="Your email address" required>
-                        <button type="submit">Subscribe</button>
-                    </form>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="container footer-bottom-content">
+                    <p class="footer-copyright">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
+                    <div class="footer-bottom-links">
+                        <a href="/MUBUGA-TSS/pages/admissions.php" class="footer-bottom-link">Admissions</a>
+                        <a href="/MUBUGA-TSS/pages/gallery.php" class="footer-bottom-link">Gallery</a>
+                        <a href="/MUBUGA-TSS/pages/contact.php" class="footer-bottom-link">Contacts</a>
+                    </div>
                 </div>
             </div>
         </footer>

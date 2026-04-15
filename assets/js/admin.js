@@ -1,7 +1,114 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const adminLoader = document.querySelector('[data-admin-loader]');
     const editors = document.querySelectorAll('[data-editor]');
     const imagePreviews = document.querySelectorAll('[data-image-preview]');
     const dropInputs = document.querySelectorAll('[data-upload-drop]');
+    const dashboardViews = document.querySelectorAll('[data-dashboard-view]');
+    const dashboardLinks = document.querySelectorAll('.dashboard-nav-link[href^="#"]');
+    const dashboardCardLinks = document.querySelectorAll('.dashboard-card-link[href^="#"]');
+    const initialDashboardView = document.body.dataset.dashboardInitial || 'dashboard-panel';
+
+    if (adminLoader) {
+        const hideAdminLoader = () => {
+            adminLoader.classList.add('is-hidden');
+        };
+
+        // Initial hide and safety fallback
+        window.setTimeout(hideAdminLoader, 250);
+        window.addEventListener('load', hideAdminLoader);
+
+        let loaderTimeout = null;
+
+        const showLoader = () => {
+            adminLoader.classList.remove('is-hidden');
+            clearTimeout(loaderTimeout);
+            loaderTimeout = setTimeout(() => {
+                adminLoader.classList.add('is-hidden');
+            }, 5000);
+        };
+
+        const adminForms = document.querySelectorAll('form');
+        const adminLinks = document.querySelectorAll('a[href]');
+
+        adminForms.forEach((form) => {
+            form.addEventListener('submit', () => {
+                showLoader();
+            });
+        });
+
+        adminLinks.forEach((link) => {
+            const href = link.getAttribute('href') || '';
+            if (
+                href === '' ||
+                href.startsWith('#') ||
+                href.startsWith('mailto:') ||
+                href.startsWith('tel:') ||
+                href.startsWith('javascript:')
+            ) {
+                return;
+            }
+
+            link.addEventListener('click', (e) => {
+                // Ignore clicks with modifier keys (Ctrl/Cmd/Shift)
+                if (e.ctrlKey || e.shiftKey || e.metaKey || link.target === '_blank') return;
+                showLoader();
+            });
+        });
+
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                hideAdminLoader();
+            }
+        });
+    }
+
+    if (dashboardViews.length > 0 && (dashboardLinks.length > 0 || dashboardCardLinks.length > 0)) {
+        const showDashboardView = (viewId) => {
+            const targetId = viewId && document.getElementById(viewId) ? viewId : initialDashboardView;
+
+            dashboardViews.forEach((view) => {
+                view.classList.toggle('is-active', view.id === targetId);
+            });
+
+            dashboardLinks.forEach((link) => {
+                const isActive = link.getAttribute('href') === `#${targetId}`;
+                link.classList.toggle('is-active', isActive);
+            });
+        };
+
+        dashboardLinks.forEach((link) => {
+            link.addEventListener('click', (event) => {
+                const href = link.getAttribute('href') || '';
+                const targetId = href.replace('#', '');
+
+                if (targetId === '') {
+                    return;
+                }
+
+                event.preventDefault();
+                showDashboardView(targetId);
+                window.history.replaceState(null, '', `#${targetId}`);
+            });
+        });
+
+        dashboardCardLinks.forEach((link) => {
+            link.addEventListener('click', (event) => {
+                const href = link.getAttribute('href') || '';
+                const targetId = href.replace('#', '');
+
+                if (targetId === '') {
+                    return;
+                }
+
+                event.preventDefault();
+                showDashboardView(targetId);
+                window.history.replaceState(null, '', `#${targetId}`);
+            });
+        });
+
+        const hashView = window.location.hash.replace('#', '');
+        showDashboardView(hashView || initialDashboardView);
+    }
 
     editors.forEach((textarea) => {
         const wrapper = document.createElement('div');

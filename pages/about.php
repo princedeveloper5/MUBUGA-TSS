@@ -6,7 +6,7 @@ $page = sitePageContent('about-us', [
     'title' => 'About Us',
     'excerpt' => 'Learn the story, mission, vision, and values that shape Mubuga TSS.',
     'content' => $schoolName . ' is committed to helping learners grow into capable professionals and responsible citizens through strong technical education and a disciplined school culture.',
-    'image' => 'assets/images/mb1.jfif',
+    'image' => 'assets/images/students.jfif',
 ]);
 renderSiteHeader($page['title'], $schoolName, $contacts, 'about');
 renderInnerHero('WELCOME TO', $schoolName, $page['excerpt'], $page['image']);

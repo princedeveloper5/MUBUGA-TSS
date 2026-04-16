@@ -6,6 +6,66 @@ require_once __DIR__ . '/../includes/admin_upload.php';
 
 requireAdminLogin();
 
+function adminNormalizeNewsCategory(string $category): string
+{
+    $normalized = strtolower(trim($category));
+    return match ($normalized) {
+        'event', 'events' => 'events',
+        'announcement', 'announcements' => 'announcements',
+        default => 'news',
+    };
+}
+
+function adminEncodeNewsContent(string $content, string $category): string
+{
+    return '[category:' . adminNormalizeNewsCategory($category) . ']' . "\n" . trim($content);
+}
+
+function adminDecodeNewsContent(?string $content): array
+{
+    $rawContent = trim((string) $content);
+    $category = 'news';
+
+    if ($rawContent !== '' && preg_match('/^\[category:(events|announcements|news)\]\s*/i', $rawContent, $matches) === 1) {
+        $category = adminNormalizeNewsCategory($matches[1]);
+        $rawContent = trim((string) preg_replace('/^\[category:(events|announcements|news)\]\s*/i', '', $rawContent, 1));
+    }
+
+    return [
+        'category' => $category,
+        'content' => $rawContent,
+    ];
+}
+
+function adminParseGalleryCategory(?string $category): array
+{
+    $raw = strtolower(trim((string) $category));
+    $mediaType = 'image';
+    $topic = 'campus';
+
+    if ($raw !== '') {
+        $parts = explode(':', $raw, 2);
+        if (in_array($parts[0], ['image', 'video'], true)) {
+            $mediaType = $parts[0];
+            $topic = trim((string) ($parts[1] ?? '')) ?: $topic;
+        } else {
+            $topic = $raw;
+        }
+    }
+
+    return [
+        'media_type' => $mediaType,
+        'category' => $topic,
+    ];
+}
+
+function adminBuildGalleryCategory(string $mediaType, string $category): string
+{
+    $resolvedMediaType = strtolower(trim($mediaType)) === 'video' ? 'video' : 'image';
+    $resolvedCategory = strtolower(trim($category)) ?: 'campus';
+    return $resolvedMediaType . ':' . $resolvedCategory;
+}
+
 $pdo = getDatabaseConnection();
 $message = '';
 $error = '';
@@ -133,15 +193,16 @@ if ($requestMethod === 'POST' && $pdo instanceof PDO) {
             $slug = strtolower(trim(preg_replace('/[^a-z0-9]+/i', '-', $title), '-'));
             $featuredImage = trim((string) ($_POST['featured_image'] ?? 'assets/images/mb1.jfif'));
             $featuredImage = handleAdminImageUpload('featured_image_upload', $featuredImage);
+            $newsCategory = adminNormalizeNewsCategory((string) ($_POST['news_category'] ?? 'news'));
             $stmt = $pdo->prepare('INSERT INTO news (title, slug, summary, content, featured_image, published_at, status) VALUES (:title, :slug, :summary, :content, :featured_image, NOW(), "published")');
             $stmt->execute([
                 'title' => $title,
                 'slug' => $slug,
                 'summary' => trim((string) ($_POST['summary'] ?? '')),
-                'content' => trim((string) ($_POST['content'] ?? '')),
+                'content' => adminEncodeNewsContent((string) ($_POST['content'] ?? ''), $newsCategory),
                 'featured_image' => $featuredImage,
             ]);
-            $message = 'News item published.';
+            $message = ucfirst($newsCategory) . ' item published.';
         }
 
         if ($action === 'update_news') {
@@ -153,16 +214,17 @@ if ($requestMethod === 'POST' && $pdo instanceof PDO) {
             }
             $featuredImage = trim((string) ($_POST['featured_image'] ?? 'assets/images/mb1.jfif'));
             $featuredImage = handleAdminImageUpload('featured_image_upload', $featuredImage);
+            $newsCategory = adminNormalizeNewsCategory((string) ($_POST['news_category'] ?? 'news'));
             $stmt = $pdo->prepare('UPDATE news SET title = :title, slug = :slug, summary = :summary, content = :content, featured_image = :featured_image WHERE id = :id');
             $stmt->execute([
                 'id' => $id,
                 'title' => $title,
                 'slug' => $slug,
                 'summary' => trim((string) ($_POST['summary'] ?? '')),
-                'content' => trim((string) ($_POST['content'] ?? '')),
+                'content' => adminEncodeNewsContent((string) ($_POST['content'] ?? ''), $newsCategory),
                 'featured_image' => $featuredImage,
             ]);
-            $message = 'News item updated.';
+            $message = ucfirst($newsCategory) . ' item updated.';
             $editType = '';
             $editId = 0;
         }
@@ -177,31 +239,33 @@ if ($requestMethod === 'POST' && $pdo instanceof PDO) {
 
         if ($action === 'add_gallery') {
             $imagePath = trim((string) ($_POST['image_path'] ?? ''));
-            $imagePath = handleAdminImageUpload('gallery_image_upload', $imagePath);
+            $imagePath = handleAdminMediaUpload('gallery_image_upload', $imagePath, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'jfif', 'mp4', 'webm', 'ogg']);
+            $galleryCategory = adminBuildGalleryCategory((string) ($_POST['media_type'] ?? 'image'), (string) ($_POST['category'] ?? 'campus'));
             $stmt = $pdo->prepare('INSERT INTO gallery (title, image_path, caption, category, is_featured) VALUES (:title, :image_path, :caption, :category, :is_featured)');
             $stmt->execute([
                 'title' => trim((string) ($_POST['title'] ?? '')),
                 'image_path' => $imagePath,
                 'caption' => trim((string) ($_POST['caption'] ?? '')),
-                'category' => trim((string) ($_POST['category'] ?? 'general')),
+                'category' => $galleryCategory,
                 'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
             ]);
-            $message = 'Gallery image added.';
+            $message = 'Gallery media added.';
         }
 
         if ($action === 'update_gallery') {
             $imagePath = trim((string) ($_POST['image_path'] ?? ''));
-            $imagePath = handleAdminImageUpload('gallery_image_upload', $imagePath);
+            $imagePath = handleAdminMediaUpload('gallery_image_upload', $imagePath, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'jfif', 'mp4', 'webm', 'ogg']);
+            $galleryCategory = adminBuildGalleryCategory((string) ($_POST['media_type'] ?? 'image'), (string) ($_POST['category'] ?? 'campus'));
             $stmt = $pdo->prepare('UPDATE gallery SET title = :title, image_path = :image_path, caption = :caption, category = :category, is_featured = :is_featured WHERE id = :id');
             $stmt->execute([
                 'id' => (int) ($_POST['id'] ?? 0),
                 'title' => trim((string) ($_POST['title'] ?? '')),
                 'image_path' => $imagePath,
                 'caption' => trim((string) ($_POST['caption'] ?? '')),
-                'category' => trim((string) ($_POST['category'] ?? 'general')),
+                'category' => $galleryCategory,
                 'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
             ]);
-            $message = 'Gallery image updated.';
+            $message = 'Gallery media updated.';
             $editType = '';
             $editId = 0;
         }
@@ -326,6 +390,7 @@ $newsForm = [
     'id' => 0,
     'title' => '',
     'slug' => '',
+    'news_category' => 'news',
     'summary' => '',
     'content' => '',
     'featured_image' => 'assets/images/mb1.jfif',
@@ -335,7 +400,8 @@ $galleryForm = [
     'title' => '',
     'image_path' => '',
     'caption' => '',
-    'category' => 'general',
+    'category' => 'campus',
+    'media_type' => 'image',
     'is_featured' => 0,
 ];
 $pageForm = [
@@ -358,7 +424,20 @@ if ($pdo instanceof PDO) {
     $programs = $pdo->query('SELECT id, title, slug, short_description, duration, department, cover_image, status FROM programs ORDER BY id DESC')->fetchAll();
     $staff = $pdo->query('SELECT id, full_name, job_title, bio, photo, display_order, is_featured, status FROM staff ORDER BY display_order ASC, id DESC')->fetchAll();
     $news = $pdo->query('SELECT id, title, slug, summary, content, featured_image, published_at FROM news ORDER BY id DESC')->fetchAll();
+    foreach ($news as &$newsItem) {
+        $decodedNewsContent = adminDecodeNewsContent((string) ($newsItem['content'] ?? ''));
+        $newsItem['category'] = $decodedNewsContent['category'];
+        $newsItem['content'] = $decodedNewsContent['content'];
+    }
+    unset($newsItem);
+
     $gallery = $pdo->query('SELECT id, title, image_path, caption, category, is_featured FROM gallery ORDER BY id DESC')->fetchAll();
+    foreach ($gallery as &$galleryItem) {
+        $galleryMeta = adminParseGalleryCategory((string) ($galleryItem['category'] ?? ''));
+        $galleryItem['media_type'] = $galleryMeta['media_type'];
+        $galleryItem['category'] = $galleryMeta['category'];
+    }
+    unset($galleryItem);
     $admissions = $pdo->query('SELECT id, applicant_name, email, preferred_program_id, status, created_at FROM admissions ORDER BY created_at DESC')->fetchAll();
     $pages = $pdo->query('SELECT id, title, slug, banner_image, status FROM pages ORDER BY slug ASC, id DESC')->fetchAll();
     $contactMessages = $pdo->query('SELECT id, full_name, email, phone, subject, message_body, is_read, created_at FROM contact_messages ORDER BY created_at DESC')->fetchAll();
@@ -379,12 +458,18 @@ if ($pdo instanceof PDO) {
         $stmt = $pdo->prepare('SELECT id, title, slug, summary, content, featured_image FROM news WHERE id = :id LIMIT 1');
         $stmt->execute(['id' => $editId]);
         $newsForm = $stmt->fetch() ?: $newsForm;
+        $decodedNewsContent = adminDecodeNewsContent((string) ($newsForm['content'] ?? ''));
+        $newsForm['news_category'] = $decodedNewsContent['category'];
+        $newsForm['content'] = $decodedNewsContent['content'];
     }
 
     if ($editType === 'gallery' && $editId > 0) {
         $stmt = $pdo->prepare('SELECT id, title, image_path, caption, category, is_featured FROM gallery WHERE id = :id LIMIT 1');
         $stmt->execute(['id' => $editId]);
         $galleryForm = $stmt->fetch() ?: $galleryForm;
+        $galleryMeta = adminParseGalleryCategory((string) ($galleryForm['category'] ?? ''));
+        $galleryForm['media_type'] = $galleryMeta['media_type'];
+        $galleryForm['category'] = $galleryMeta['category'];
     }
 
     if ($editType === 'page' && $editId > 0) {
@@ -617,7 +702,7 @@ if ($pdo instanceof PDO) {
                     <div class="panel-top">
                         <div>
                             <p class="admin-eyebrow">News</p>
-                            <h2><?php echo $editType === 'news' ? 'Edit News Post' : 'Publish News'; ?></h2>
+                            <h2><?php echo $editType === 'news' ? 'Edit News Item' : 'Publish News, Event, or Announcement'; ?></h2>
                         </div>
                     </div>
                     <form method="post" class="admin-form" enctype="multipart/form-data">
@@ -625,11 +710,19 @@ if ($pdo instanceof PDO) {
                         <input type="hidden" name="id" value="<?php echo (int) $newsForm['id']; ?>">
                         <label><span>Title</span><input type="text" name="title" value="<?php echo htmlspecialchars((string) $newsForm['title']); ?>"></label>
                         <label><span>Slug</span><input type="text" name="slug" value="<?php echo htmlspecialchars((string) $newsForm['slug']); ?>"></label>
+                        <label>
+                            <span>Type</span>
+                            <select name="news_category">
+                                <option value="news"<?php echo (($newsForm['news_category'] ?? 'news') === 'news') ? ' selected' : ''; ?>>News</option>
+                                <option value="events"<?php echo (($newsForm['news_category'] ?? '') === 'events') ? ' selected' : ''; ?>>Event</option>
+                                <option value="announcements"<?php echo (($newsForm['news_category'] ?? '') === 'announcements') ? ' selected' : ''; ?>>Announcement</option>
+                            </select>
+                        </label>
                         <label><span>Summary</span><textarea name="summary" rows="4"><?php echo htmlspecialchars((string) $newsForm['summary']); ?></textarea></label>
                         <label><span>Full Content</span><textarea name="content" rows="7"><?php echo htmlspecialchars((string) $newsForm['content']); ?></textarea></label>
-                        <label><span>Featured Image Path</span><input type="text" name="featured_image" value="<?php echo htmlspecialchars((string) $newsForm['featured_image']); ?>"></label>
-                        <label><span>Upload Featured Image</span><input type="file" name="featured_image_upload" accept=".jpg,.jpeg,.png,.gif,.webp,.jfif" class="upload-input"></label>
-                        <button type="submit"><?php echo $editType === 'news' ? 'Update News' : 'Publish News'; ?></button>
+                        <label><span>Featured Photo Path</span><input type="text" name="featured_image" value="<?php echo htmlspecialchars((string) $newsForm['featured_image']); ?>"></label>
+                        <label><span>Upload Featured Photo</span><input type="file" name="featured_image_upload" accept=".jpg,.jpeg,.png,.gif,.webp,.jfif" class="upload-input"></label>
+                        <button type="submit"><?php echo $editType === 'news' ? 'Update Item' : 'Publish Item'; ?></button>
                     </form>
                     <div class="table-list">
                         <?php foreach ($news as $newsItem): ?>
@@ -638,7 +731,7 @@ if ($pdo instanceof PDO) {
                                     <img src="/MUBUGA-TSS/<?php echo htmlspecialchars((string) $newsItem['featured_image']); ?>" alt="" class="table-thumb">
                                     <div class="table-item-content">
                                         <strong><?php echo htmlspecialchars((string) $newsItem['title']); ?></strong>
-                                        <span><?php echo htmlspecialchars((string) ($newsItem['published_at'] ?? '')); ?></span>
+                                        <span><?php echo htmlspecialchars(ucfirst((string) ($newsItem['category'] ?? 'news'))); ?><?php echo !empty($newsItem['published_at']) ? ' - ' . htmlspecialchars((string) $newsItem['published_at']) : ''; ?></span>
                                     </div>
                                 </div>
                                 <div class="item-actions">
@@ -658,19 +751,26 @@ if ($pdo instanceof PDO) {
                     <div class="panel-top">
                         <div>
                             <p class="admin-eyebrow">Gallery</p>
-                            <h2><?php echo $editType === 'gallery' ? 'Edit Gallery Image' : 'Add Gallery Image'; ?></h2>
+                            <h2><?php echo $editType === 'gallery' ? 'Edit Gallery Media' : 'Add Gallery Image or Video'; ?></h2>
                         </div>
                     </div>
                     <form method="post" class="admin-form" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="<?php echo $editType === 'gallery' ? 'update_gallery' : 'add_gallery'; ?>">
                         <input type="hidden" name="id" value="<?php echo (int) $galleryForm['id']; ?>">
                         <label><span>Title</span><input type="text" name="title" value="<?php echo htmlspecialchars((string) $galleryForm['title']); ?>"></label>
-                        <label><span>Image Path</span><input type="text" name="image_path" value="<?php echo htmlspecialchars((string) $galleryForm['image_path']); ?>"></label>
-                        <label><span>Upload Image</span><input type="file" name="gallery_image_upload" accept=".jpg,.jpeg,.png,.gif,.webp,.jfif" class="upload-input"></label>
+                        <label>
+                            <span>Media Type</span>
+                            <select name="media_type">
+                                <option value="image"<?php echo (($galleryForm['media_type'] ?? 'image') === 'image') ? ' selected' : ''; ?>>Image</option>
+                                <option value="video"<?php echo (($galleryForm['media_type'] ?? '') === 'video') ? ' selected' : ''; ?>>Video</option>
+                            </select>
+                        </label>
+                        <label><span>Media Path or Video URL</span><input type="text" name="image_path" value="<?php echo htmlspecialchars((string) $galleryForm['image_path']); ?>"></label>
+                        <label><span>Upload Image or Video</span><input type="file" name="gallery_image_upload" accept=".jpg,.jpeg,.png,.gif,.webp,.jfif,.mp4,.webm,.ogg" class="upload-input"></label>
                         <label><span>Caption</span><textarea name="caption" rows="4"><?php echo htmlspecialchars((string) $galleryForm['caption']); ?></textarea></label>
-                        <label><span>Category</span><input type="text" name="category" value="<?php echo htmlspecialchars((string) $galleryForm['category']); ?>"></label>
+                        <label><span>Topic</span><input type="text" name="category" value="<?php echo htmlspecialchars((string) $galleryForm['category']); ?>"></label>
                         <label class="checkbox"><input type="checkbox" name="is_featured"<?php echo ((int) $galleryForm['is_featured'] === 1) ? ' checked' : ''; ?>> <span>Featured image</span></label>
-                        <button type="submit"><?php echo $editType === 'gallery' ? 'Update Image' : 'Add Image'; ?></button>
+                        <button type="submit"><?php echo $editType === 'gallery' ? 'Update Media' : 'Add Media'; ?></button>
                     </form>
                     <div class="table-list">
                         <?php foreach ($gallery as $galleryItem): ?>

@@ -4,8 +4,102 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../config/db.php';
 
+function resolveSiteImage(string $path, string $fallback = 'assets/images/students.jfif'): string
+{
+    $normalizedPath = trim(str_replace('\\', '/', $path));
+    if ($normalizedPath !== '') {
+        $absolutePath = __DIR__ . '/../' . ltrim($normalizedPath, '/');
+        if (is_file($absolutePath)) {
+            return $normalizedPath;
+        }
+    }
+
+    return $fallback;
+}
+
+function normalizeNewsCategory(string $category): string
+{
+    $normalized = strtolower(trim($category));
+    return match ($normalized) {
+        'event', 'events' => 'events',
+        'announcement', 'announcements' => 'announcements',
+        default => 'news',
+    };
+}
+
+function newsCategoryLabel(string $category): string
+{
+    return match (normalizeNewsCategory($category)) {
+        'events' => 'Events',
+        'announcements' => 'Announcements',
+        default => 'News',
+    };
+}
+
+function encodeNewsContent(string $content, string $category): string
+{
+    return '[category:' . normalizeNewsCategory($category) . ']' . "\n" . trim($content);
+}
+
+function decodeNewsContent(?string $content): array
+{
+    $rawContent = trim((string) $content);
+    $category = 'news';
+
+    if ($rawContent !== '' && preg_match('/^\[category:(events|announcements|news)\]\s*/i', $rawContent, $matches) === 1) {
+        $category = normalizeNewsCategory($matches[1]);
+        $rawContent = trim((string) preg_replace('/^\[category:(events|announcements|news)\]\s*/i', '', $rawContent, 1));
+    }
+
+    return [
+        'category' => $category,
+        'content' => $rawContent,
+    ];
+}
+
+function isVideoMediaPath(string $path): bool
+{
+    $normalized = strtolower(trim($path));
+    if ($normalized === '') {
+        return false;
+    }
+
+    if (preg_match('/\.(mp4|webm|ogg)$/', $normalized) === 1) {
+        return true;
+    }
+
+    return str_contains($normalized, 'youtube.com/') || str_contains($normalized, 'youtu.be/') || str_contains($normalized, 'vimeo.com/');
+}
+
+function parseGalleryCategory(?string $rawCategory, string $path = ''): array
+{
+    $raw = strtolower(trim((string) $rawCategory));
+    $mediaType = isVideoMediaPath($path) ? 'video' : 'image';
+    $category = 'campus';
+
+    if ($raw !== '') {
+        $parts = explode(':', $raw, 2);
+        if (in_array($parts[0], ['image', 'video'], true)) {
+            $mediaType = $parts[0];
+            $category = trim($parts[1] ?? '') !== '' ? trim($parts[1]) : $category;
+        } else {
+            $category = $raw;
+            if (str_contains($raw, 'video')) {
+                $mediaType = 'video';
+                $category = trim(str_replace('video', '', $raw), ' :-') ?: 'campus';
+            }
+        }
+    }
+
+    return [
+        'media_type' => $mediaType,
+        'category' => $category,
+        'category_label' => ucwords(str_replace(['-', '_'], ' ', $category)),
+    ];
+}
+
 $schoolName = 'Mubuga TSS';
-$tagline = 'Technical education for builders, coders, and future problem-solvers.';
+$tagline = 'Short training. Real skills. Strong futures.';
 
 $imageSet = [
     'logo' => 'assets/images/MUBUGA LOGO SN.PNG',
@@ -28,14 +122,14 @@ $imageSet = [
 $programs = [
     [
         'title' => 'Software Development',
-        'summary' => 'Students learn programming, web development, databases, systems thinking, and real-world digital problem solving.',
+        'summary' => 'Learn coding, web building, and digital problem-solving.',
         'focus' => ['Coding practice', 'Project-based learning', 'Digital innovation'],
         'image' => $imageSet['software_primary'],
         'link' => '/MUBUGA-TSS/pages/programs.php',
     ],
     [
         'title' => 'Electrical Technology',
-        'summary' => 'Students build practical skills in electrical installation, maintenance, safety, troubleshooting, and technical workshop practice.',
+        'summary' => 'Build strong skills in installation, safety, and maintenance.',
         'focus' => ['Hands-on circuits', 'Power systems basics', 'Industry safety culture'],
         'image' => $imageSet['electrical_primary'],
         'link' => '/MUBUGA-TSS/pages/programs.php',
@@ -50,48 +144,51 @@ $stats = [
 ];
 
 $highlights = [
-    'Competency-based learning shaped around technical careers',
-    'A balanced environment for discipline, creativity, and teamwork',
-    'Classroom theory connected directly to practical application',
+    'Skills first',
+    'Discipline every day',
+    'Practice with purpose',
 ];
 
 $heroSlides = [
     [
         'eyebrow' => 'Welcome to Mubuga TSS',
-        'title' => 'Excellence in technical education',
-        'text' => 'A disciplined and practical learning environment where students prepare for modern careers through focused training.',
+        'title' => 'Technical skills for real life',
+        'text' => 'We train students to learn fast, work well, and build confidently.',
         'button' => 'Register',
-        'image' => $imageSet['students'],
+        'link' => '/MUBUGA-TSS/pages/admissions.php',
+        'image' => resolveSiteImage($imageSet['students']),
         'spotlight' => 'Campus and school community',
     ],
     [
         'eyebrow' => 'Software Development',
-        'title' => 'Build digital solutions that solve real problems',
-        'text' => 'Students learn programming, systems thinking, web development, and project delivery with a strong practical mindset.',
+        'title' => 'Code useful digital solutions',
+        'text' => 'Students learn programming, web development, and project thinking through practice.',
         'button' => 'Register Now',
-        'image' => $imageSet['software_secondary'],
+        'link' => '/MUBUGA-TSS/pages/programs.php',
+        'image' => resolveSiteImage($imageSet['software_secondary']),
         'spotlight' => 'Coding labs and digital projects',
     ],
     [
         'eyebrow' => 'Electrical Technology',
-        'title' => 'Learn through workshop-based technical practice',
-        'text' => 'From installation to maintenance and safety, learners build the confidence to work with real electrical systems.',
+        'title' => 'Train with real electrical practice',
+        'text' => 'Learners grow through installation, maintenance, safety, and workshop sessions.',
         'button' => 'Register Now',
-        'image' => $imageSet['electrical_secondary'],
+        'link' => '/MUBUGA-TSS/pages/programs.php',
+        'image' => resolveSiteImage($imageSet['electrical_secondary']),
         'spotlight' => 'Workshop practice and electrical systems',
     ],
 ];
 
 $featuredStories = [
     [
-        'title' => 'Students in practical learning sessions',
-        'text' => 'Learners engage in real technical tasks that connect classroom knowledge to hands-on problem solving.',
+        'title' => 'Students learning by doing',
+        'text' => 'Classroom knowledge meets practical work every day.',
         'link' => '/MUBUGA-TSS/pages/news.php',
         'image' => $imageSet['students'],
     ],
     [
-        'title' => 'Mubuga TSS school life and discipline',
-        'text' => 'A focused environment that supports teamwork, confidence, and professional growth.',
+        'title' => 'School life with discipline',
+        'text' => 'Students grow in teamwork, confidence, and focus.',
         'link' => '/MUBUGA-TSS/pages/gallery.php',
         'image' => $imageSet['playground'],
     ],
@@ -101,33 +198,36 @@ $leadership = [
     [
         'role' => 'School Leadership',
         'name' => 'Mubuga TSS Administration',
-        'text' => 'Our leadership team is committed to growing a disciplined, innovative, and student-centered technical school community.',
+        'text' => 'We lead a school culture built on discipline, skills, and student growth.',
         'photo' => $imageSet['leader'],
     ],
     [
         'role' => 'Academic Direction',
         'name' => 'Training and Learning Team',
-        'text' => 'We support learners through strong instruction, practical coaching, and clear pathways into employment and further studies.',
+        'text' => 'We guide learners with clear teaching, practice, and career direction.',
         'photo' => $imageSet['leader'],
     ],
 ];
 
 $news = [
     [
-        'title' => 'Practical Learning Across Both Trades',
-        'text' => 'Students engage in hands-on activities that connect classroom concepts to software projects and electrical workshop tasks.',
+        'title' => 'Open Day for New Applicants',
+        'text' => 'Families can visit the campus, meet staff, and explore our programs.',
+        'category' => 'events',
         'image' => $imageSet['students'],
         'link' => '/MUBUGA-TSS/pages/news.php',
     ],
     [
-        'title' => 'Career-Focused Technical Education',
-        'text' => 'Mubuga TSS prepares learners with relevant skills, confidence, and a mindset for solving real community and industry challenges.',
+        'title' => 'Admission Requirements Released',
+        'text' => 'Applicants can now check key requirements before registration.',
+        'category' => 'announcements',
         'image' => $imageSet['software_primary'],
         'link' => '/MUBUGA-TSS/pages/news.php',
     ],
     [
-        'title' => 'School Community and Growth',
-        'text' => 'Our school promotes discipline, collaboration, and innovation as core values in daily learning and school life.',
+        'title' => 'Students Build Real Projects',
+        'text' => 'Learning at Mubuga TSS stays practical, creative, and career-focused.',
+        'category' => 'news',
         'image' => $imageSet['school_7'],
         'link' => '/MUBUGA-TSS/pages/news.php',
     ],
@@ -136,17 +236,17 @@ $news = [
 $facilities = [
     [
         'title' => 'ICT and Coding Labs',
-        'text' => 'Spaces where Software Development students practice programming, systems work, and collaborative digital projects.',
+        'text' => 'Focused spaces for coding, systems work, and digital projects.',
         'image' => $imageSet['software_primary'],
     ],
     [
         'title' => 'Electrical Workshops',
-        'text' => 'Hands-on training areas designed for installation practice, troubleshooting, equipment handling, and safety routines.',
+        'text' => 'Hands-on areas for installation, troubleshooting, and safety practice.',
         'image' => $imageSet['electrical_primary'],
     ],
     [
         'title' => 'Student Support Environment',
-        'text' => 'A school setting that encourages discipline, teamwork, mentorship, and strong daily learning habits.',
+        'text' => 'A calm school environment built on support, teamwork, and discipline.',
         'image' => $imageSet['school_3'],
     ],
 ];
@@ -166,25 +266,25 @@ $contacts = [
 $institutionCards = [
     [
         'label' => 'School Identity',
-        'title' => 'Government-aligned technical secondary school',
-        'text' => 'Mubuga TSS is positioned as a focused technical school preparing learners through practical trades and disciplined study.',
+        'title' => 'Focused technical school',
+        'text' => 'We prepare learners through practical trades and disciplined study.',
     ],
     [
         'label' => 'Campus Focus',
-        'title' => 'Training shaped by workshops and digital practice',
-        'text' => 'Learning combines classroom instruction, guided projects, and practical sessions that build real technical confidence.',
+        'title' => 'Learning by practice',
+        'text' => 'Workshops, projects, and class lessons build real confidence.',
     ],
     [
         'label' => 'Student Pathway',
-        'title' => 'Preparation for work, entrepreneurship, and growth',
-        'text' => 'Students are guided toward employability, self-reliance, and continued professional development after graduation.',
+        'title' => 'Ready for the future',
+        'text' => 'Students grow toward work, self-reliance, and further study.',
     ],
 ];
 
 $welcomeHighlights = [
-    'Clear school values centered on discipline, integrity, and responsibility',
-    'A practical curriculum that connects study directly to real technical work',
-    'A student experience shaped by mentorship, teamwork, and future readiness',
+    'Discipline and responsibility',
+    'Learning linked to real work',
+    'Mentorship and teamwork',
 ];
 
 $siteMeta = [
@@ -205,73 +305,87 @@ $values = [
 
 $gallery = [
     [
-        'title' => 'Students in the coding lab',
-        'text' => 'Software Development learners working on practical projects and digital skills.',
+        'title' => 'Coding lab in action',
+        'text' => 'Students build digital skills through practical work.',
+        'category' => 'image:academics',
         'image' => $imageSet['software_primary'],
     ],
     [
         'title' => 'Electrical workshop practice',
-        'text' => 'Hands-on training focused on installation, troubleshooting, and safe technical work.',
+        'text' => 'Students train in installation, troubleshooting, and safety.',
+        'category' => 'image:workshops',
         'image' => $imageSet['electrical_secondary'],
     ],
     [
-        'title' => 'School community life',
-        'text' => 'A disciplined and supportive environment that encourages growth and teamwork.',
+        'title' => 'Campus life',
+        'text' => 'A supportive environment for growth and teamwork.',
+        'category' => 'image:campus',
         'image' => $imageSet['students'],
     ],
     [
-        'title' => 'Modern classroom facilities',
-        'text' => 'Well-equipped learning spaces designed for focused technical education and skill development.',
+        'title' => 'Learning spaces',
+        'text' => 'Well-prepared rooms for focused technical learning.',
+        'category' => 'image:campus',
         'image' => $imageSet['school_1'],
     ],
     [
         'title' => 'Practical electrical training',
-        'text' => 'Students gaining hands-on experience with electrical systems and safety protocols.',
+        'text' => 'Students gain real experience with systems and safety.',
+        'category' => 'image:workshops',
         'image' => $imageSet['electrical_primary'],
     ],
     [
-        'title' => 'Digital innovation hub',
-        'text' => 'State-of-the-art computer labs where students develop programming and software skills.',
+        'title' => 'Digital skills hub',
+        'text' => 'Computer labs that support programming and software practice.',
+        'category' => 'image:academics',
         'image' => $imageSet['software_secondary'],
     ],
     [
-        'title' => 'Technical workshop environment',
-        'text' => 'Dedicated spaces for practical learning in electrical technology and systems.',
+        'title' => 'Workshop environment',
+        'text' => 'Dedicated spaces for practical technical learning.',
+        'category' => 'image:workshops',
         'image' => $imageSet['electrical_secondary'],
     ],
     [
-        'title' => 'Collaborative learning sessions',
-        'text' => 'Students working together on technical projects and problem-solving activities.',
+        'title' => 'Collaborative learning',
+        'text' => 'Students work together on technical tasks and projects.',
+        'category' => 'image:academics',
         'image' => $imageSet['school_2'],
     ],
     [
-        'title' => 'Professional development training',
-        'text' => 'Focused instruction preparing students for careers in technical fields.',
+        'title' => 'Career-focused training',
+        'text' => 'Focused instruction that prepares students for technical careers.',
+        'category' => 'image:academics',
         'image' => $imageSet['school_6'],
     ],
     [
-        'title' => 'Hands-on technical practice',
-        'text' => 'Real-world application of classroom knowledge through practical exercises.',
+        'title' => 'Hands-on practice',
+        'text' => 'Classroom learning turns into practical experience.',
+        'category' => 'image:campus',
         'image' => $imageSet['playground'],
     ],
     [
-        'title' => 'Student engagement and focus',
-        'text' => 'Dedicated learners committed to mastering technical skills and knowledge.',
+        'title' => 'Student focus',
+        'text' => 'Learners stay engaged and committed to their goals.',
+        'category' => 'image:campus',
         'image' => $imageSet['school_5'],
     ],
     [
-        'title' => 'School leadership and guidance',
-        'text' => 'Experienced educators providing mentorship and technical expertise.',
+        'title' => 'Leadership and guidance',
+        'text' => 'School leaders support learning, direction, and growth.',
+        'category' => 'image:staff',
         'image' => $imageSet['leader'],
     ],
     [
-        'title' => 'Campus life and activities',
-        'text' => 'The vibrant school environment supporting both academic and personal growth.',
+        'title' => 'Campus activities',
+        'text' => 'School life supports both learning and personal growth.',
+        'category' => 'image:campus',
         'image' => $imageSet['school_7'],
     ],
     [
-        'title' => 'Innovation in education',
-        'text' => 'Modern teaching methods combining theory with practical application.',
+        'title' => 'Innovation in learning',
+        'text' => 'Teaching combines clear theory with practical action.',
+        'category' => 'image:academics',
         'image' => $imageSet['school_4'],
     ],
 ];
@@ -310,13 +424,13 @@ if ($pdo instanceof PDO) {
             'Software Development' => ['Coding practice', 'Project-based learning', 'Digital innovation'],
             'Electrical Technology' => ['Hands-on circuits', 'Power systems basics', 'Industry safety culture'],
         ];
-        $programs = array_map(static function (array $row) use ($programImages, $programFocus): array {
+        $programs = array_map(function (array $row) use ($programImages, $programFocus, $imageSet): array {
             $title = $row['title'];
             return [
                 'title' => $title,
-                'summary' => $row['short_description'] ?: 'Technical learning pathway for Mubuga TSS students.',
+                'summary' => $row['short_description'] ?: 'A practical pathway for technical learning.',
                 'focus' => $programFocus[$title] ?? ['Technical skills', 'Practical learning', 'Career readiness'],
-                'image' => $row['cover_image'] ?: ($programImages[$title] ?? $imageSet['students']),
+                'image' => resolveSiteImage($row['cover_image'] ?: ($programImages[$title] ?? $imageSet['students'])),
                 'link' => '/MUBUGA-TSS/pages/programs.php',
             ];
         }, $programRows);
@@ -324,37 +438,43 @@ if ($pdo instanceof PDO) {
 
     $staffRows = $pdo->query('SELECT full_name, job_title, bio, photo FROM staff WHERE status = "active" ORDER BY is_featured DESC, display_order ASC, id ASC LIMIT 6')->fetchAll();
     if ($staffRows) {
-        $leadership = array_map(static function (array $row): array {
+        $leadership = array_map(function (array $row) use ($imageSet): array {
             return [
                 'role' => $row['job_title'],
                 'name' => $row['full_name'],
-                'text' => $row['bio'] ?: 'Mubuga TSS leadership committed to student success and technical excellence.',
-                'photo' => $row['photo'] ?: $imageSet['leader'],
+                'text' => $row['bio'] ?: 'Committed to student success and technical excellence.',
+                'photo' => resolveSiteImage($row['photo'] ?: $imageSet['leader'], $imageSet['leader']),
             ];
         }, $staffRows);
     }
 
     $newsRows = $pdo->query('SELECT title, slug, summary, content, featured_image FROM news WHERE status = "published" ORDER BY published_at DESC, id DESC LIMIT 6')->fetchAll();
     if ($newsRows) {
-        $news = array_map(static function (array $row): array {
+        $news = array_map(function (array $row) use ($imageSet): array {
+            $decodedContent = decodeNewsContent($row['content'] ?? '');
             return [
                 'title' => $row['title'],
                 'slug' => $row['slug'] ?? '',
+                'category' => $decodedContent['category'],
                 'text' => $row['summary'] ?: 'Latest update from Mubuga TSS.',
-                'content' => $row['content'] ?: $row['summary'] ?: 'Latest update from Mubuga TSS.',
-                'image' => $row['featured_image'] ?: $imageSet['students'],
+                'content' => $decodedContent['content'] ?: $row['summary'] ?: 'Latest update from Mubuga TSS.',
+                'image' => resolveSiteImage($row['featured_image'] ?: $imageSet['students']),
                 'link' => '/MUBUGA-TSS/pages/news.php' . (!empty($row['slug']) ? '?slug=' . urlencode((string) $row['slug']) : ''),
             ];
         }, $newsRows);
     }
 
-    $galleryRows = $pdo->query('SELECT title, caption, image_path FROM gallery ORDER BY is_featured DESC, id DESC LIMIT 9')->fetchAll();
+    $galleryRows = $pdo->query('SELECT title, caption, image_path, category FROM gallery ORDER BY is_featured DESC, id DESC LIMIT 9')->fetchAll();
     if ($galleryRows) {
-        $gallery = array_map(static function (array $row): array {
+        $gallery = array_map(function (array $row): array {
+            $media = parseGalleryCategory($row['category'] ?? '', (string) $row['image_path']);
             return [
                 'title' => $row['title'],
-                'text' => $row['caption'] ?: 'Mubuga TSS gallery image.',
-                'image' => $row['image_path'],
+                'text' => $row['caption'] ?: 'A moment from Mubuga TSS.',
+                'image' => isVideoMediaPath((string) $row['image_path']) ? (string) $row['image_path'] : resolveSiteImage((string) $row['image_path']),
+                'category' => $media['category'],
+                'media_type' => $media['media_type'],
+                'category_label' => $media['category_label'],
             ];
         }, $galleryRows);
     }
@@ -363,9 +483,11 @@ if ($pdo instanceof PDO) {
 function sitePageContent(string $slug, array $defaults): array
 {
     $pdo = getDatabaseConnection();
+    $resolvedDefaults = $defaults;
+    $resolvedDefaults['image'] = resolveSiteImage((string) ($defaults['image'] ?? ''));
 
     if (!$pdo instanceof PDO) {
-        return $defaults;
+        return $resolvedDefaults;
     }
 
     $stmt = $pdo->prepare('SELECT title, excerpt, content, banner_image, status FROM pages WHERE slug = :slug LIMIT 1');
@@ -373,13 +495,13 @@ function sitePageContent(string $slug, array $defaults): array
     $page = $stmt->fetch();
 
     if (!$page || ($page['status'] ?? 'draft') !== 'published') {
-        return $defaults;
+        return $resolvedDefaults;
     }
 
     return [
-        'title' => $page['title'] ?: $defaults['title'],
-        'excerpt' => $page['excerpt'] ?: $defaults['excerpt'],
-        'content' => $page['content'] ?: $defaults['content'],
-        'image' => $page['banner_image'] ?: $defaults['image'],
+        'title' => $page['title'] ?: $resolvedDefaults['title'],
+        'excerpt' => $page['excerpt'] ?: $resolvedDefaults['excerpt'],
+        'content' => $page['content'] ?: $resolvedDefaults['content'],
+        'image' => resolveSiteImage((string) ($page['banner_image'] ?: $resolvedDefaults['image'])),
     ];
 }

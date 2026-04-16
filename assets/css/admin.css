@@ -56,11 +56,11 @@ body {
 }
 
 .admin-loader-logo {
-    width: 86px;
-    height: 86px;
+    width: 64px;
+    height: 64px;
     object-fit: contain;
-    padding: 10px;
-    border-radius: 24px;
+    padding: 8px;
+    border-radius: 18px;
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(79, 125, 191, 0.16);
 }
@@ -131,6 +131,35 @@ body {
     width: min(460px, 100%);
     padding: 32px;
     border-radius: 28px;
+}
+
+.admin-brand-block {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.admin-brand-logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    object-fit: contain;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(79, 125, 191, 0.16);
+    padding: 6px;
+}
+
+.admin-brand-block > div {
+    display: grid;
+    gap: 2px;
+}
+
+.admin-brand-block h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--ink);
 }
 
 .admin-eyebrow {

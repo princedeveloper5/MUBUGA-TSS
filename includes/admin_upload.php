@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-function handleAdminImageUpload(string $fieldName, string $existingPath = ''): string
+function handleAdminMediaUpload(string $fieldName, string $existingPath = '', array $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'jfif']): string
 {
     if (empty($_FILES[$fieldName]) || !is_array($_FILES[$fieldName])) {
         return $existingPath;
@@ -23,7 +23,6 @@ function handleAdminImageUpload(string $fieldName, string $existingPath = ''): s
         return $existingPath;
     }
 
-    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'jfif'];
     $originalName = (string) ($file['name'] ?? 'upload.jpg');
     $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
 
@@ -39,7 +38,7 @@ function handleAdminImageUpload(string $fieldName, string $existingPath = ''): s
     $safeBaseName = preg_replace('/[^a-zA-Z0-9_-]+/', '-', pathinfo($originalName, PATHINFO_FILENAME));
     $safeBaseName = trim((string) $safeBaseName, '-');
     if ($safeBaseName === '') {
-        $safeBaseName = 'image';
+        $safeBaseName = 'media';
     }
 
     $fileName = $safeBaseName . '-' . date('YmdHis') . '.' . $extension;
@@ -50,4 +49,9 @@ function handleAdminImageUpload(string $fieldName, string $existingPath = ''): s
     }
 
     return 'assets/uploads/' . $fileName;
+}
+
+function handleAdminImageUpload(string $fieldName, string $existingPath = ''): string
+{
+    return handleAdminMediaUpload($fieldName, $existingPath);
 }

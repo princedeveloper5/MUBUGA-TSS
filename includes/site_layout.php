@@ -88,10 +88,33 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
                     <a href="/MUBUGA-TSS/pages/about.php"<?php echo $active === 'about' ? ' class="is-current"' : ''; ?>>About Us</a>
                     <a href="/MUBUGA-TSS/pages/programs.php"<?php echo $active === 'programs' ? ' class="is-current"' : ''; ?>>Our Programs</a>
                     <a href="/MUBUGA-TSS/pages/facilities.php"<?php echo $active === 'facilities' ? ' class="is-current"' : ''; ?>>Facilities</a>
-                    <a href="/MUBUGA-TSS/pages/admissions.php"<?php echo $active === 'admissions' ? ' class="is-current"' : ''; ?>>Admission</a>
+                    
+                    <div class="dropdown">
+                        <a href="/MUBUGA-TSS/pages/admissions.php"<?php echo $active === 'admissions' ? ' class="is-current"' : ''; ?>>Admission ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="/MUBUGA-TSS/pages/admissions.php#requirements">Fees &amp; Requirements</a>
+                            <a href="/MUBUGA-TSS/pages/admissions.php#registration">Student Registration</a>
+                        </div>
+                    </div>
+                    
                     <a href="/MUBUGA-TSS/pages/team.php"<?php echo $active === 'team' ? ' class="is-current"' : ''; ?>>Our Team</a>
-                    <a href="/MUBUGA-TSS/pages/news.php"<?php echo $active === 'news' ? ' class="is-current"' : ''; ?>>News</a>
-                    <a href="/MUBUGA-TSS/pages/gallery.php"<?php echo $active === 'gallery' ? ' class="is-current"' : ''; ?>>Gallery</a>
+                    
+                    <div class="dropdown">
+                        <a href="/MUBUGA-TSS/pages/news.php"<?php echo $active === 'news' ? ' class="is-current"' : ''; ?>>News ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="/MUBUGA-TSS/pages/news.php?type=events">Events</a>
+                            <a href="/MUBUGA-TSS/pages/news.php?type=announcements">Announcements</a>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <a href="/MUBUGA-TSS/pages/gallery.php"<?php echo $active === 'gallery' ? ' class="is-current"' : ''; ?>>Gallery ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="/MUBUGA-TSS/pages/gallery.php#pictures">Pictures</a>
+                            <a href="/MUBUGA-TSS/pages/gallery.php#videos">Videos</a>
+                        </div>
+                    </div>
+                    
                     <a href="/MUBUGA-TSS/pages/contact.php" class="nav-cta">Contacts</a>
                 </nav>
             </div>
@@ -166,7 +189,7 @@ function renderSiteFooter(string $schoolName): void
                 <div class="footer-topline">
                     <div>
                         <p class="eyebrow">Mubuga TSS</p>
-                        <h2>Technical training for a confident future.</h2>
+                        <h2>Short path. Big future.</h2>
                     </div>
                     <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Apply Now</a>
                 </div>
@@ -180,7 +203,7 @@ function renderSiteFooter(string $schoolName): void
                                 <span>Technical Secondary School</span>
                             </div>
                         </div>
-                        <p class="footer-description">Focused technical education in Software Development and Electrical Technology.</p>
+                        <p class="footer-description">Practical training in software and electrical technology.</p>
                         <div class="footer-social">
                             <a href="<?php echo htmlspecialchars($facebookUrl); ?>" class="social-link" aria-label="Follow us on Facebook" title="Facebook">
                                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
@@ -237,7 +260,7 @@ function renderSiteFooter(string $schoolName): void
                         </div>
                         
                         <h3 class="footer-heading footer-heading-newsletter">Newsletter</h3>
-                        <p class="footer-newsletter-desc">Get updates on admissions and school news.</p>
+                        <p class="footer-newsletter-desc">Get admissions and school updates.</p>
                         <form class="footer-newsletter-form" method="post" action="/MUBUGA-TSS/handlers/site_forms.php">
                             <input type="hidden" name="form_action" value="newsletter_subscribe">
                             <input type="hidden" name="source" value="footer">

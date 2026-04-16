@@ -48,6 +48,71 @@ const initSite = () => {
         });
     }
 
+    document.querySelectorAll('.nav-dropdown').forEach((dropdown) => {
+        const toggle = dropdown.querySelector('.nav-dropdown-toggle');
+        if (!toggle) {
+            return;
+        }
+
+        toggle.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const isOpen = dropdown.classList.toggle('is-open');
+
+            document.querySelectorAll('.nav-dropdown').forEach((item) => {
+                if (item !== dropdown) {
+                    item.classList.remove('is-open');
+                    const itemToggle = item.querySelector('.nav-dropdown-toggle');
+                    if (itemToggle) {
+                        itemToggle.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+
+            toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+    });
+
+    document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element) || target.closest('.nav-dropdown')) {
+            return;
+        }
+
+        document.querySelectorAll('.nav-dropdown.is-open').forEach((dropdown) => {
+            dropdown.classList.remove('is-open');
+            const toggle = dropdown.querySelector('.nav-dropdown-toggle');
+            if (toggle) {
+                toggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 960) {
+            nav?.classList.remove('is-open');
+            navToggle?.setAttribute('aria-expanded', 'false');
+            document.querySelectorAll('.nav-dropdown.is-open').forEach((dropdown) => {
+                dropdown.classList.remove('is-open');
+                const toggle = dropdown.querySelector('.nav-dropdown-toggle');
+                if (toggle) {
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+    });
+
+    nav?.querySelectorAll('a[href]').forEach((link) => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth > 960) {
+                return;
+            }
+
+            nav.classList.remove('is-open');
+            navToggle?.setAttribute('aria-expanded', 'false');
+        });
+    });
+
     window.addEventListener('scroll', updateScrollUI, { passive: true });
     updateScrollUI();
 
@@ -165,6 +230,7 @@ const initSite = () => {
 
             if (heroButton) {
                 heroButton.textContent = activeTrigger.dataset.button || 'Learn More';
+                heroButton.setAttribute('href', activeTrigger.dataset.link || '/MUBUGA-TSS/pages/admissions.php');
             }
 
             if (heroSpotlight) {
@@ -248,6 +314,10 @@ const initSite = () => {
         const closeBtn = lightbox.querySelector('.lightbox-close');
 
         galleryCards.forEach((card) => {
+            if (card.classList.contains('gallery-video-card')) {
+                return;
+            }
+
             const img = card.querySelector('img');
             if (!img) {
                 return;

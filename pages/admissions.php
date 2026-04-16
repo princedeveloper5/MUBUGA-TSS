@@ -80,32 +80,65 @@ renderSiteHeader('Admissions', $schoolName, $contacts, 'admissions');
 renderInnerHero('ADMISSION', 'Start your journey at Mubuga TSS', 'Find the basic requirements and simple admission pathway for joining one of our technical trades.', 'assets/images/IM8.jpg');
 ?>
 <main>
-    <section class="section admission-form-section">
+    <section class="section admission-form-section" id="requirements">
         <div class="container">
             <div class="admission-layout">
             <aside class="admission-side-panel">
                 <p class="eyebrow">Admission Guide</p>
-                <h2>Join Mubuga TSS with a clear, simple process.</h2>
-                <p>Admissions are organized to help students and families understand the trade options, registration steps, and follow-up support.</p>
+                <h2>Join Mubuga TSS in a few clear steps.</h2>
+                <p>Check the essentials, choose your program, and complete the form.</p>
                 <div class="admission-side-points">
                     <article class="admission-side-item">
                         <strong>Choose a trade</strong>
-                        <span>Select the program that matches your interest and career direction.</span>
+                        <span>Pick the program that matches your interest.</span>
                     </article>
                     <article class="admission-side-item">
-                        <strong>Prepare details</strong>
-                        <span>Fill in your learner and guardian information carefully before submission.</span>
+                        <strong>Prepare documents</strong>
+                        <span>Keep your learner and guardian details ready.</span>
                     </article>
                     <article class="admission-side-item">
                         <strong>Wait for response</strong>
-                        <span>The school office can contact you with the next guidance and reporting steps.</span>
+                        <span>The school will guide you on the next step.</span>
                     </article>
                 </div>
             </aside>
             <div class="admission-card">
                 <div class="form-heading">
-                    <h1>Student Registration Form</h1>
-                    <p>Fill all form fields to go to the next step</p>
+                    <h1>Admission Checklist</h1>
+                    <p>Before registration, make sure you have these key details.</p>
+                </div>
+
+                <div class="admission-check-grid">
+                    <article class="admission-check-card">
+                        <strong>Program choice</strong>
+                        <span>Choose Software Development or Electrical Technology.</span>
+                    </article>
+                    <article class="admission-check-card">
+                        <strong>Guardian contact</strong>
+                        <span>Prepare parent or guardian names and phone number.</span>
+                    </article>
+                    <article class="admission-check-card">
+                        <strong>Previous results</strong>
+                        <span>Upload a clear JPG or PNG image of your report.</span>
+                    </article>
+                </div>
+
+                <div class="admission-staff-strip">
+                    <div class="admission-staff-strip-top">
+                        <p class="eyebrow">Admission Support</p>
+                        <h2>Talk to our team</h2>
+                    </div>
+                    <div class="admission-staff-grid">
+                        <?php foreach (array_slice($leadership, 0, 3) as $member): ?>
+                            <article class="admission-staff-card">
+                                <img src="/MUBUGA-TSS/<?php echo htmlspecialchars((string) $member['photo']); ?>" alt="<?php echo htmlspecialchars((string) $member['name']); ?>" class="admission-staff-photo">
+                                <div>
+                                    <strong><?php echo htmlspecialchars((string) $member['name']); ?></strong>
+                                    <span><?php echo htmlspecialchars((string) $member['role']); ?></span>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
 
                 <?php if ($message): ?>
@@ -115,6 +148,10 @@ renderInnerHero('ADMISSION', 'Start your journey at Mubuga TSS', 'Find the basic
                 <?php endif; ?>
 
                 <form method="POST" action="" class="admission-form" id="admissionForm" enctype="multipart/form-data">
+                    <div id="registration" class="form-heading form-heading-left">
+                        <h2>Student Registration Form</h2>
+                        <p>Fill the form carefully and submit once.</p>
+                    </div>
                     <div class="form-grid form-grid--two">
                         <div class="form-group">
                             <label for="first_name">First Name</label>

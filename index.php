@@ -102,9 +102,33 @@ $galleryMore = array_slice($gallery, 5, 4);
                     <a href="/MUBUGA-TSS/pages/about.php">About Us</a>
                     <a href="/MUBUGA-TSS/pages/programs.php">Our Programs</a>
                     <a href="/MUBUGA-TSS/pages/facilities.php">Facilities</a>
-                    <a href="/MUBUGA-TSS/pages/admissions.php">Admission</a>
+                    
+                    <div class="dropdown">
+                        <a href="/MUBUGA-TSS/pages/admissions.php">Admission ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="/MUBUGA-TSS/pages/admissions.php#requirements">Fees &amp; Requirements</a>
+                            <a href="/MUBUGA-TSS/pages/admissions.php#registration">Student Registration</a>
+                        </div>
+                    </div>
+                    
                     <a href="/MUBUGA-TSS/pages/team.php">Our Team</a>
-                    <a href="/MUBUGA-TSS/pages/news.php">News</a>
+                    
+                    <div class="dropdown">
+                        <a href="/MUBUGA-TSS/pages/news.php">News ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="/MUBUGA-TSS/pages/news.php?type=events">Events</a>
+                            <a href="/MUBUGA-TSS/pages/news.php?type=announcements">Announcements</a>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <a href="/MUBUGA-TSS/pages/gallery.php">Gallery ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="/MUBUGA-TSS/pages/gallery.php#pictures">Pictures</a>
+                            <a href="/MUBUGA-TSS/pages/gallery.php#videos">Videos</a>
+                        </div>
+                    </div>
+                    
                     <a href="/MUBUGA-TSS/pages/contact.php" class="nav-cta">Contacts</a>
                 </nav>
             </div>
@@ -114,6 +138,9 @@ $galleryMore = array_slice($gallery, 5, 4);
             <section class="hero" id="home">
                 <div class="container hero-grid">
                     <div class="hero-copy" data-hero-slider>
+                        <div class="hero-topline">
+                        </div>
+
                         <div class="brand-ribbon">
                             <div class="brand-seal">
                                 <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> emblem" class="brand-seal-logo">
@@ -129,9 +156,18 @@ $galleryMore = array_slice($gallery, 5, 4);
                             <h1 data-hero-title><?php echo htmlspecialchars($heroSlides[0]['title']); ?></h1>
                             <p class="hero-text" data-hero-text><?php echo htmlspecialchars($heroSlides[0]['text']); ?></p>
                             <div class="hero-actions">
-                                <a href="#admissions" class="button button-primary" data-hero-button><?php echo htmlspecialchars($heroSlides[0]['button']); ?></a>
-                                <a href="#about" class="button button-secondary">Learn About Us</a>
+                                <a href="<?php echo htmlspecialchars($heroSlides[0]['link'] ?? '/MUBUGA-TSS/pages/admissions.php'); ?>" class="button button-primary" data-hero-button><?php echo htmlspecialchars($heroSlides[0]['button']); ?></a>
+                                <a href="/MUBUGA-TSS/pages/programs.php" class="button button-secondary">Explore Programs</a>
                             </div>
+                        </div>
+
+                        <div class="hero-metrics" aria-label="School overview">
+                            <?php foreach ($stats as $stat): ?>
+                                <article class="hero-metric">
+                                    <strong><?php echo htmlspecialchars($stat['value']); ?></strong>
+                                    <span><?php echo htmlspecialchars($stat['label']); ?></span>
+                                </article>
+                            <?php endforeach; ?>
                         </div>
 
                         <div class="hero-slider-mock" role="tablist" aria-label="Homepage highlights">
@@ -145,7 +181,8 @@ $galleryMore = array_slice($gallery, 5, 4);
                                     data-title="<?php echo htmlspecialchars($slide['title']); ?>"
                                     data-text="<?php echo htmlspecialchars($slide['text']); ?>"
                                     data-button="<?php echo htmlspecialchars($slide['button']); ?>"
-                                    data-image="<?php echo htmlspecialchars($slide['image'] ?? 'assets/images/mb1.jfif'); ?>"
+                                    data-link="<?php echo htmlspecialchars($slide['link'] ?? '/MUBUGA-TSS/pages/admissions.php'); ?>"
+                                    data-image="<?php echo htmlspecialchars($slide['image'] ?? 'assets/images/students.jfif'); ?>"
                                     data-spotlight="<?php echo htmlspecialchars($slide['spotlight'] ?? $slide['eyebrow']); ?>"
                                     aria-selected="<?php echo $index === 0 ? 'true' : 'false'; ?>"
                                 >
@@ -162,7 +199,7 @@ $galleryMore = array_slice($gallery, 5, 4);
                         <div class="hero-photo hero-photo-slider">
                             <?php foreach ($heroSlides as $index => $slide): ?>
                                 <img
-                                    src="<?php echo htmlspecialchars($slide['image'] ?? 'assets/images/mb1.jfif'); ?>"
+                                    src="/MUBUGA-TSS/<?php echo htmlspecialchars($slide['image'] ?? 'assets/images/students.jfif'); ?>"
                                     alt="<?php echo htmlspecialchars($slide['title']); ?>"
                                     class="hero-slide-image<?php echo $index === 0 ? ' is-active' : ''; ?>"
                                     data-hero-image
@@ -175,6 +212,7 @@ $galleryMore = array_slice($gallery, 5, 4);
                             <div class="hero-photo-overlay">
                                 <p class="card-label">Featured View</p>
                                 <h2 data-hero-spotlight><?php echo htmlspecialchars($heroSlides[0]['spotlight'] ?? 'Campus and school community'); ?></h2>
+                                <a href="/MUBUGA-TSS/pages/gallery.php" class="hero-overlay-link">View school gallery</a>
                             </div>
                         </div>
                         <div class="hero-slider-dots" aria-label="Hero slide pagination">
@@ -190,23 +228,26 @@ $galleryMore = array_slice($gallery, 5, 4);
                             <?php endforeach; ?>
                         </div>
                         <div class="hero-panel-grid">
-                            <div class="hero-card hero-card-accent">
-                                <p class="card-label">Core Trades</p>
-                                <h2>Software Development</h2>
-                                <p>Programming, web systems, digital projects, and modern technical thinking.</p>
-                            </div>
-                            <div class="hero-card">
-                                <p class="card-label">Core Trades</p>
-                                <h2>Electrical Technology</h2>
-                                <p>Electrical installation, maintenance, workshop practice, and safe technical execution.</p>
-                            </div>
+                            <article class="hero-card hero-card-accent">
+                                <p class="card-label">Quick Access</p>
+                                <h2>Apply, ask questions, and discover the campus.</h2>
+                                <div class="hero-shortcuts">
+                                    <a href="/MUBUGA-TSS/pages/admissions.php" class="shortcut-link">Apply Now</a>
+                                    <a href="/MUBUGA-TSS/pages/contact.php" class="shortcut-link">Contact Office</a>
+                                    <a href="/MUBUGA-TSS/pages/gallery.php" class="shortcut-link">View Gallery</a>
+                                </div>
+                            </article>
+                            <article class="hero-card">
+                                <p class="card-label">Why Mubuga TSS</p>
+                                <ul class="hero-points">
+                                    <?php foreach ($highlights as $highlight): ?>
+                                        <li><?php echo htmlspecialchars($highlight); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </article>
                         </div>
                         <div class="hero-badge">Competence. Discipline. Innovation.</div>
-                        <ul class="hero-points">
-                            <?php foreach ($highlights as $highlight): ?>
-                                <li><?php echo htmlspecialchars($highlight); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
+                        <p class="hero-support-copy">A practical school environment inspired by the clear, confidence-building hero structure of the reference site, but tailored to Mubuga TSS.</p>
                     </div>
                 </div>
             </section>

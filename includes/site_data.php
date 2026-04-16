@@ -36,6 +36,21 @@ function newsCategoryLabel(string $category): string
     };
 }
 
+function formatPublishedDate(?string $publishedAt): string
+{
+    $value = trim((string) $publishedAt);
+    if ($value === '') {
+        return 'Recent update';
+    }
+
+    $timestamp = strtotime($value);
+    if ($timestamp === false) {
+        return 'Recent update';
+    }
+
+    return date('F j, Y', $timestamp);
+}
+
 function encodeNewsContent(string $content, string $category): string
 {
     return '[category:' . normalizeNewsCategory($category) . ']' . "\n" . trim($content);
@@ -214,22 +229,31 @@ $news = [
         'title' => 'Open Day for New Applicants',
         'text' => 'Families can visit the campus, meet staff, and explore our programs.',
         'category' => 'events',
+        'slug' => 'open-day-for-new-applicants',
+        'content' => 'Families can visit the campus, meet staff, and explore our programs.',
         'image' => $imageSet['students'],
-        'link' => '/MUBUGA-TSS/pages/news.php',
+        'published_at' => '2026-01-18 09:00:00',
+        'link' => '/MUBUGA-TSS/pages/news.php?slug=open-day-for-new-applicants',
     ],
     [
         'title' => 'Admission Requirements Released',
         'text' => 'Applicants can now check key requirements before registration.',
         'category' => 'announcements',
+        'slug' => 'admission-requirements-released',
+        'content' => 'Applicants can now check key requirements before registration.',
         'image' => $imageSet['software_primary'],
-        'link' => '/MUBUGA-TSS/pages/news.php',
+        'published_at' => '2026-02-08 08:30:00',
+        'link' => '/MUBUGA-TSS/pages/news.php?slug=admission-requirements-released',
     ],
     [
         'title' => 'Students Build Real Projects',
         'text' => 'Learning at Mubuga TSS stays practical, creative, and career-focused.',
         'category' => 'news',
+        'slug' => 'students-build-real-projects',
+        'content' => 'Learning at Mubuga TSS stays practical, creative, and career-focused.',
         'image' => $imageSet['school_7'],
-        'link' => '/MUBUGA-TSS/pages/news.php',
+        'published_at' => '2026-03-02 10:15:00',
+        'link' => '/MUBUGA-TSS/pages/news.php?slug=students-build-real-projects',
     ],
 ];
 
@@ -448,7 +472,7 @@ if ($pdo instanceof PDO) {
         }, $staffRows);
     }
 
-    $newsRows = $pdo->query('SELECT title, slug, summary, content, featured_image FROM news WHERE status = "published" ORDER BY published_at DESC, id DESC LIMIT 6')->fetchAll();
+    $newsRows = $pdo->query('SELECT title, slug, summary, content, featured_image, published_at FROM news WHERE status = "published" ORDER BY published_at DESC, id DESC LIMIT 18')->fetchAll();
     if ($newsRows) {
         $news = array_map(function (array $row) use ($imageSet): array {
             $decodedContent = decodeNewsContent($row['content'] ?? '');
@@ -459,6 +483,7 @@ if ($pdo instanceof PDO) {
                 'text' => $row['summary'] ?: 'Latest update from Mubuga TSS.',
                 'content' => $decodedContent['content'] ?: $row['summary'] ?: 'Latest update from Mubuga TSS.',
                 'image' => resolveSiteImage($row['featured_image'] ?: $imageSet['students']),
+                'published_at' => $row['published_at'] ?? '',
                 'link' => '/MUBUGA-TSS/pages/news.php' . (!empty($row['slug']) ? '?slug=' . urlencode((string) $row['slug']) : ''),
             ];
         }, $newsRows);

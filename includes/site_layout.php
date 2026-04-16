@@ -90,25 +90,27 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
                     <a href="/MUBUGA-TSS/pages/facilities.php"<?php echo $active === 'facilities' ? ' class="is-current"' : ''; ?>>Facilities</a>
                     
                     <div class="dropdown">
-                        <a href="/MUBUGA-TSS/pages/admissions.php"<?php echo $active === 'admissions' ? ' class="is-current"' : ''; ?>>Admission ▾</a>
+                        <a href="/MUBUGA-TSS/pages/admissions.php"<?php echo $active === 'admissions' ? ' class="is-current"' : ''; ?>>Admission &#9662;</a>
                         <div class="dropdown-menu">
-                            <a href="/MUBUGA-TSS/pages/admissions.php#requirements">Fees &amp; Requirements</a>
-                            <a href="/MUBUGA-TSS/pages/admissions.php#registration">Student Registration</a>
-                        </div>
+                            <a href="/MUBUGA-TSS/pages/admissions.php">Admission Overview</a>
+                            <a href="/MUBUGA-TSS/pages/fees.php">Fees &amp; Requirements</a>
+                            <a href="/MUBUGA-TSS/pages/registration.php">Student Registration</a>
+                    </div>
                     </div>
                     
                     <a href="/MUBUGA-TSS/pages/team.php"<?php echo $active === 'team' ? ' class="is-current"' : ''; ?>>Our Team</a>
                     
                     <div class="dropdown">
-                        <a href="/MUBUGA-TSS/pages/news.php"<?php echo $active === 'news' ? ' class="is-current"' : ''; ?>>News ▾</a>
+                        <a href="/MUBUGA-TSS/pages/news.php"<?php echo $active === 'news' ? ' class="is-current"' : ''; ?>>News &#9662;</a>
                         <div class="dropdown-menu">
-                            <a href="/MUBUGA-TSS/pages/news.php?type=events">Events</a>
-                            <a href="/MUBUGA-TSS/pages/news.php?type=announcements">Announcements</a>
-                        </div>
+                            <a href="/MUBUGA-TSS/pages/news.php">All News</a>
+                            <a href="/MUBUGA-TSS/pages/events.php">Events</a>
+                            <a href="/MUBUGA-TSS/pages/announcements.php">Announcements</a>
+                    </div>
                     </div>
                     
                     <div class="dropdown">
-                        <a href="/MUBUGA-TSS/pages/gallery.php"<?php echo $active === 'gallery' ? ' class="is-current"' : ''; ?>>Gallery ▾</a>
+                        <a href="/MUBUGA-TSS/pages/gallery.php"<?php echo $active === 'gallery' ? ' class="is-current"' : ''; ?>>Gallery &#9662;</a>
                         <div class="dropdown-menu">
                             <a href="/MUBUGA-TSS/pages/gallery.php#pictures">Pictures</a>
                             <a href="/MUBUGA-TSS/pages/gallery.php#videos">Videos</a>
@@ -224,6 +226,8 @@ function renderSiteFooter(string $schoolName): void
                             <li><a href="/MUBUGA-TSS/pages/team.php">Our Team</a></li>
                             <li><a href="/MUBUGA-TSS/pages/gallery.php">Gallery</a></li>
                             <li><a href="/MUBUGA-TSS/pages/news.php">News &amp; Updates</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/events.php">Events</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/announcements.php">Announcements</a></li>
                         </ul>
                     </div>
 
@@ -234,6 +238,8 @@ function renderSiteFooter(string $schoolName): void
                             <li><a href="/MUBUGA-TSS/pages/programs.php">Software Development</a></li>
                             <li><a href="/MUBUGA-TSS/pages/programs.php">Electrical Technology</a></li>
                             <li><a href="/MUBUGA-TSS/pages/programs.php">View All Programs</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/fees.php">Fees &amp; Requirements</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/registration.php">Student Registration</a></li>
                         </ul>
                     </div>
 
@@ -280,6 +286,7 @@ function renderSiteFooter(string $schoolName): void
                     <p class="footer-copyright">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
                     <div class="footer-bottom-links">
                         <a href="/MUBUGA-TSS/pages/admissions.php" class="footer-bottom-link">Admissions</a>
+                        <a href="/MUBUGA-TSS/pages/fees.php" class="footer-bottom-link">Fees</a>
                         <a href="/MUBUGA-TSS/pages/gallery.php" class="footer-bottom-link">Gallery</a>
                         <a href="/MUBUGA-TSS/pages/contact.php" class="footer-bottom-link">Contacts</a>
                     </div>
@@ -292,3 +299,5 @@ function renderSiteFooter(string $schoolName): void
 </html>
 <?php
 }
+
+

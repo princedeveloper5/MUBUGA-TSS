@@ -33,7 +33,7 @@ renderInnerHero('WELCOME TO', $schoolName, $page['excerpt'], $page['image']);
             <div class="feature-stack">
                 <article class="feature-card">
                     <h3>Our Motto</h3>
-                    <p>Excellence in technical education.</p>
+                    <p></p>
                 </article>
                 <article class="feature-card">
                     <h3>Vision</h3>

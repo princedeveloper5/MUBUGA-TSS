@@ -228,17 +228,17 @@ $galleryMore = array_slice($gallery, 5, 4);
                             <?php endforeach; ?>
                         </div>
                         <div class="hero-panel-grid">
-                            <article class="hero-card hero-card-accent">
-                                <p class="card-label">Quick Access</p>
-                                <h2>Apply, ask questions, and discover the campus.</h2>
+                            <article class="hero-card">
+                                <p class="card-label">Quick Links</p>
+                                <h2>Explore Mubuga TSS</h2>
                                 <div class="hero-shortcuts">
-                                    <a href="/MUBUGA-TSS/pages/admissions.php" class="shortcut-link">Apply Now</a>
-                                    <a href="/MUBUGA-TSS/pages/contact.php" class="shortcut-link">Contact Office</a>
-                                    <a href="/MUBUGA-TSS/pages/gallery.php" class="shortcut-link">View Gallery</a>
+                                    <a href="/MUBUGA-TSS/pages/programs.php" class="shortcut-link">View Programs</a>
+                                    <a href="/MUBUGA-TSS/pages/gallery.php" class="shortcut-link">See Gallery</a>
+                                    <a href="/MUBUGA-TSS/pages/contact.php" class="shortcut-link">Contact Us</a>
                                 </div>
                             </article>
                             <article class="hero-card">
-                                <p class="card-label">Why Mubuga TSS</p>
+                                <p class="card-label">Why Choose Us</p>
                                 <ul class="hero-points">
                                     <?php foreach ($highlights as $highlight): ?>
                                         <li><?php echo htmlspecialchars($highlight); ?></li>
@@ -252,97 +252,7 @@ $galleryMore = array_slice($gallery, 5, 4);
                 </div>
             </section>
 
-            <section class="section featured-strip">
-                <div class="container">
-                    <div class="section-heading section-heading-compact">
-                        <p class="eyebrow">Campus Highlights</p>
-                        <h2>School stories, events, and student life.</h2>
-                    </div>
-                </div>
-                <div class="container featured-grid">
-                    <?php foreach ($featuredStories as $story): ?>
-                        <article class="featured-card">
-                            <div class="featured-media">
-                                <img src="<?php echo htmlspecialchars($story['image']); ?>" alt="<?php echo htmlspecialchars($story['title']); ?>" class="featured-image">
-                                <span class="featured-badge">Featured Story</span>
-                            </div>
-                            <div class="featured-copy">
-                                <p class="news-tag">Mubuga TSS</p>
-                                <h3><?php echo htmlspecialchars($story['title']); ?></h3>
-                                <p><?php echo htmlspecialchars($story['text']); ?></p>
-                                <a href="<?php echo htmlspecialchars($story['link']); ?>" class="inline-link">Learn More</a>
-                            </div>
-                        </article>
-                    <?php endforeach; ?>
-                </div>
-            </section>
 
-            <section class="section quick-info">
-                <div class="container quick-info-grid">
-                    <article class="quick-info-card">
-                        <span>School Type</span>
-                        <strong>TVET / Technical Secondary School</strong>
-                        <p>Structured technical education with practical training and clear learner pathways.</p>
-                    </article>
-                    <article class="quick-info-card">
-                        <span>Main Trades</span>
-                        <strong>Software Development and Electrical Technology</strong>
-                        <p>Focused technical departments designed around current skills and hands-on learning.</p>
-                    </article>
-                    <article class="quick-info-card">
-                        <span>Learning Style</span>
-                        <strong>Competency-based and practical</strong>
-                        <p>Students build confidence through projects, workshop practice, and guided instruction.</p>
-                    </article>
-                </div>
-            </section>
-
-            <section class="section institutional-overview">
-                <div class="container institutional-grid">
-                    <div class="welcome-panel">
-                        <p class="eyebrow">Welcome</p>
-                        <h2>Technical education shaped by discipline, practice, and purpose.</h2>
-                        <p><?php echo htmlspecialchars($leadership[0]['text'] ?? 'Mubuga TSS is committed to giving learners strong technical foundations, discipline, and confidence for the future.'); ?></p>
-                        <div class="welcome-signature">
-                            <img src="<?php echo htmlspecialchars($leadership[0]['photo'] ?? 'assets/images/master.jpeg'); ?>" alt="<?php echo htmlspecialchars($leadership[0]['name'] ?? 'Mubuga TSS Administration'); ?>" class="welcome-avatar">
-                            <div>
-                                <strong><?php echo htmlspecialchars($leadership[0]['name'] ?? 'Mubuga TSS Administration'); ?></strong>
-                                <span><?php echo htmlspecialchars($leadership[0]['role'] ?? 'School Leadership'); ?></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="institutional-side">
-                        <div class="institution-card-grid">
-                            <?php foreach ($institutionCards as $card): ?>
-                                <article class="institution-card">
-                                    <span><?php echo htmlspecialchars($card['label']); ?></span>
-                                    <h3><?php echo htmlspecialchars($card['title']); ?></h3>
-                                    <p><?php echo htmlspecialchars($card['text']); ?></p>
-                                </article>
-                            <?php endforeach; ?>
-                        </div>
-                        <article class="school-profile-card">
-                            <p class="eyebrow">School Profile</p>
-                            <ul class="profile-list">
-                                <?php foreach ($welcomeHighlights as $highlight): ?>
-                                    <li><?php echo htmlspecialchars($highlight); ?></li>
-                                <?php endforeach; ?>
-                            </ul>
-                        </article>
-                    </div>
-                </div>
-            </section>
-
-            <section class="stats">
-                <div class="container stats-grid">
-                    <?php foreach ($stats as $stat): ?>
-                        <article class="stat-card">
-                            <strong><?php echo htmlspecialchars($stat['value']); ?></strong>
-                            <span><?php echo htmlspecialchars($stat['label']); ?></span>
-                        </article>
-                    <?php endforeach; ?>
-                </div>
-            </section>
 
             <section class="section about" id="about">
                 <div class="container section-grid">
@@ -361,27 +271,6 @@ $galleryMore = array_slice($gallery, 5, 4);
                             </article>
                         </div>
                         <a href="/MUBUGA-TSS/pages/about.php" class="inline-link">Read More</a>
-                    </div>
-                    <div class="feature-stack">
-                        <article class="feature-card feature-card-image">
-                            <img src="<?php echo htmlspecialchars($leadership[0]['photo'] ?? 'assets/images/master.jpeg'); ?>" alt="Mubuga TSS school representative">
-                            <div class="feature-card-body">
-                                <h3>School Leadership Message</h3>
-                                <p>Mubuga TSS is committed to giving learners strong technical foundations, discipline, and confidence for the future.</p>
-                            </div>
-                        </article>
-                        <article class="feature-card">
-                            <h3>Our Motto</h3>
-                            <p>Excellence in technical education.</p>
-                        </article>
-                        <article class="feature-card">
-                            <h3>Vision</h3>
-                            <p>To become a respected center of technical excellence that prepares students for opportunity, service, and innovation.</p>
-                        </article>
-                        <article class="feature-card">
-                            <h3>Mission</h3>
-                            <p>To equip learners with practical skills, discipline, and creativity through focused vocational education.</p>
-                        </article>
                     </div>
                 </div>
             </section>
@@ -416,15 +305,7 @@ $galleryMore = array_slice($gallery, 5, 4);
                 </div>
             </section>
 
-            <section class="section info-banner">
-                <div class="container info-banner-panel">
-                    <div>
-                        <p class="eyebrow">Admissions</p>
-                        <h2>Join Mubuga TSS.</h2>
-                    </div>
-                    <a href="#admissions" class="button button-primary">Apply Now</a>
-                </div>
-            </section>
+
 
             <section class="section values">
                 <div class="container">
@@ -485,43 +366,27 @@ $galleryMore = array_slice($gallery, 5, 4);
                     </div>
 
                     <?php if ($galleryLead !== null): ?>
-                        <div class="gallery-showcase">
-                            <article class="gallery-feature-card gallery-card">
-                                <img src="<?php echo htmlspecialchars($galleryLead['image']); ?>" alt="<?php echo htmlspecialchars($galleryLead['title']); ?>" class="gallery-image gallery-image-feature">
-                                <div class="gallery-copy gallery-copy-feature">
-                                    <p class="gallery-kicker">Featured View</p>
+                        <div class="gallery-grid">
+                            <article class="gallery-card">
+                                <img src="<?php echo htmlspecialchars($galleryLead['image']); ?>" alt="<?php echo htmlspecialchars($galleryLead['title']); ?>" class="gallery-image">
+                                <div class="gallery-copy">
                                     <h3><?php echo htmlspecialchars($galleryLead['title']); ?></h3>
                                     <p><?php echo htmlspecialchars($galleryLead['text']); ?></p>
-                                    <a href="/MUBUGA-TSS/pages/gallery.php" class="inline-link">View Full Gallery</a>
                                 </div>
                             </article>
-                            <div class="gallery-side-grid">
-                                <?php foreach ($galleryHighlights as $item): ?>
-                                    <article class="gallery-mini-card gallery-card">
-                                        <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="gallery-image">
-                                        <div class="gallery-copy">
-                                            <h3><?php echo htmlspecialchars($item['title']); ?></h3>
-                                            <p><?php echo htmlspecialchars($item['text']); ?></p>
-                                        </div>
-                                    </article>
-                                <?php endforeach; ?>
-                            </div>
+                            <?php foreach (array_slice($galleryHighlights, 0, 3) as $item): ?>
+                                <article class="gallery-card">
+                                    <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="gallery-image">
+                                    <div class="gallery-copy">
+                                        <h3><?php echo htmlspecialchars($item['title']); ?></h3>
+                                        <p><?php echo htmlspecialchars($item['text']); ?></p>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
-
-                    <div class="gallery-grid gallery-grid-secondary">
-                        <?php foreach ($galleryMore as $item): ?>
-                            <article class="gallery-card">
-                                <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="gallery-image">
-                                <div class="gallery-copy">
-                                    <h3><?php echo htmlspecialchars($item['title']); ?></h3>
-                                    <p><?php echo htmlspecialchars($item['text']); ?></p>
-                                </div>
-                            </article>
-                        <?php endforeach; ?>
-                    </div>
                     <div class="section-more">
-                        <a href="/MUBUGA-TSS/pages/gallery.php" class="inline-link">Visit Gallery Page</a>
+                        <a href="/MUBUGA-TSS/pages/gallery.php" class="inline-link">View More Gallery →</a>
                     </div>
                 </div>
             </section>
@@ -725,7 +590,8 @@ $galleryMore = array_slice($gallery, 5, 4);
 
             <div class="footer-bottom">
                 <div class="container footer-bottom-content">
-                    <p class="footer-copyright">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
+                    <p class="footer-copyright">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. MADE BY 2P company LTD
+                </p>
                     <div class="footer-bottom-links">
                         <a href="/MUBUGA-TSS/pages/admissions.php" class="footer-bottom-link">Admissions</a>
                         <a href="/MUBUGA-TSS/pages/gallery.php" class="footer-bottom-link">Gallery</a>

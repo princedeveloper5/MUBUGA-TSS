@@ -500,6 +500,19 @@ if ($pdo instanceof PDO) {
 
     $adminName = trim((string) (($admin['name'] ?? $admin['full_name'] ?? 'Administrator')));
     $currentDateLabel = date('l, d M Y');
+    $imageMediaItems = array_values(array_filter($gallery, static function (array $item): bool {
+        return ($item['media_type'] ?? 'image') === 'image';
+    }));
+    $videoMediaItems = array_values(array_filter($gallery, static function (array $item): bool {
+        return ($item['media_type'] ?? 'image') === 'video';
+    }));
+    $announcementItems = array_values(array_filter($news, static function (array $item): bool {
+        return (($item['category'] ?? 'news') === 'announcements');
+    }));
+    $imageCount = count($imageMediaItems);
+    $videoCount = count($videoMediaItems);
+    $announcementCount = count($announcementItems);
+    $userCount = count($staff) + 1;
 }
 ?>
 <!DOCTYPE html>
@@ -539,27 +552,31 @@ if ($pdo instanceof PDO) {
                 <nav class="dashboard-nav" aria-label="Dashboard navigation">
                     <a href="#dashboard-panel" class="dashboard-nav-link is-active" data-tooltip="Dashboard" title="Dashboard" aria-label="Dashboard">
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h5A1.5 1.5 0 0 1 12 5.5v5A1.5 1.5 0 0 1 10.5 12h-5A1.5 1.5 0 0 1 4 10.5v-5zM4 15.5A1.5 1.5 0 0 1 5.5 14h5a1.5 1.5 0 0 1 1.5 1.5v3A1.5 1.5 0 0 1 10.5 20h-5A1.5 1.5 0 0 1 4 18.5v-3zM14 5.5A1.5 1.5 0 0 1 15.5 4h3A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 14 18.5v-13z" fill="currentColor"/></svg>
-                        <span>Overview</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#gallery-panel" class="dashboard-nav-link" data-tooltip="Upload Images" title="Upload Images" aria-label="Upload Images">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5a2 2 0 0 0-2 2v10.5A2.5 2.5 0 0 0 5.5 20h13a2.5 2.5 0 0 0 2.5-2.5V7a2 2 0 0 0-2-2H5zm2.5 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm11.5 9.5H5.5a.5.5 0 0 1-.39-.813l3.254-4.067a1 1 0 0 1 1.53.017l1.617 2.055 2.75-3.261a1 1 0 0 1 1.55.047l3.58 4.299A.5.5 0 0 1 19 17.5z" fill="currentColor"/></svg>
+                        <span>Upload Images</span>
+                    </a>
+                    <a href="#gallery-panel" class="dashboard-nav-link" data-tooltip="Upload Videos" title="Upload Videos" aria-label="Upload Videos">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 5h10A1.5 1.5 0 0 1 16 6.5v2.586l3.293-3.293A1 1 0 0 1 21 6.5v11a1 1 0 0 1-1.707.707L16 14.914V17.5A1.5 1.5 0 0 1 14.5 19h-10A1.5 1.5 0 0 1 3 17.5v-11A1.5 1.5 0 0 1 4.5 5z" fill="currentColor"/></svg>
+                        <span>Upload Videos</span>
+                    </a>
+                    <a href="#news-panel" class="dashboard-nav-link" data-tooltip="Announcements" title="Announcements" aria-label="Announcements">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 10.5 16.5 4v16L3 13.5v-3zm14.5 1.75h2.25a1.25 1.25 0 0 1 0 2.5H17.5v-2.5zM5.75 14.1h2.2l1.25 4.15H7.1L5.75 14.1z" fill="currentColor"/></svg>
+                        <span>Announcements</span>
+                    </a>
+                    <a href="#staff-panel" class="dashboard-nav-link" data-tooltip="Manage Users" title="Manage Users" aria-label="Manage Users">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 1 1 14 0H5zm14.5-9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM18 20c0-2.02-.76-3.86-2.01-5.26A6 6 0 0 1 22 20h-4z" fill="currentColor"/></svg>
+                        <span>Manage Users</span>
+                    </a>
+                    <a href="#pages-panel" class="dashboard-nav-link" data-tooltip="Settings" title="Settings" aria-label="Settings">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.23-1.13.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94L2.83 14.52a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.4 1.05.72 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.84a.5.5 0 0 0 .5-.42l.36-2.54c.58-.23 1.13-.54 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5z" fill="currentColor"/></svg>
+                        <span>Settings</span>
                     </a>
                     <a href="#programs-panel" class="dashboard-nav-link" data-tooltip="Manage Programs" title="Programs" aria-label="Programs">
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h14a1 1 0 0 1 1 1v12.5a1 1 0 0 1-1.447.894L12 15.118l-6.553 3.276A1 1 0 0 1 4 17.5V5a1 1 0 0 1 1-1zm2 3v2h10V7H7zm0 4v2h7v-2H7z" fill="currentColor"/></svg>
                         <span>Programs</span>
-                    </a>
-                    <a href="#staff-panel" class="dashboard-nav-link" data-tooltip="Manage Staff" title="Staff" aria-label="Staff">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 1 1 14 0H5zm14.5-9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM18 20c0-2.02-.76-3.86-2.01-5.26A6 6 0 0 1 22 20h-4z" fill="currentColor"/></svg>
-                        <span>Staff</span>
-                    </a>
-                    <a href="#news-panel" class="dashboard-nav-link" data-tooltip="Manage News" title="News" aria-label="News">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 5.5A1.5 1.5 0 0 1 7.5 4h8A1.5 1.5 0 0 1 17 5.5V6h1.5A1.5 1.5 0 0 1 20 7.5v10a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 6 17.5v-12zM8 8v2h7V8H8zm0 4v2h8v-2H8zm0 4v2h5v-2H8z" fill="currentColor"/></svg>
-                        <span>News</span>
-                    </a>
-                    <a href="#gallery-panel" class="dashboard-nav-link" data-tooltip="Manage Gallery" title="Gallery" aria-label="Gallery">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5a2 2 0 0 0-2 2v10.5A2.5 2.5 0 0 0 5.5 20h13a2.5 2.5 0 0 0 2.5-2.5V7a2 2 0 0 0-2-2H5zm2.5 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm11.5 9.5H5.5a.5.5 0 0 1-.39-.813l3.254-4.067a1 1 0 0 1 1.53.017l1.617 2.055 2.75-3.261a1 1 0 0 1 1.55.047l3.58 4.299A.5.5 0 0 1 19 17.5z" fill="currentColor"/></svg>
-                        <span>Gallery</span>
-                    </a>
-                    <a href="#pages-panel" class="dashboard-nav-link" data-tooltip="Manage Pages" title="Pages" aria-label="Pages">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 4h8l4 4v11.5A1.5 1.5 0 0 1 17.5 21h-10A1.5 1.5 0 0 1 6 19.5v-14A1.5 1.5 0 0 1 7.5 4H7zm7 1.5V9h3.5L14 5.5zM8 11v2h8v-2H8zm0 4v2h6v-2H8z" fill="currentColor"/></svg>
-                        <span>Pages</span>
                     </a>
                     <a href="#admissions-panel" class="dashboard-nav-link" data-tooltip="View Admissions" title="Admissions" aria-label="Admissions">
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5 4 6.5v5.8c0 4.8 3.12 9.18 8 10.7 4.88-1.52 8-5.9 8-10.7V6.5l-8-4zm-1 5h2v4h3v2h-5v-6z" fill="currentColor"/></svg>
@@ -581,20 +598,16 @@ if ($pdo instanceof PDO) {
         </aside>
 
         <main class="admin-main dashboard-main">
-            <header class="dashboard-header">
-                <div class="dashboard-header-copy">
-                    <p class="admin-eyebrow">Dashboard</p>
-                    <h1>Welcome back, <?php echo htmlspecialchars($adminName); ?></h1>
-                    <p class="dashboard-header-text">Keep the website fresh, review submissions quickly, and manage school information from one clean workspace.</p>
-                    <div class="dashboard-header-meta">
-                        <span><?php echo htmlspecialchars($currentDateLabel); ?></span>
-                        <span><?php echo count($summaryCards); ?> key areas</span>
-                        <span><?php echo count($contactMessages); ?> public messages</span>
-                    </div>
-                </div>
-                <div class="dashboard-filters">
-                    <a href="/MUBUGA-TSS/" class="button-secondary">Open Website</a>
-                    <a href="/MUBUGA-TSS/admin/submissions.php" class="logout-link">View Submissions</a>
+            <header class="dashboard-header dashboard-header-compact">
+                <nav class="dashboard-top-menu" aria-label="Admin quick navigation">
+                    <a href="#dashboard-panel" class="dashboard-top-link dashboard-card-link">Home</a>
+                    <a href="#gallery-panel" class="dashboard-top-link dashboard-card-link">Media</a>
+                    <a href="#news-panel" class="dashboard-top-link dashboard-card-link">Announcements</a>
+                    <a href="#pages-panel" class="dashboard-top-link dashboard-card-link">About</a>
+                </nav>
+                <div class="dashboard-admin-pill">
+                    <span class="dashboard-admin-role">Admin</span>
+                    <strong><?php echo htmlspecialchars($adminName); ?></strong>
                 </div>
             </header>
 
@@ -607,94 +620,123 @@ if ($pdo instanceof PDO) {
             <?php endif; ?>
 
             <div class="dashboard-home-view is-active" id="dashboard-panel" data-dashboard-view>
-            <section class="dashboard-hero">
-                <div class="dashboard-hero-card dashboard-hero-primary">
-                    <p class="admin-eyebrow">Control Center</p>
-                    <h2>Everything important is visible at a glance.</h2>
-                    <p>Use the overview cards for quick navigation, then jump into each section to update website content and school records.</p>
-                    <div class="dashboard-hero-actions">
-                        <a href="#news-panel" class="button-secondary dashboard-inline-action dashboard-card-link">Publish News</a>
-                        <a href="#admissions-panel" class="button-secondary dashboard-inline-action dashboard-card-link">Review Admissions</a>
+                <section class="dashboard-showcase">
+                    <div class="dashboard-welcome">
+                        <h2>Welcome, Admin!</h2>
+                        <p>Manage your content easily.</p>
                     </div>
-                </div>
-                <div class="dashboard-hero-card dashboard-hero-secondary">
-                    <p class="admin-eyebrow">Today</p>
-                    <div class="dashboard-hero-stat">
-                        <strong><?php echo count($admissions); ?></strong>
-                        <span>admission records currently available</span>
-                    </div>
-                    <div class="dashboard-hero-list">
-                        <span><?php echo count($programs); ?> active program entries</span>
-                        <span><?php echo count($staff); ?> staff profiles on the site</span>
-                        <span><?php echo count($news); ?> news stories published</span>
-                    </div>
-                </div>
-            </section>
 
-            <section class="dashboard-cards">
-                <?php foreach ($summaryCards as $card): ?>
-                    <a href="<?php echo htmlspecialchars((string) $card['link']); ?>" class="dashboard-card dashboard-card-<?php echo htmlspecialchars($card['color']); ?> dashboard-card-link">
-                        <div class="dashboard-card-icon">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="<?php echo htmlspecialchars($card['icon']); ?>" fill="currentColor"/></svg>
-                        </div>
-                        <p><?php echo htmlspecialchars($card['title']); ?></p>
-                        <strong><?php echo htmlspecialchars((string) $card['value']); ?></strong>
-                    </a>
-                <?php endforeach; ?>
-            </section>
+                    <section class="dashboard-stats-strip">
+                        <a href="#gallery-panel" class="dashboard-mini-stat dashboard-card-link">
+                            <span class="dashboard-mini-stat-icon dashboard-mini-stat-icon-green">IM</span>
+                            <div>
+                                <small>Total Images</small>
+                                <strong><?php echo $imageCount; ?></strong>
+                            </div>
+                        </a>
+                        <a href="#gallery-panel" class="dashboard-mini-stat dashboard-card-link">
+                            <span class="dashboard-mini-stat-icon dashboard-mini-stat-icon-blue">VD</span>
+                            <div>
+                                <small>Total Videos</small>
+                                <strong><?php echo $videoCount; ?></strong>
+                            </div>
+                        </a>
+                        <a href="#news-panel" class="dashboard-mini-stat dashboard-card-link">
+                            <span class="dashboard-mini-stat-icon dashboard-mini-stat-icon-orange">AN</span>
+                            <div>
+                                <small>Announcements</small>
+                                <strong><?php echo $announcementCount; ?></strong>
+                            </div>
+                        </a>
+                        <a href="#staff-panel" class="dashboard-mini-stat dashboard-card-link">
+                            <span class="dashboard-mini-stat-icon dashboard-mini-stat-icon-purple">US</span>
+                            <div>
+                                <small>Users</small>
+                                <strong><?php echo $userCount; ?></strong>
+                            </div>
+                        </a>
+                    </section>
 
-            <section class="admin-grid">
-                <article class="panel">
-                    <div class="panel-top">
-                        <div>
-                            <p class="admin-eyebrow">School Settings</p>
-                            <h2>Branding and contact details</h2>
-                        </div>
-                    </div>
-                    <form method="post" class="admin-form" enctype="multipart/form-data">
-                        <input type="hidden" name="action" value="update_settings">
-                        <label><span>School Name</span><input type="text" name="school_name" value="<?php echo htmlspecialchars((string) ($settings['school_name'] ?? 'Mubuga TSS')); ?>"></label>
-                        <label><span>Motto</span><input type="text" name="school_motto" value="<?php echo htmlspecialchars((string) ($settings['school_motto'] ?? '')); ?>"></label>
-                        <label><span>Email</span><input type="email" name="school_email" value="<?php echo htmlspecialchars((string) ($settings['school_email'] ?? '')); ?>"></label>
-                        <label><span>Phone</span><input type="text" name="school_phone" value="<?php echo htmlspecialchars((string) ($settings['school_phone'] ?? '')); ?>"></label>
-                        <label><span>Address</span><input type="text" name="school_address" value="<?php echo htmlspecialchars((string) ($settings['school_address'] ?? '')); ?>"></label>
-                        <label><span>Logo Path</span><input type="text" name="school_logo" value="<?php echo htmlspecialchars((string) ($settings['school_logo'] ?? '')); ?>"></label>
-                        <label><span>Upload Logo</span><input type="file" name="school_logo_upload" accept=".jpg,.jpeg,.png,.gif,.webp,.jfif" class="upload-input"></label>
-                        <label><span>Facebook URL</span><input type="url" name="school_facebook" value="<?php echo htmlspecialchars((string) ($settings['school_facebook'] ?? '')); ?>"></label>
-                        <label><span>Instagram URL</span><input type="url" name="school_instagram" value="<?php echo htmlspecialchars((string) ($settings['school_instagram'] ?? '')); ?>"></label>
-                        <button type="submit">Save Settings</button>
-                    </form>
-                </article>
+                    <section class="dashboard-showcase-grid">
+                        <article class="panel dashboard-showcase-panel">
+                            <div class="panel-top dashboard-showcase-top">
+                                <div>
+                                    <h3>Latest Announcements</h3>
+                                </div>
+                            </div>
+                            <div class="announcement-feed">
+                                <?php foreach (array_slice($announcementItems, 0, 3) as $item): ?>
+                                    <article class="announcement-feed-item">
+                                        <strong><?php echo htmlspecialchars((string) $item['title']); ?></strong>
+                                        <p><?php echo htmlspecialchars((string) ($item['summary'] ?? $item['content'] ?? 'School update.')); ?></p>
+                                        <a href="#news-panel" class="feed-read-link dashboard-card-link">Read More</a>
+                                    </article>
+                                <?php endforeach; ?>
+                                <?php if ($announcementItems === []): ?>
+                                    <article class="announcement-feed-item">
+                                        <strong>No announcements yet</strong>
+                                        <p>Use the announcements panel to publish the first school notice.</p>
+                                        <a href="#news-panel" class="feed-read-link dashboard-card-link">Open Panel</a>
+                                    </article>
+                                <?php endif; ?>
+                            </div>
+                        </article>
 
-                <article class="panel">
-                    <div class="panel-top">
-                        <div>
-                            <p class="admin-eyebrow">Latest Activity</p>
-                            <h2>Newest admissions, news, and messages</h2>
-                        </div>
-                    </div>
-                    <div class="table-list">
-                        <?php foreach (array_slice($admissions, 0, 3) as $admission): ?>
-                            <div class="table-item">
-                                <strong><?php echo htmlspecialchars((string) $admission['applicant_name']); ?></strong>
-                                <span>Admission - <?php echo htmlspecialchars((string) $admission['status']); ?></span>
+                        <article class="panel dashboard-showcase-panel">
+                            <div class="panel-top dashboard-showcase-top">
+                                <div>
+                                    <h3>Media Uploads</h3>
+                                </div>
                             </div>
-                        <?php endforeach; ?>
-                        <?php foreach (array_slice($news, 0, 2) as $newsItem): ?>
-                            <div class="table-item">
-                                <strong><?php echo htmlspecialchars((string) $newsItem['title']); ?></strong>
-                                <span>News post</span>
+                            <div class="dashboard-media-actions">
+                                <a href="#gallery-panel" class="dashboard-media-action dashboard-card-link">+ Upload Image</a>
+                                <a href="#gallery-panel" class="dashboard-media-action dashboard-media-action-video dashboard-card-link">+ Upload Video</a>
                             </div>
-                        <?php endforeach; ?>
-                        <?php foreach (array_slice($contactMessages, 0, 2) as $messageItem): ?>
-                            <div class="table-item">
-                                <strong><?php echo htmlspecialchars((string) $messageItem['full_name']); ?></strong>
-                                <span>Contact message</span>
+
+                            <div class="dashboard-media-group">
+                                <div class="dashboard-media-group-top">
+                                    <strong>Image Gallery</strong>
+                                    <a href="#gallery-panel" class="inline-link dashboard-card-link">View All</a>
+                                </div>
+                                <div class="dashboard-media-thumbs">
+                                    <?php foreach (array_slice($imageMediaItems, 0, 3) as $item): ?>
+                                        <div class="dashboard-thumb">
+                                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars((string) $item['image_path']); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>">
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
-                        <?php endforeach; ?>
-                    </div>
-                </article>
-            </section>
+
+                            <div class="dashboard-media-group">
+                                <div class="dashboard-media-group-top">
+                                    <strong>Video Gallery</strong>
+                                    <a href="#gallery-panel" class="inline-link dashboard-card-link">View All</a>
+                                </div>
+                                <div class="dashboard-media-thumbs dashboard-media-thumbs-video">
+                                    <?php foreach (array_slice($videoMediaItems, 0, 2) as $item): ?>
+                                        <div class="dashboard-thumb dashboard-thumb-video">
+                                            <div class="dashboard-thumb-video-overlay">▶</div>
+                                            <img src="/MUBUGA-TSS/assets/images/school view 6.jpg" alt="<?php echo htmlspecialchars((string) $item['title']); ?>">
+                                            <span><?php echo htmlspecialchars((string) $item['title']); ?></span>
+                                        </div>
+                                    <?php endforeach; ?>
+                                    <?php if ($videoMediaItems === []): ?>
+                                        <div class="dashboard-thumb dashboard-thumb-video dashboard-thumb-video-empty">
+                                            <div class="dashboard-thumb-video-overlay">▶</div>
+                                            <img src="/MUBUGA-TSS/assets/images/school view 5.jpg" alt="Video placeholder">
+                                            <span>No videos yet</span>
+                                        </div>
+                                        <div class="dashboard-thumb dashboard-thumb-video dashboard-thumb-video-empty">
+                                            <div class="dashboard-thumb-video-overlay">▶</div>
+                                            <img src="/MUBUGA-TSS/assets/images/school view 4.jpg" alt="Video placeholder">
+                                            <span>Upload first video</span>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </article>
+                    </section>
+                </section>
             </div>
 
             <section class="admin-grid">

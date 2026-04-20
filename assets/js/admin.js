@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashboardViews = document.querySelectorAll('[data-dashboard-view]');
     const dashboardLinks = document.querySelectorAll('.dashboard-nav-link[href^="#"]');
     const dashboardCardLinks = document.querySelectorAll('.dashboard-card-link[href^="#"]');
+    const logoPathInput = document.querySelector('[data-logo-path-input]');
+    const logoUploadInput = document.querySelector('[data-logo-upload-input]');
+    const logoSizeInputs = document.querySelectorAll('[data-logo-size-input]');
+    const logoPreviewImages = document.querySelectorAll('[data-logo-preview-image]');
     const initialDashboardView = document.body.dataset.dashboardInitial || 'dashboard-panel';
 
     if (adminLoader) {
@@ -238,6 +242,111 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderFromPath();
     });
+
+    if (logoPreviewImages.length > 0) {
+        let currentLogoObjectUrl = null;
+
+        const updateLogoSizes = () => {
+            logoSizeInputs.forEach((input) => {
+                const key = input.dataset.logoSizeInput;
+                const previewImage = document.querySelector(`[data-logo-preview-image="${key}"]`);
+                const sizeLabel = document.querySelector(`[data-logo-preview-size-label="${key}"]`);
+
+                if (!previewImage) {
+                    return;
+                }
+
+                const min = Number(input.min || 0);
+                const max = Number(input.max || 999);
+                const fallback = key === 'admin' ? 34 : 52;
+                const rawSize = Number(input.value || fallback);
+                const clampedSize = Number.isFinite(rawSize)
+                    ? Math.min(max, Math.max(min, rawSize))
+                    : fallback;
+
+                previewImage.style.width = `${clampedSize}px`;
+                if (sizeLabel) {
+                    sizeLabel.textContent = `${clampedSize}px`;
+                }
+            });
+        };
+
+        const resolveLogoPreviewPath = (value) => {
+            const trimmed = (value || '').trim();
+            if (trimmed === '') {
+                return '';
+            }
+
+            if (/^(blob:|data:|https?:)?\/\//i.test(trimmed)) {
+                return trimmed;
+            }
+
+            return `/MUBUGA-TSS/${trimmed.replace(/^\/+/, '')}`;
+        };
+
+        const updateLogoSource = (source) => {
+            logoPreviewImages.forEach((image) => {
+                if (source === '') {
+                    image.removeAttribute('src');
+                    return;
+                }
+
+                image.src = source;
+            });
+        };
+
+        const syncLogoPreviewFromPath = () => {
+            if (!logoPathInput) {
+                return;
+            }
+
+            if (currentLogoObjectUrl) {
+                URL.revokeObjectURL(currentLogoObjectUrl);
+                currentLogoObjectUrl = null;
+            }
+
+            const resolvedPath = resolveLogoPreviewPath(logoPathInput.value);
+            if (resolvedPath !== '') {
+                updateLogoSource(resolvedPath);
+            }
+        };
+
+        if (logoPathInput) {
+            logoPathInput.addEventListener('input', syncLogoPreviewFromPath);
+        }
+
+        if (logoUploadInput) {
+            logoUploadInput.addEventListener('change', () => {
+                const [file] = logoUploadInput.files || [];
+
+                if (!file) {
+                    syncLogoPreviewFromPath();
+                    return;
+                }
+
+                if (currentLogoObjectUrl) {
+                    URL.revokeObjectURL(currentLogoObjectUrl);
+                }
+
+                currentLogoObjectUrl = URL.createObjectURL(file);
+                updateLogoSource(currentLogoObjectUrl);
+            });
+        }
+
+        logoSizeInputs.forEach((input) => {
+            input.addEventListener('input', updateLogoSizes);
+            input.addEventListener('change', updateLogoSizes);
+        });
+
+        logoPreviewImages.forEach((image) => {
+            image.addEventListener('error', () => {
+                syncLogoPreviewFromPath();
+            });
+        });
+
+        updateLogoSizes();
+        syncLogoPreviewFromPath();
+    }
 
     dropInputs.forEach((input) => {
         const dropzone = document.createElement('button');

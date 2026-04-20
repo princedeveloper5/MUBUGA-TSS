@@ -83,7 +83,10 @@ $page = sitePageContent('registration', [
     'image' => 'assets/images/school view 4.jpg',
 ]);
 
-renderSiteHeader($page['title'], $schoolName, $contacts, 'admissions');
+renderSiteHeader($page['title'], $schoolName, $contacts, 'admissions', [
+    'description' => $page['excerpt'],
+    'image' => $page['image'],
+]);
 renderInnerHero('REGISTRATION', $page['title'], $page['excerpt'], $page['image']);
 ?>
 <main>

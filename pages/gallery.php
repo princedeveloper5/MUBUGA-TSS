@@ -9,7 +9,10 @@ $page = sitePageContent('gallery', [
     'content' => 'School gallery',
     'image' => 'assets/images/school view 1.jpg',
 ]);
-renderSiteHeader($page['title'], $schoolName, $contacts, 'gallery');
+renderSiteHeader($page['title'], $schoolName, $contacts, 'gallery', [
+    'description' => $page['excerpt'],
+    'image' => $page['image'],
+]);
 renderInnerHero('GALLERY', $page['content'], $page['excerpt'], $page['image']);
 ?>
 <main>

@@ -18,7 +18,10 @@ $announcementItems = array_values(array_filter(array_map(function (array $item):
     return ($item['category'] ?? 'news') === 'announcements';
 }));
 
-renderSiteHeader($page['title'], $schoolName, $contacts, 'news');
+renderSiteHeader($page['title'], $schoolName, $contacts, 'news', [
+    'description' => $page['excerpt'],
+    'image' => $page['image'],
+]);
 renderInnerHero('ANNOUNCEMENTS', $page['title'], $page['excerpt'], $page['image']);
 ?>
 <main>

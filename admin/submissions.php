@@ -24,6 +24,9 @@ if (!$pdo instanceof PDO) {
 }
 
 if ($requestMethod === 'POST' && $pdo instanceof PDO) {
+    if (!adminVerifyCsrfToken((string) ($_POST['csrf_token'] ?? ''))) {
+        $error = 'Security token mismatch. Refresh the page and try again.';
+    } else {
     $action = (string) ($_POST['action'] ?? '');
 
     try {
@@ -46,6 +49,7 @@ if ($requestMethod === 'POST' && $pdo instanceof PDO) {
         }
     } catch (Throwable $exception) {
         $error = 'The submission update could not be saved.';
+    }
     }
 }
 
@@ -198,12 +202,14 @@ if ($pdo instanceof PDO) {
                                     <div class="item-actions">
                                         <?php if ((int) $messageItem['is_read'] !== 1): ?>
                                             <form method="post" class="inline-form">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                                                 <input type="hidden" name="action" value="mark_message_read">
                                                 <input type="hidden" name="id" value="<?php echo (int) $messageItem['id']; ?>">
                                                 <button type="submit" class="action-link action-button">Mark Read</button>
                                             </form>
                                         <?php endif; ?>
                                         <form method="post" class="inline-form" onsubmit="return confirm('Delete this message?');">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                                             <input type="hidden" name="action" value="delete_message">
                                             <input type="hidden" name="id" value="<?php echo (int) $messageItem['id']; ?>">
                                             <button type="submit" class="danger-button">Delete</button>
@@ -231,6 +237,7 @@ if ($pdo instanceof PDO) {
                                     <div class="item-actions">
                                         <?php if ((int) $subscriber['is_active'] === 1): ?>
                                             <form method="post" class="inline-form" onsubmit="return confirm('Mark this subscriber as inactive?');">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                                                 <input type="hidden" name="action" value="unsubscribe_email">
                                                 <input type="hidden" name="id" value="<?php echo (int) $subscriber['id']; ?>">
                                                 <button type="submit" class="danger-button">Unsubscribe</button>

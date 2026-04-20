@@ -8,7 +8,10 @@ $page = sitePageContent('contacts', [
     'content' => 'Reach Mubuga TSS for more information.',
     'image' => 'assets/images/mb2.jfif',
 ]);
-renderSiteHeader($page['title'], $schoolName, $contacts, 'contact');
+renderSiteHeader($page['title'], $schoolName, $contacts, 'contact', [
+    'description' => $page['excerpt'],
+    'image' => $page['image'],
+]);
 renderInnerHero('CONTACTS', $page['content'], $page['excerpt'], $page['image']);
 ?>
 <main>

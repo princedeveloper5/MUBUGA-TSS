@@ -78,6 +78,9 @@ if (!$pdo instanceof PDO) {
 }
 
 if ($requestMethod === 'POST' && $pdo instanceof PDO) {
+    if (!adminVerifyCsrfToken((string) ($_POST['csrf_token'] ?? ''))) {
+        $error = 'Security token mismatch. Refresh the page and try again.';
+    } else {
     $action = (string) ($_POST['action'] ?? '');
 
     try {
@@ -353,6 +356,7 @@ if ($requestMethod === 'POST' && $pdo instanceof PDO) {
         }
     } catch (Throwable $exception) {
         $error = 'The update could not be saved. Please check the values and try again.';
+    }
     }
 }
 
@@ -748,6 +752,7 @@ if ($pdo instanceof PDO) {
                         </div>
                     </div>
                     <form method="post" class="admin-form" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                         <input type="hidden" name="action" value="<?php echo $editType === 'news' ? 'update_news' : 'add_news'; ?>">
                         <input type="hidden" name="id" value="<?php echo (int) $newsForm['id']; ?>">
                         <label><span>Title</span><input type="text" name="title" value="<?php echo htmlspecialchars((string) $newsForm['title']); ?>"></label>
@@ -779,6 +784,7 @@ if ($pdo instanceof PDO) {
                                 <div class="item-actions">
                                     <a href="/MUBUGA-TSS/admin/dashboard.php?edit=news&id=<?php echo (int) $newsItem['id']; ?>" class="action-link">Edit</a>
                                     <form method="post" class="inline-form">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                                         <input type="hidden" name="action" value="delete_news">
                                         <input type="hidden" name="id" value="<?php echo (int) $newsItem['id']; ?>">
                                         <button type="submit" class="action-link action-button danger-button">Delete</button>
@@ -797,6 +803,7 @@ if ($pdo instanceof PDO) {
                         </div>
                     </div>
                     <form method="post" class="admin-form" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                         <input type="hidden" name="action" value="<?php echo $editType === 'gallery' ? 'update_gallery' : 'add_gallery'; ?>">
                         <input type="hidden" name="id" value="<?php echo (int) $galleryForm['id']; ?>">
                         <label><span>Title</span><input type="text" name="title" value="<?php echo htmlspecialchars((string) $galleryForm['title']); ?>"></label>
@@ -827,6 +834,7 @@ if ($pdo instanceof PDO) {
                                 <div class="item-actions">
                                     <a href="/MUBUGA-TSS/admin/dashboard.php?edit=gallery&id=<?php echo (int) $galleryItem['id']; ?>" class="action-link">Edit</a>
                                     <form method="post" class="inline-form">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                                         <input type="hidden" name="action" value="delete_gallery">
                                         <input type="hidden" name="id" value="<?php echo (int) $galleryItem['id']; ?>">
                                         <button type="submit" class="action-link action-button danger-button">Delete</button>
@@ -847,6 +855,7 @@ if ($pdo instanceof PDO) {
                         </div>
                     </div>
                     <form method="post" class="admin-form" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                         <input type="hidden" name="action" value="<?php echo $editType === 'page' ? 'update_page' : 'add_page'; ?>">
                         <input type="hidden" name="id" value="<?php echo (int) $pageForm['id']; ?>">
                         <label><span>Title</span><input type="text" name="title" value="<?php echo htmlspecialchars((string) $pageForm['title']); ?>"></label>
@@ -876,6 +885,7 @@ if ($pdo instanceof PDO) {
                                 <div class="item-actions">
                                     <a href="/MUBUGA-TSS/admin/dashboard.php?edit=page&id=<?php echo (int) $pageItem['id']; ?>" class="action-link">Edit</a>
                                     <form method="post" class="inline-form">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                                         <input type="hidden" name="action" value="delete_page">
                                         <input type="hidden" name="id" value="<?php echo (int) $pageItem['id']; ?>">
                                         <button type="submit" class="action-link action-button danger-button">Delete</button>
@@ -900,6 +910,7 @@ if ($pdo instanceof PDO) {
                                 <span><?php echo htmlspecialchars((string) ($admission['email'] ?? '')); ?> - <?php echo htmlspecialchars((string) $admission['created_at']); ?></span>
                                 <div class="item-actions">
                                     <form method="post" class="inline-form">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                                         <input type="hidden" name="action" value="update_admission_status">
                                         <input type="hidden" name="id" value="<?php echo (int) $admission['id']; ?>">
                                         <select name="status">
@@ -911,6 +922,7 @@ if ($pdo instanceof PDO) {
                                         <button type="submit" class="action-link action-button">Save</button>
                                     </form>
                                     <form method="post" class="inline-form">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                                         <input type="hidden" name="action" value="delete_admission">
                                         <input type="hidden" name="id" value="<?php echo (int) $admission['id']; ?>">
                                         <button type="submit" class="action-link action-button danger-button">Delete</button>
@@ -931,6 +943,7 @@ if ($pdo instanceof PDO) {
                         </div>
                     </div>
                     <form method="post" class="admin-form" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                         <input type="hidden" name="action" value="<?php echo $editType === 'program' ? 'update_program' : 'add_program'; ?>">
                         <input type="hidden" name="id" value="<?php echo (int) $programForm['id']; ?>">
                         <label><span>Title</span><input type="text" name="program_title" value="<?php echo htmlspecialchars((string) $programForm['title']); ?>"></label>
@@ -962,6 +975,7 @@ if ($pdo instanceof PDO) {
                                 <div class="item-actions">
                                     <a href="/MUBUGA-TSS/admin/dashboard.php?edit=program&id=<?php echo (int) $program['id']; ?>" class="action-link">Edit</a>
                                     <form method="post" class="inline-form">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                                         <input type="hidden" name="action" value="delete_program">
                                         <input type="hidden" name="id" value="<?php echo (int) $program['id']; ?>">
                                         <button type="submit" class="action-link action-button danger-button">Delete</button>
@@ -980,6 +994,7 @@ if ($pdo instanceof PDO) {
                         </div>
                     </div>
                     <form method="post" class="admin-form" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                         <input type="hidden" name="action" value="<?php echo $editType === 'staff' ? 'update_staff' : 'add_staff'; ?>">
                         <input type="hidden" name="id" value="<?php echo (int) $staffForm['id']; ?>">
                         <label><span>Full Name</span><input type="text" name="full_name" value="<?php echo htmlspecialchars((string) $staffForm['full_name']); ?>"></label>
@@ -1004,6 +1019,7 @@ if ($pdo instanceof PDO) {
                                 <div class="item-actions">
                                     <a href="/MUBUGA-TSS/admin/dashboard.php?edit=staff&id=<?php echo (int) $member['id']; ?>" class="action-link">Edit</a>
                                     <form method="post" class="inline-form">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                                         <input type="hidden" name="action" value="delete_staff">
                                         <input type="hidden" name="id" value="<?php echo (int) $member['id']; ?>">
                                         <button type="submit" class="action-link action-button danger-button">Delete</button>

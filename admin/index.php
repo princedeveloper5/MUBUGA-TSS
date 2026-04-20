@@ -13,6 +13,9 @@ $error = '';
 $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 if ($requestMethod === 'POST') {
+    if (!adminVerifyCsrfToken((string) ($_POST['csrf_token'] ?? ''))) {
+        $error = 'Your session token is invalid. Please try again.';
+    } else {
     $email = trim((string) ($_POST['email'] ?? ''));
     $password = (string) ($_POST['password'] ?? '');
 
@@ -22,6 +25,7 @@ if ($requestMethod === 'POST') {
     }
 
     $error = 'Invalid login details. Please try again.';
+    }
 }
 ?>
 
@@ -99,6 +103,7 @@ if ($requestMethod === 'POST') {
             <?php endif; ?>
 
             <form method="post" class="login-form" id="loginForm">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                 
                 <div class="input-group">
                     <div class="input-wrapper">
@@ -199,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<script src="/MUBUGA-TSS/assets/js/photo-viewer-simple.js"></script>
+<script src="/MUBUGA-TSS/assets/js/photo-viewer.js"></script>
 
 </body>
 </html>

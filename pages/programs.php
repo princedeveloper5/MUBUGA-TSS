@@ -8,7 +8,10 @@ $page = sitePageContent('our-programs', [
     'content' => 'Technical programs for modern careers.',
     'image' => 'assets/images/mb3.jfif',
 ]);
-renderSiteHeader($page['title'], $schoolName, $contacts, 'programs');
+renderSiteHeader($page['title'], $schoolName, $contacts, 'programs', [
+    'description' => $page['excerpt'],
+    'image' => $page['image'],
+]);
 renderInnerHero('OUR PROGRAMS', $page['content'], $page['excerpt'], $page['image']);
 ?>
 <main>

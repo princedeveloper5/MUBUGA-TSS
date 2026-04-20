@@ -8,7 +8,10 @@ $page = sitePageContent('about-us', [
     'content' => $schoolName . ' is committed to helping learners grow into capable professionals and responsible citizens through strong technical education and a disciplined school culture.',
     'image' => 'assets/images/students.jfif',
 ]);
-renderSiteHeader($page['title'], $schoolName, $contacts, 'about');
+renderSiteHeader($page['title'], $schoolName, $contacts, 'about', [
+    'description' => $page['excerpt'],
+    'image' => $page['image'],
+]);
 renderInnerHero('WELCOME TO', $schoolName, $page['excerpt'], $page['image']);
 ?>
 <main>
@@ -33,7 +36,7 @@ renderInnerHero('WELCOME TO', $schoolName, $page['excerpt'], $page['image']);
             <div class="feature-stack">
                 <article class="feature-card">
                     <h3>Our Motto</h3>
-                    <p></p>
+                    <p>Discipline, competence, and innovation in technical education.</p>
                 </article>
                 <article class="feature-card">
                     <h3>Vision</h3>

@@ -76,7 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-renderSiteHeader('Admissions', $schoolName, $contacts, 'admissions');
+renderSiteHeader('Admissions', $schoolName, $contacts, 'admissions', [
+    'description' => 'Find the requirements and admission path for joining Mubuga TSS.',
+    'image' => 'assets/images/IM8.jpg',
+]);
 renderInnerHero('ADMISSION', 'Start your journey at Mubuga TSS', 'Find the basic requirements and simple admission pathway for joining one of our technical trades.', 'assets/images/IM8.jpg');
 ?>
 <main>

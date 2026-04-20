@@ -8,7 +8,10 @@ $page = sitePageContent('facilities', [
     'content' => 'Learning spaces built for practical growth.',
     'image' => 'assets/images/mb2.jfif',
 ]);
-renderSiteHeader($page['title'], $schoolName, $contacts, 'facilities');
+renderSiteHeader($page['title'], $schoolName, $contacts, 'facilities', [
+    'description' => $page['excerpt'],
+    'image' => $page['image'],
+]);
 renderInnerHero('FACILITIES', $page['content'], $page['excerpt'], $page['image']);
 ?>
 <main>

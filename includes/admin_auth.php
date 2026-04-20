@@ -77,3 +77,24 @@ function adminLogout(): void
 
     session_destroy();
 }
+
+function adminCsrfToken(): string
+{
+    if (empty($_SESSION['admin_csrf_token']) || !is_string($_SESSION['admin_csrf_token'])) {
+        $_SESSION['admin_csrf_token'] = bin2hex(random_bytes(32));
+    }
+
+    return $_SESSION['admin_csrf_token'];
+}
+
+function adminVerifyCsrfToken(?string $token): bool
+{
+    $submittedToken = trim((string) $token);
+    $sessionToken = (string) ($_SESSION['admin_csrf_token'] ?? '');
+
+    if ($submittedToken === '' || $sessionToken === '') {
+        return false;
+    }
+
+    return hash_equals($sessionToken, $submittedToken);
+}

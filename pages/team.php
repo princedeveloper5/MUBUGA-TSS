@@ -8,7 +8,10 @@ $page = sitePageContent('our-team', [
     'content' => 'Meet our team',
     'image' => 'assets/images/master.jpeg',
 ]);
-renderSiteHeader($page['title'], $schoolName, $contacts, 'team');
+renderSiteHeader($page['title'], $schoolName, $contacts, 'team', [
+    'description' => $page['excerpt'],
+    'image' => $page['image'],
+]);
 renderInnerHero('OUR TEAM', $page['content'], $page['excerpt'], $page['image']);
 ?>
 <main>

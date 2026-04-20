@@ -21,7 +21,11 @@ if ($requestedSlug !== '') {
 }
 
 if ($selectedNews !== null) {
-    renderSiteHeader($selectedNews['title'], $schoolName, $contacts, 'news');
+    renderSiteHeader($selectedNews['title'], $schoolName, $contacts, 'news', [
+        'description' => (string) ($selectedNews['text'] ?? ''),
+        'image' => (string) ($selectedNews['image'] ?? ''),
+        'type' => 'article',
+    ]);
     renderInnerHero(newsCategoryLabel((string) $selectedNews['category']), $selectedNews['title'], $selectedNews['text'], $selectedNews['image']);
 } else {
     $page = sitePageContent('news', [
@@ -30,7 +34,10 @@ if ($selectedNews !== null) {
         'content' => 'School updates',
         'image' => 'assets/images/students.jfif',
     ]);
-    renderSiteHeader($page['title'], $schoolName, $contacts, 'news');
+    renderSiteHeader($page['title'], $schoolName, $contacts, 'news', [
+        'description' => $page['excerpt'],
+        'image' => $page['image'],
+    ]);
     renderInnerHero('LATEST NEWS', $page['content'], $page['excerpt'], $page['image']);
 }
 ?>

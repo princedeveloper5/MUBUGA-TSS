@@ -10,7 +10,10 @@ $page = sitePageContent('fees', [
     'image' => 'assets/images/school view 3.jpg',
 ]);
 
-renderSiteHeader($page['title'], $schoolName, $contacts, 'admissions');
+renderSiteHeader($page['title'], $schoolName, $contacts, 'admissions', [
+    'description' => $page['excerpt'],
+    'image' => $page['image'],
+]);
 renderInnerHero('FEES & REQUIREMENTS', $page['title'], $page['excerpt'], $page['image']);
 ?>
 <main>

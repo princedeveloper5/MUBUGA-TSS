@@ -2,7 +2,64 @@
 
 declare(strict_types=1);
 
-function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts, string $active = ''): void
+function siteBaseUrl(): string
+{
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = (string) ($_SERVER['HTTP_HOST'] ?? 'localhost');
+    return $scheme . '://' . $host;
+}
+
+function siteAbsoluteUrl(string $path): string
+{
+    $normalizedPath = '/' . ltrim($path, '/');
+    return siteBaseUrl() . $normalizedPath;
+}
+
+function renderSeoMetaTags(string $schoolName, string $pageTitle, array $seo = []): void
+{
+    $requestUri = (string) ($_SERVER['REQUEST_URI'] ?? '/MUBUGA-TSS/');
+    $canonicalPath = strtok($requestUri, '?');
+    if (!is_string($canonicalPath) || $canonicalPath === '') {
+        $canonicalPath = '/MUBUGA-TSS/';
+    }
+
+    $description = trim((string) ($seo['description'] ?? ($schoolName . ' official website.')));
+    if ($description === '') {
+        $description = $schoolName . ' official website.';
+    }
+
+    $type = trim((string) ($seo['type'] ?? 'website'));
+    if ($type === '') {
+        $type = 'website';
+    }
+
+    $canonicalUrl = trim((string) ($seo['canonical_url'] ?? siteAbsoluteUrl($canonicalPath)));
+    if ($canonicalUrl === '') {
+        $canonicalUrl = siteAbsoluteUrl($canonicalPath);
+    }
+
+    $imagePath = trim((string) ($seo['image'] ?? ''));
+    $imageUrl = '';
+    if ($imagePath !== '') {
+        $imageUrl = siteAbsoluteUrl('/MUBUGA-TSS/' . ltrim($imagePath, '/'));
+    }
+
+    echo '<meta name="description" content="' . htmlspecialchars($description, ENT_QUOTES, 'UTF-8') . '">' . PHP_EOL;
+    echo '<link rel="canonical" href="' . htmlspecialchars($canonicalUrl, ENT_QUOTES, 'UTF-8') . '">' . PHP_EOL;
+    echo '<meta property="og:title" content="' . htmlspecialchars($pageTitle . ' | ' . $schoolName, ENT_QUOTES, 'UTF-8') . '">' . PHP_EOL;
+    echo '<meta property="og:description" content="' . htmlspecialchars($description, ENT_QUOTES, 'UTF-8') . '">' . PHP_EOL;
+    echo '<meta property="og:type" content="' . htmlspecialchars($type, ENT_QUOTES, 'UTF-8') . '">' . PHP_EOL;
+    echo '<meta property="og:url" content="' . htmlspecialchars($canonicalUrl, ENT_QUOTES, 'UTF-8') . '">' . PHP_EOL;
+    if ($imageUrl !== '') {
+        echo '<meta property="og:image" content="' . htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8') . '">' . PHP_EOL;
+        echo '<meta name="twitter:image" content="' . htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8') . '">' . PHP_EOL;
+    }
+    echo '<meta name="twitter:card" content="summary_large_image">' . PHP_EOL;
+    echo '<meta name="twitter:title" content="' . htmlspecialchars($pageTitle . ' | ' . $schoolName, ENT_QUOTES, 'UTF-8') . '">' . PHP_EOL;
+    echo '<meta name="twitter:description" content="' . htmlspecialchars($description, ENT_QUOTES, 'UTF-8') . '">' . PHP_EOL;
+}
+
+function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts, string $active = '', array $seo = []): void
 {
     global $siteMeta;
     $formStatus = (string) ($_GET['form_status'] ?? '');
@@ -22,7 +79,7 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle . ' | ' . $schoolName); ?></title>
-    <meta name="description" content="<?php echo htmlspecialchars($schoolName); ?> official website.">
+    <?php renderSeoMetaTags($schoolName, $pageTitle, $seo); ?>
     <link rel="icon" type="image/png" href="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

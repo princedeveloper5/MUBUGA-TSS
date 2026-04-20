@@ -34,6 +34,7 @@ if ($requestMethod === 'POST') {
 
     <link rel="icon" type="image/png" href="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG">
     <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/admin.css">
+    <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/photo-viewer.css">
 </head>
 
 <body class="admin-login-page">
@@ -82,7 +83,7 @@ if ($requestMethod === 'POST') {
         <div class="login-right">
             <div class="login-header">
                 <div class="branding-section">
-                    <img src="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG" alt="Mubuga TSS Logo" class="branding-logo">
+                    <img src="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG" alt="Mubuga TSS Logo" class="branding-logo photo-viewer">
                     <div class="branding-text">
                         <h2 class="branding-title">MUBUGA TSS</h2>
                         <p class="branding-subtitle">ADMIN LOGIN</p>
@@ -197,6 +198,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<script src="/MUBUGA-TSS/assets/js/photo-viewer-simple.js"></script>
 
 </body>
 </html>

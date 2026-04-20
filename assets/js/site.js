@@ -60,9 +60,10 @@ const initSite = () => {
                 return;
             }
 
-            // On mobile, first tap opens submenu; second tap can navigate.
+            // On mobile, tapping parent links toggles submenu without navigation.
+            event.preventDefault();
+
             if (!dropdown.classList.contains('is-open')) {
-                event.preventDefault();
                 navDropdowns.forEach((item) => {
                     if (item !== dropdown) {
                         item.classList.remove('is-open');

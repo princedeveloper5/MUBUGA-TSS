@@ -85,6 +85,7 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/site.css">
+    <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/photo-viewer.css">
 </head>
 <body>
     <div class="project-loader" data-project-loader>
@@ -352,6 +353,7 @@ function renderSiteFooter(string $schoolName): void
         </footer>
     </div>
     <script src="/MUBUGA-TSS/assets/js/site.js"></script>
+    <script src="/MUBUGA-TSS/assets/js/photo-viewer.js"></script>
 </body>
 </html>
 <?php

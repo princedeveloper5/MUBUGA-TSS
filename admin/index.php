@@ -45,55 +45,39 @@ if ($requestMethod === 'POST') {
 
 <div class="login-shell">
     <div class="login-card">
-        
-        <!-- LEFT SIDE - Illustration -->
         <div class="login-left">
-            <div class="login-illustration">
-                <!-- Abstract shapes background -->
-                <div class="abstract-shape shape-1"></div>
-                <div class="abstract-shape shape-2"></div>
-                <div class="abstract-shape shape-3"></div>
-                
-                <!-- Main illustration container -->
-                <div class="illustration-content">
-                    <!-- Speech bubble with dots -->
-                    <div class="speech-bubble">
-                        <div class="speech-dots">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
+            <div class="login-panel">
+                <span class="login-panel-badge">SiteAdmin</span>
+                <h1>Welcome back</h1>
+                <p>Manage announcements, media uploads, school pages, and admissions from one place.</p>
+                <div class="login-panel-features">
+                    <div class="login-feature-item">
+                        <strong>Media</strong>
+                        <span>Upload image and video content quickly.</span>
                     </div>
-                    
-                    <!-- Person at desk illustration -->
-                    <div class="person-illustration">
-                        <div class="person">
-                            <div class="head"></div>
-                            <div class="body"></div>
-                            <div class="arms"></div>
-                        </div>
-                        <div class="desk">
-                            <div class="laptop"></div>
-                            <div class="lamp"></div>
-                            <div class="plant plant-1"></div>
-                            <div class="plant plant-2"></div>
-                        </div>
+                    <div class="login-feature-item">
+                        <strong>Announcements</strong>
+                        <span>Publish school updates from the same dashboard.</span>
+                    </div>
+                    <div class="login-feature-item">
+                        <strong>Settings</strong>
+                        <span>Keep your public site details updated.</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT SIDE - Login Form -->
         <div class="login-right">
             <div class="login-header">
                 <div class="branding-section">
                     <img src="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG" alt="Mubuga TSS Logo" class="branding-logo photo-viewer">
                     <div class="branding-text">
                         <h2 class="branding-title">MUBUGA TSS</h2>
-                        <p class="branding-subtitle">ADMIN LOGIN</p>
+                        <p class="branding-subtitle">ADMIN PANEL</p>
                     </div>
                 </div>
-                <h1 class="login-heading">Login</h1>
+                <h1 class="login-heading">Admin Login</h1>
+                <p class="login-intro">Use your administrator account to enter the dashboard.</p>
             </div>
 
             <?php if ($error !== ''): ?>
@@ -148,10 +132,6 @@ if ($requestMethod === 'POST') {
                             <span class="radio-label">Show</span>
                         </label>
                     </div>
-                </div>
-
-                <div class="forgot-password">
-                    <a href="#" class="forgot-link">Forgot Password?</a>
                 </div>
 
                 <div class="login-actions">

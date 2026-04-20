@@ -66,11 +66,39 @@ function adminBuildGalleryCategory(string $mediaType, string $category): string
     return $resolvedMediaType . ':' . $resolvedCategory;
 }
 
+function adminIsAbsoluteMediaPath(string $path): bool
+{
+    return preg_match('~^(?:https?:)?//~i', trim($path)) === 1;
+}
+
+function adminIsVideoPath(string $path): bool
+{
+    return preg_match('/\.(mp4|webm|ogg)$/i', trim($path)) === 1;
+}
+
+function adminResolveMediaUrl(string $path): string
+{
+    $normalized = trim(str_replace('\\', '/', $path));
+    if ($normalized === '') {
+        return '/MUBUGA-TSS/assets/images/school view 1.jpg';
+    }
+
+    if (adminIsAbsoluteMediaPath($normalized)) {
+        return $normalized;
+    }
+
+    return '/MUBUGA-TSS/' . ltrim($normalized, '/');
+}
+
 $pdo = getDatabaseConnection();
 $message = '';
 $error = '';
 $editType = (string) ($_GET['edit'] ?? '');
 $editId = (int) ($_GET['id'] ?? 0);
+$newsFilter = strtolower(trim((string) ($_GET['news_filter'] ?? 'all')));
+if (!in_array($newsFilter, ['all', 'published', 'draft'], true)) {
+    $newsFilter = 'all';
+}
 $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 if (!$pdo instanceof PDO) {
@@ -197,15 +225,19 @@ if ($requestMethod === 'POST' && $pdo instanceof PDO) {
             $featuredImage = trim((string) ($_POST['featured_image'] ?? 'assets/images/mb1.jfif'));
             $featuredImage = handleAdminImageUpload('featured_image_upload', $featuredImage);
             $newsCategory = adminNormalizeNewsCategory((string) ($_POST['news_category'] ?? 'news'));
-            $stmt = $pdo->prepare('INSERT INTO news (title, slug, summary, content, featured_image, published_at, status) VALUES (:title, :slug, :summary, :content, :featured_image, NOW(), "published")');
+            $newsStatus = strtolower(trim((string) ($_POST['news_status'] ?? 'published'))) === 'draft' ? 'draft' : 'published';
+            $publishedAt = $newsStatus === 'published' ? date('Y-m-d H:i:s') : null;
+            $stmt = $pdo->prepare('INSERT INTO news (title, slug, summary, content, featured_image, published_at, status) VALUES (:title, :slug, :summary, :content, :featured_image, :published_at, :status)');
             $stmt->execute([
                 'title' => $title,
                 'slug' => $slug,
                 'summary' => trim((string) ($_POST['summary'] ?? '')),
                 'content' => adminEncodeNewsContent((string) ($_POST['content'] ?? ''), $newsCategory),
                 'featured_image' => $featuredImage,
+                'published_at' => $publishedAt,
+                'status' => $newsStatus,
             ]);
-            $message = ucfirst($newsCategory) . ' item published.';
+            $message = ucfirst($newsCategory) . ' item saved as ' . $newsStatus . '.';
         }
 
         if ($action === 'update_news') {
@@ -218,7 +250,8 @@ if ($requestMethod === 'POST' && $pdo instanceof PDO) {
             $featuredImage = trim((string) ($_POST['featured_image'] ?? 'assets/images/mb1.jfif'));
             $featuredImage = handleAdminImageUpload('featured_image_upload', $featuredImage);
             $newsCategory = adminNormalizeNewsCategory((string) ($_POST['news_category'] ?? 'news'));
-            $stmt = $pdo->prepare('UPDATE news SET title = :title, slug = :slug, summary = :summary, content = :content, featured_image = :featured_image WHERE id = :id');
+            $newsStatus = strtolower(trim((string) ($_POST['news_status'] ?? 'published'))) === 'draft' ? 'draft' : 'published';
+            $stmt = $pdo->prepare('UPDATE news SET title = :title, slug = :slug, summary = :summary, content = :content, featured_image = :featured_image, status = :status, published_at = IF(:status = "published", COALESCE(published_at, NOW()), published_at) WHERE id = :id');
             $stmt->execute([
                 'id' => $id,
                 'title' => $title,
@@ -226,8 +259,9 @@ if ($requestMethod === 'POST' && $pdo instanceof PDO) {
                 'summary' => trim((string) ($_POST['summary'] ?? '')),
                 'content' => adminEncodeNewsContent((string) ($_POST['content'] ?? ''), $newsCategory),
                 'featured_image' => $featuredImage,
+                'status' => $newsStatus,
             ]);
-            $message = ucfirst($newsCategory) . ' item updated.';
+            $message = ucfirst($newsCategory) . ' item updated as ' . $newsStatus . '.';
             $editType = '';
             $editId = 0;
         }
@@ -364,6 +398,7 @@ $settings = [];
 $programs = [];
 $staff = [];
 $news = [];
+$filteredNews = [];
 $gallery = [];
 $admissions = [];
 $pages = [];
@@ -395,6 +430,7 @@ $newsForm = [
     'title' => '',
     'slug' => '',
     'news_category' => 'news',
+    'status' => 'published',
     'summary' => '',
     'content' => '',
     'featured_image' => 'assets/images/mb1.jfif',
@@ -427,13 +463,20 @@ if ($pdo instanceof PDO) {
     }
     $programs = $pdo->query('SELECT id, title, slug, short_description, duration, department, cover_image, status FROM programs ORDER BY id DESC')->fetchAll();
     $staff = $pdo->query('SELECT id, full_name, job_title, bio, photo, display_order, is_featured, status FROM staff ORDER BY display_order ASC, id DESC')->fetchAll();
-    $news = $pdo->query('SELECT id, title, slug, summary, content, featured_image, published_at FROM news ORDER BY id DESC')->fetchAll();
+    $news = $pdo->query('SELECT id, title, slug, summary, content, featured_image, published_at, status FROM news ORDER BY id DESC')->fetchAll();
     foreach ($news as &$newsItem) {
         $decodedNewsContent = adminDecodeNewsContent((string) ($newsItem['content'] ?? ''));
         $newsItem['category'] = $decodedNewsContent['category'];
         $newsItem['content'] = $decodedNewsContent['content'];
     }
     unset($newsItem);
+    $filteredNews = array_values(array_filter($news, static function (array $item) use ($newsFilter): bool {
+        if ($newsFilter === 'all') {
+            return true;
+        }
+
+        return strtolower((string) ($item['status'] ?? 'published')) === $newsFilter;
+    }));
 
     $gallery = $pdo->query('SELECT id, title, image_path, caption, category, is_featured FROM gallery ORDER BY id DESC')->fetchAll();
     foreach ($gallery as &$galleryItem) {
@@ -459,7 +502,7 @@ if ($pdo instanceof PDO) {
     }
 
     if ($editType === 'news' && $editId > 0) {
-        $stmt = $pdo->prepare('SELECT id, title, slug, summary, content, featured_image FROM news WHERE id = :id LIMIT 1');
+        $stmt = $pdo->prepare('SELECT id, title, slug, summary, content, featured_image, status FROM news WHERE id = :id LIMIT 1');
         $stmt->execute(['id' => $editId]);
         $newsForm = $stmt->fetch() ?: $newsForm;
         $decodedNewsContent = adminDecodeNewsContent((string) ($newsForm['content'] ?? ''));
@@ -519,13 +562,16 @@ if ($pdo instanceof PDO) {
     $userCount = count($staff) + 1;
 }
 ?>
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mubuga TSS Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/admin.css">
+    <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/photo-viewer.css">
 </head>
 <body class="admin-page" data-dashboard-initial="<?php echo htmlspecialchars($activeDashboardPanel); ?>">
     <div class="admin-loader" data-admin-loader>
@@ -543,17 +589,16 @@ if ($pdo instanceof PDO) {
         <aside class="admin-sidebar dashboard-sidebar">
             <div class="dashboard-sidebar-top">
                 <div class="dashboard-brand-block">
-                    <a href="/MUBUGA-TSS/admin/dashboard.php" class="dashboard-brand-icon" aria-label="Mubuga TSS dashboard home">
-                        <img src="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG" alt="Mubuga TSS logo" class="dashboard-brand-logo">
+                    <a href="/MUBUGA-TSS/admin/dashboard.php" class="dashboard-brand-icon dashboard-brand-mark" aria-label="Mubuga TSS dashboard home">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5v8A1.5 1.5 0 0 1 18.5 21h-13A1.5 1.5 0 0 1 4 19.5v-8z" fill="currentColor"/><path d="M9.5 21v-5h5v5" fill="rgba(255,255,255,0.9)"/></svg>
                     </a>
                     <div class="dashboard-brand-copy">
-                        <p class="admin-eyebrow">Admin Console</p>
-                        <h1>Mubuga TSS</h1>
-                        <p>Manage school content, staff updates, admissions, and public communication.</p>
+                        <h1>SiteAdmin</h1>
                     </div>
                 </div>
 
                 <nav class="dashboard-nav" aria-label="Dashboard navigation">
+                    <p class="dashboard-nav-section-label">Main</p>
                     <a href="#dashboard-panel" class="dashboard-nav-link is-active" data-tooltip="Dashboard" title="Dashboard" aria-label="Dashboard">
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h5A1.5 1.5 0 0 1 12 5.5v5A1.5 1.5 0 0 1 10.5 12h-5A1.5 1.5 0 0 1 4 10.5v-5zM4 15.5A1.5 1.5 0 0 1 5.5 14h5a1.5 1.5 0 0 1 1.5 1.5v3A1.5 1.5 0 0 1 10.5 20h-5A1.5 1.5 0 0 1 4 18.5v-3zM14 5.5A1.5 1.5 0 0 1 15.5 4h3A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 14 18.5v-13z" fill="currentColor"/></svg>
                         <span>Dashboard</span>
@@ -574,15 +619,12 @@ if ($pdo instanceof PDO) {
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 1 1 14 0H5zm14.5-9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM18 20c0-2.02-.76-3.86-2.01-5.26A6 6 0 0 1 22 20h-4z" fill="currentColor"/></svg>
                         <span>Manage Users</span>
                     </a>
-                    <a href="#pages-panel" class="dashboard-nav-link" data-tooltip="Settings" title="Settings" aria-label="Settings">
+                    <a href="#settings-panel" class="dashboard-nav-link" data-tooltip="Settings" title="Settings" aria-label="Settings">
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.23-1.13.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94L2.83 14.52a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.4 1.05.72 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.84a.5.5 0 0 0 .5-.42l.36-2.54c.58-.23 1.13-.54 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5z" fill="currentColor"/></svg>
                         <span>Settings</span>
                     </a>
-                    <a href="#programs-panel" class="dashboard-nav-link" data-tooltip="Manage Programs" title="Programs" aria-label="Programs">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h14a1 1 0 0 1 1 1v12.5a1 1 0 0 1-1.447.894L12 15.118l-6.553 3.276A1 1 0 0 1 4 17.5V5a1 1 0 0 1 1-1zm2 3v2h10V7H7zm0 4v2h7v-2H7z" fill="currentColor"/></svg>
-                        <span>Programs</span>
-                    </a>
-                    <a href="#admissions-panel" class="dashboard-nav-link" data-tooltip="View Admissions" title="Admissions" aria-label="Admissions">
+                    <p class="dashboard-nav-section-label dashboard-nav-section-label-secondary">More</p>
+                    <a href="#admissions-panel" class="dashboard-nav-link dashboard-nav-link-secondary" data-tooltip="Admissions" title="Admissions" aria-label="Admissions">
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5 4 6.5v5.8c0 4.8 3.12 9.18 8 10.7 4.88-1.52 8-5.9 8-10.7V6.5l-8-4zm-1 5h2v4h3v2h-5v-6z" fill="currentColor"/></svg>
                         <span>Admissions</span>
                     </a>
@@ -590,7 +632,7 @@ if ($pdo instanceof PDO) {
             </div>
 
             <div class="dashboard-sidebar-footer">
-                <a href="/MUBUGA-TSS/admin/submissions.php" class="dashboard-nav-link" data-tooltip="View Submissions" title="Submissions" aria-label="Submissions">
+                <a href="/MUBUGA-TSS/admin/submissions.php" class="dashboard-nav-link dashboard-nav-link-secondary" data-tooltip="Submissions" title="Submissions" aria-label="Submissions">
                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13zM7 8v2h10V8H7zm0 4v2h7v-2H7z" fill="currentColor"/></svg>
                     <span>Submissions</span>
                 </a>
@@ -604,12 +646,13 @@ if ($pdo instanceof PDO) {
         <main class="admin-main dashboard-main">
             <header class="dashboard-header dashboard-header-compact">
                 <nav class="dashboard-top-menu" aria-label="Admin quick navigation">
-                    <a href="#dashboard-panel" class="dashboard-top-link dashboard-card-link">Home</a>
-                    <a href="#gallery-panel" class="dashboard-top-link dashboard-card-link">Media</a>
-                    <a href="#news-panel" class="dashboard-top-link dashboard-card-link">Announcements</a>
-                    <a href="#pages-panel" class="dashboard-top-link dashboard-card-link">About</a>
+                    <a href="#dashboard-panel" class="dashboard-top-link dashboard-card-link"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5v7A1.5 1.5 0 0 1 18.5 20h-13A1.5 1.5 0 0 1 4 18.5v-7z" fill="currentColor"/></svg><span>Home</span></a>
+                    <a href="#gallery-panel" class="dashboard-top-link dashboard-card-link"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5a2 2 0 0 0-2 2v10.5A2.5 2.5 0 0 0 5.5 20h13a2.5 2.5 0 0 0 2.5-2.5V7a2 2 0 0 0-2-2H5zm2.5 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm11.5 9.5H5.5a.5.5 0 0 1-.39-.813l3.254-4.067a1 1 0 0 1 1.53.017l1.617 2.055 2.75-3.261a1 1 0 0 1 1.55.047l3.58 4.299A.5.5 0 0 1 19 17.5z" fill="currentColor"/></svg><span>Media</span></a>
+                    <a href="#news-panel" class="dashboard-top-link dashboard-card-link"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 10.5 16.5 4v16L3 13.5v-3zm14.5 1.75h2.25a1.25 1.25 0 0 1 0 2.5H17.5v-2.5zM5.75 14.1h2.2l1.25 4.15H7.1L5.75 14.1z" fill="currentColor"/></svg><span>Announcements</span></a>
+                    <a href="#settings-panel" class="dashboard-top-link dashboard-card-link"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.23-1.13.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94L2.83 14.52a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.4 1.05.72 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.84a.5.5 0 0 0 .5-.42l.36-2.54c.58-.23 1.13-.54 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5z" fill="currentColor"/></svg><span>About</span></a>
                 </nav>
                 <div class="dashboard-admin-pill">
+                    <img src="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG" alt="Admin profile" class="dashboard-admin-avatar-image">
                     <span class="dashboard-admin-role">Admin</span>
                     <strong><?php echo htmlspecialchars($adminName); ?></strong>
                 </div>
@@ -632,28 +675,36 @@ if ($pdo instanceof PDO) {
 
                     <section class="dashboard-stats-strip">
                         <a href="#gallery-panel" class="dashboard-mini-stat dashboard-card-link">
-                            <span class="dashboard-mini-stat-icon dashboard-mini-stat-icon-green">IM</span>
+                            <span class="dashboard-mini-stat-icon dashboard-mini-stat-icon-green" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none"><path d="M5 5a2 2 0 0 0-2 2v10.5A2.5 2.5 0 0 0 5.5 20h13a2.5 2.5 0 0 0 2.5-2.5V7a2 2 0 0 0-2-2H5zm2.5 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm11.5 9.5H5.5a.5.5 0 0 1-.39-.813l3.254-4.067a1 1 0 0 1 1.53.017l1.617 2.055 2.75-3.261a1 1 0 0 1 1.55.047l3.58 4.299A.5.5 0 0 1 19 17.5z" fill="currentColor"/></svg>
+                            </span>
                             <div>
                                 <small>Total Images</small>
                                 <strong><?php echo $imageCount; ?></strong>
                             </div>
                         </a>
                         <a href="#gallery-panel" class="dashboard-mini-stat dashboard-card-link">
-                            <span class="dashboard-mini-stat-icon dashboard-mini-stat-icon-blue">VD</span>
+                            <span class="dashboard-mini-stat-icon dashboard-mini-stat-icon-blue" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none"><path d="M4.5 5h10A1.5 1.5 0 0 1 16 6.5v2.586l3.293-3.293A1 1 0 0 1 21 6.5v11a1 1 0 0 1-1.707.707L16 14.914V17.5A1.5 1.5 0 0 1 14.5 19h-10A1.5 1.5 0 0 1 3 17.5v-11A1.5 1.5 0 0 1 4.5 5z" fill="currentColor"/></svg>
+                            </span>
                             <div>
                                 <small>Total Videos</small>
                                 <strong><?php echo $videoCount; ?></strong>
                             </div>
                         </a>
                         <a href="#news-panel" class="dashboard-mini-stat dashboard-card-link">
-                            <span class="dashboard-mini-stat-icon dashboard-mini-stat-icon-orange">AN</span>
+                            <span class="dashboard-mini-stat-icon dashboard-mini-stat-icon-orange" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none"><path d="M3 10.5 16.5 4v16L3 13.5v-3zm14.5 1.75h2.25a1.25 1.25 0 0 1 0 2.5H17.5v-2.5zM5.75 14.1h2.2l1.25 4.15H7.1L5.75 14.1z" fill="currentColor"/></svg>
+                            </span>
                             <div>
                                 <small>Announcements</small>
                                 <strong><?php echo $announcementCount; ?></strong>
                             </div>
                         </a>
                         <a href="#staff-panel" class="dashboard-mini-stat dashboard-card-link">
-                            <span class="dashboard-mini-stat-icon dashboard-mini-stat-icon-purple">US</span>
+                            <span class="dashboard-mini-stat-icon dashboard-mini-stat-icon-purple" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 1 1 14 0H5zm14.5-9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM18 20c0-2.02-.76-3.86-2.01-5.26A6 6 0 0 1 22 20h-4z" fill="currentColor"/></svg>
+                            </span>
                             <div>
                                 <small>Users</small>
                                 <strong><?php echo $userCount; ?></strong>
@@ -705,7 +756,7 @@ if ($pdo instanceof PDO) {
                                 <div class="dashboard-media-thumbs">
                                     <?php foreach (array_slice($imageMediaItems, 0, 3) as $item): ?>
                                         <div class="dashboard-thumb">
-                                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars((string) $item['image_path']); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>">
+                                            <img src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="photo-viewer">
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
@@ -719,20 +770,24 @@ if ($pdo instanceof PDO) {
                                 <div class="dashboard-media-thumbs dashboard-media-thumbs-video">
                                     <?php foreach (array_slice($videoMediaItems, 0, 2) as $item): ?>
                                         <div class="dashboard-thumb dashboard-thumb-video">
-                                            <div class="dashboard-thumb-video-overlay">▶</div>
-                                            <img src="/MUBUGA-TSS/assets/images/school view 6.jpg" alt="<?php echo htmlspecialchars((string) $item['title']); ?>">
+                                            <div class="dashboard-thumb-video-overlay">&#9658;</div>
+                                            <?php if (adminIsVideoPath((string) $item['image_path'])): ?>
+                                                <video muted playsinline preload="metadata" src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>"></video>
+                                            <?php else: ?>
+                                                <img src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="photo-viewer">
+                                            <?php endif; ?>
                                             <span><?php echo htmlspecialchars((string) $item['title']); ?></span>
                                         </div>
                                     <?php endforeach; ?>
                                     <?php if ($videoMediaItems === []): ?>
                                         <div class="dashboard-thumb dashboard-thumb-video dashboard-thumb-video-empty">
-                                            <div class="dashboard-thumb-video-overlay">▶</div>
-                                            <img src="/MUBUGA-TSS/assets/images/school view 5.jpg" alt="Video placeholder">
+                                            <div class="dashboard-thumb-video-overlay">&#9658;</div>
+                                            <img src="/MUBUGA-TSS/assets/images/school view 5.jpg" alt="Video placeholder" class="photo-viewer">
                                             <span>No videos yet</span>
                                         </div>
                                         <div class="dashboard-thumb dashboard-thumb-video dashboard-thumb-video-empty">
-                                            <div class="dashboard-thumb-video-overlay">▶</div>
-                                            <img src="/MUBUGA-TSS/assets/images/school view 4.jpg" alt="Video placeholder">
+                                            <div class="dashboard-thumb-video-overlay">&#9658;</div>
+                                            <img src="/MUBUGA-TSS/assets/images/school view 4.jpg" alt="Video placeholder" class="photo-viewer">
                                             <span>Upload first video</span>
                                         </div>
                                     <?php endif; ?>
@@ -744,6 +799,29 @@ if ($pdo instanceof PDO) {
             </div>
 
             <section class="admin-grid">
+                <article class="panel dashboard-view-panel" id="settings-panel" data-dashboard-view>
+                    <div class="panel-top">
+                        <div>
+                            <p class="admin-eyebrow">Settings</p>
+                            <h2>Branding and contact details</h2>
+                        </div>
+                    </div>
+                    <form method="post" class="admin-form" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
+                        <input type="hidden" name="action" value="update_settings">
+                        <label><span>School Name</span><input type="text" name="school_name" value="<?php echo htmlspecialchars((string) ($settings['school_name'] ?? 'Mubuga TSS')); ?>"></label>
+                        <label><span>Motto</span><input type="text" name="school_motto" value="<?php echo htmlspecialchars((string) ($settings['school_motto'] ?? '')); ?>"></label>
+                        <label><span>Email</span><input type="email" name="school_email" value="<?php echo htmlspecialchars((string) ($settings['school_email'] ?? '')); ?>"></label>
+                        <label><span>Phone</span><input type="text" name="school_phone" value="<?php echo htmlspecialchars((string) ($settings['school_phone'] ?? '')); ?>"></label>
+                        <label><span>Address</span><input type="text" name="school_address" value="<?php echo htmlspecialchars((string) ($settings['school_address'] ?? '')); ?>"></label>
+                        <label><span>Logo Path</span><input type="text" name="school_logo" value="<?php echo htmlspecialchars((string) ($settings['school_logo'] ?? '')); ?>"></label>
+                        <label><span>Upload Logo</span><input type="file" name="school_logo_upload" accept=".jpg,.jpeg,.png,.gif,.webp,.jfif" class="upload-input"></label>
+                        <label><span>Facebook URL</span><input type="url" name="school_facebook" value="<?php echo htmlspecialchars((string) ($settings['school_facebook'] ?? '')); ?>"></label>
+                        <label><span>Instagram URL</span><input type="url" name="school_instagram" value="<?php echo htmlspecialchars((string) ($settings['school_instagram'] ?? '')); ?>"></label>
+                        <button type="submit">Save Settings</button>
+                    </form>
+                </article>
+
                 <article class="panel dashboard-view-panel" id="news-panel" data-dashboard-view>
                     <div class="panel-top">
                         <div>
@@ -765,24 +843,36 @@ if ($pdo instanceof PDO) {
                                 <option value="announcements"<?php echo (($newsForm['news_category'] ?? '') === 'announcements') ? ' selected' : ''; ?>>Announcement</option>
                             </select>
                         </label>
+                        <label>
+                            <span>Status</span>
+                            <select name="news_status">
+                                <option value="published"<?php echo (($newsForm['status'] ?? 'published') === 'published') ? ' selected' : ''; ?>>Published</option>
+                                <option value="draft"<?php echo (($newsForm['status'] ?? '') === 'draft') ? ' selected' : ''; ?>>Draft</option>
+                            </select>
+                        </label>
                         <label><span>Summary</span><textarea name="summary" rows="4"><?php echo htmlspecialchars((string) $newsForm['summary']); ?></textarea></label>
                         <label><span>Full Content</span><textarea name="content" rows="7"><?php echo htmlspecialchars((string) $newsForm['content']); ?></textarea></label>
                         <label><span>Featured Photo Path</span><input type="text" name="featured_image" value="<?php echo htmlspecialchars((string) $newsForm['featured_image']); ?>"></label>
                         <label><span>Upload Featured Photo</span><input type="file" name="featured_image_upload" accept=".jpg,.jpeg,.png,.gif,.webp,.jfif" class="upload-input"></label>
                         <button type="submit"><?php echo $editType === 'news' ? 'Update Item' : 'Publish Item'; ?></button>
                     </form>
+                    <div class="news-filter-bar">
+                        <a href="/MUBUGA-TSS/admin/dashboard.php?news_filter=all#news-panel" class="news-filter-link<?php echo $newsFilter === 'all' ? ' is-active' : ''; ?>">All</a>
+                        <a href="/MUBUGA-TSS/admin/dashboard.php?news_filter=published#news-panel" class="news-filter-link<?php echo $newsFilter === 'published' ? ' is-active' : ''; ?>">Published</a>
+                        <a href="/MUBUGA-TSS/admin/dashboard.php?news_filter=draft#news-panel" class="news-filter-link<?php echo $newsFilter === 'draft' ? ' is-active' : ''; ?>">Draft</a>
+                    </div>
                     <div class="table-list">
-                        <?php foreach ($news as $newsItem): ?>
+                        <?php foreach ($filteredNews as $newsItem): ?>
                             <div class="table-item">
                                 <div class="table-item-layout">
-                                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars((string) $newsItem['featured_image']); ?>" alt="" class="table-thumb">
+                                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars((string) $newsItem['featured_image']); ?>" alt="" class="table-thumb photo-viewer">
                                     <div class="table-item-content">
                                         <strong><?php echo htmlspecialchars((string) $newsItem['title']); ?></strong>
-                                        <span><?php echo htmlspecialchars(ucfirst((string) ($newsItem['category'] ?? 'news'))); ?><?php echo !empty($newsItem['published_at']) ? ' - ' . htmlspecialchars((string) $newsItem['published_at']) : ''; ?></span>
+                                        <span><?php echo htmlspecialchars(ucfirst((string) ($newsItem['category'] ?? 'news'))); ?> - <?php echo htmlspecialchars(ucfirst((string) ($newsItem['status'] ?? 'published'))); ?><?php echo !empty($newsItem['published_at']) ? ' - ' . htmlspecialchars((string) $newsItem['published_at']) : ''; ?></span>
                                     </div>
                                 </div>
                                 <div class="item-actions">
-                                    <a href="/MUBUGA-TSS/admin/dashboard.php?edit=news&id=<?php echo (int) $newsItem['id']; ?>" class="action-link">Edit</a>
+                                    <a href="/MUBUGA-TSS/admin/dashboard.php?edit=news&id=<?php echo (int) $newsItem['id']; ?>&news_filter=<?php echo htmlspecialchars($newsFilter); ?>#news-panel" class="action-link">Edit</a>
                                     <form method="post" class="inline-form">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
                                         <input type="hidden" name="action" value="delete_news">
@@ -792,6 +882,12 @@ if ($pdo instanceof PDO) {
                                 </div>
                             </div>
                         <?php endforeach; ?>
+                        <?php if ($filteredNews === []): ?>
+                            <div class="table-item">
+                                <strong>No news items in this filter.</strong>
+                                <span>Try another filter or create a new item.</span>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </article>
 
@@ -825,10 +921,14 @@ if ($pdo instanceof PDO) {
                         <?php foreach ($gallery as $galleryItem): ?>
                             <div class="table-item">
                                 <div class="table-item-layout">
-                                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars((string) $galleryItem['image_path']); ?>" alt="" class="table-thumb">
+                                    <?php if (($galleryItem['media_type'] ?? 'image') === 'video' && adminIsVideoPath((string) $galleryItem['image_path'])): ?>
+                                        <video class="table-thumb" muted playsinline preload="metadata" src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $galleryItem['image_path'])); ?>"></video>
+                                    <?php else: ?>
+                                        <img src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $galleryItem['image_path'])); ?>" alt="" class="table-thumb photo-viewer">
+                                    <?php endif; ?>
                                     <div class="table-item-content">
                                         <strong><?php echo htmlspecialchars((string) $galleryItem['title']); ?></strong>
-                                        <span><?php echo htmlspecialchars((string) $galleryItem['category']); ?></span>
+                                        <span><?php echo htmlspecialchars((string) $galleryItem['category']); ?> - <?php echo htmlspecialchars(ucfirst((string) ($galleryItem['media_type'] ?? 'image'))); ?></span>
                                     </div>
                                 </div>
                                 <div class="item-actions">
@@ -876,7 +976,7 @@ if ($pdo instanceof PDO) {
                         <?php foreach ($pages as $pageItem): ?>
                             <div class="table-item">
                                 <div class="table-item-layout">
-                                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars((string) $pageItem['banner_image']); ?>" alt="" class="table-thumb">
+                                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars((string) $pageItem['banner_image']); ?>" alt="" class="table-thumb photo-viewer">
                                     <div class="table-item-content">
                                         <strong><?php echo htmlspecialchars((string) $pageItem['title']); ?></strong>
                                         <span><?php echo htmlspecialchars((string) $pageItem['slug']); ?> - <?php echo htmlspecialchars((string) $pageItem['status']); ?></span>
@@ -966,7 +1066,7 @@ if ($pdo instanceof PDO) {
                         <?php foreach ($programs as $program): ?>
                             <div class="table-item">
                                 <div class="table-item-layout">
-                                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars((string) $program['cover_image']); ?>" alt="" class="table-thumb">
+                                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars((string) $program['cover_image']); ?>" alt="" class="table-thumb photo-viewer">
                                     <div class="table-item-content">
                                         <strong><?php echo htmlspecialchars((string) $program['title']); ?></strong>
                                         <span><?php echo htmlspecialchars((string) $program['department']); ?> - <?php echo htmlspecialchars((string) $program['status']); ?></span>
@@ -1010,7 +1110,7 @@ if ($pdo instanceof PDO) {
                         <?php foreach ($staff as $member): ?>
                             <div class="table-item">
                                 <div class="table-item-layout">
-                                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars((string) $member['photo']); ?>" alt="" class="table-thumb">
+                                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars((string) $member['photo']); ?>" alt="" class="table-thumb photo-viewer">
                                     <div class="table-item-content">
                                         <strong><?php echo htmlspecialchars((string) $member['full_name']); ?></strong>
                                         <span><?php echo htmlspecialchars((string) $member['job_title']); ?></span>
@@ -1033,5 +1133,7 @@ if ($pdo instanceof PDO) {
         </main>
     </div>
     <script src="/MUBUGA-TSS/assets/js/admin.js"></script>
+    <script src="/MUBUGA-TSS/assets/js/photo-viewer.js"></script>
 </body>
 </html>
+

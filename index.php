@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/includes/site_data.php';
 
-$galleryLead = $gallery[0] ?? null;
-$galleryHighlights = array_slice($gallery, 1, 4);
-$galleryMore = array_slice($gallery, 5, 4);
+$homepageGallery = array_values(array_filter($gallery, static function (array $item): bool {
+    return (string) ($item['media_type'] ?? 'image') !== 'video';
+}));
+$galleryLead = $homepageGallery[0] ?? null;
+$galleryHighlights = array_slice($homepageGallery, 1, 4);
+$galleryMore = array_slice($homepageGallery, 5, 4);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -104,7 +107,7 @@ $galleryMore = array_slice($gallery, 5, 4);
                     <a href="/MUBUGA-TSS/pages/facilities.php">Facilities</a>
                     
                     <div class="dropdown">
-                        <a href="/MUBUGA-TSS/pages/admissions.php">Admission ▾</a>
+                        <a href="/MUBUGA-TSS/pages/admissions.php">Admission &#9662;</a>
                         <div class="dropdown-menu">
                             <a href="/MUBUGA-TSS/pages/admissions.php#requirements">Fees &amp; Requirements</a>
                             <a href="/MUBUGA-TSS/pages/admissions.php#registration">Student Registration</a>
@@ -114,7 +117,7 @@ $galleryMore = array_slice($gallery, 5, 4);
                     <a href="/MUBUGA-TSS/pages/team.php">Our Team</a>
                     
                     <div class="dropdown">
-                        <a href="/MUBUGA-TSS/pages/news.php">News ▾</a>
+                        <a href="/MUBUGA-TSS/pages/news.php">News &#9662;</a>
                         <div class="dropdown-menu">
                             <a href="/MUBUGA-TSS/pages/news.php?type=events">Events</a>
                             <a href="/MUBUGA-TSS/pages/news.php?type=announcements">Announcements</a>
@@ -122,7 +125,7 @@ $galleryMore = array_slice($gallery, 5, 4);
                     </div>
                     
                     <div class="dropdown">
-                        <a href="/MUBUGA-TSS/pages/gallery.php">Gallery ▾</a>
+                        <a href="/MUBUGA-TSS/pages/gallery.php">Gallery &#9662;</a>
                         <div class="dropdown-menu">
                             <a href="/MUBUGA-TSS/pages/gallery.php#pictures">Pictures</a>
                             <a href="/MUBUGA-TSS/pages/gallery.php#videos">Videos</a>
@@ -201,7 +204,7 @@ $galleryMore = array_slice($gallery, 5, 4);
                                 <img
                                     src="/MUBUGA-TSS/<?php echo htmlspecialchars($slide['image'] ?? 'assets/images/students.jfif'); ?>"
                                     alt="<?php echo htmlspecialchars($slide['title']); ?>"
-                                    class="hero-slide-image<?php echo $index === 0 ? ' is-active' : ''; ?>"
+                                    class="hero-slide-image<?php echo $index === 0 ? ' is-active' : ''; ?> photo-viewer"
                                     data-hero-image
                                 >
                             <?php endforeach; ?>
@@ -277,7 +280,7 @@ $galleryMore = array_slice($gallery, 5, 4);
 
             <section class="section programs" id="programs">
                 <div class="container">
-                    <div class="section-heading">
+                    <div class="section-heading kha-gallery-heading">
                         <p class="eyebrow">Our Trades</p>
                         <h2>Two training programs built for modern technical careers.</h2>
                     </div>
@@ -286,7 +289,7 @@ $galleryMore = array_slice($gallery, 5, 4);
                         <?php foreach ($programs as $program): ?>
                             <article class="program-card">
                                 <?php if (!empty($program['image'])): ?>
-                                    <img src="<?php echo htmlspecialchars($program['image']); ?>" alt="<?php echo htmlspecialchars($program['title']); ?>" class="program-image">
+                                    <img src="<?php echo htmlspecialchars($program['image']); ?>" alt="<?php echo htmlspecialchars($program['title']); ?>" class="program-image photo-viewer">
                                 <?php endif; ?>
                                 <div class="program-card-body">
                                     <p class="card-label">Technical Trade</p>
@@ -309,7 +312,7 @@ $galleryMore = array_slice($gallery, 5, 4);
 
             <section class="section values">
                 <div class="container">
-                    <div class="section-heading">
+                    <div class="section-heading kha-gallery-heading">
                         <p class="eyebrow"><?php echo htmlspecialchars($schoolName); ?></p>
                         <h2>Our foundation and school values.</h2>
                     </div>
@@ -349,7 +352,7 @@ $galleryMore = array_slice($gallery, 5, 4);
                     <div class="facilities-grid">
                         <?php foreach ($facilities as $facility): ?>
                             <article class="facility-card">
-                                <img src="<?php echo htmlspecialchars($facility['image']); ?>" alt="<?php echo htmlspecialchars($facility['title']); ?>" class="section-photo">
+                                <img src="<?php echo htmlspecialchars($facility['image']); ?>" alt="<?php echo htmlspecialchars($facility['title']); ?>" class="section-photo photo-viewer">
                                 <h3><?php echo htmlspecialchars($facility['title']); ?></h3>
                                 <p><?php echo htmlspecialchars($facility['text']); ?></p>
                             </article>
@@ -365,28 +368,18 @@ $galleryMore = array_slice($gallery, 5, 4);
                         <h2>A closer look at campus life, workshop practice, and student activity.</h2>
                     </div>
 
-                    <?php if ($galleryLead !== null): ?>
-                        <div class="gallery-grid">
-                            <article class="gallery-card">
-                                <img src="<?php echo htmlspecialchars($galleryLead['image']); ?>" alt="<?php echo htmlspecialchars($galleryLead['title']); ?>" class="gallery-image">
-                                <div class="gallery-copy">
-                                    <h3><?php echo htmlspecialchars($galleryLead['title']); ?></h3>
-                                    <p><?php echo htmlspecialchars($galleryLead['text']); ?></p>
-                                </div>
-                            </article>
-                            <?php foreach (array_slice($galleryHighlights, 0, 3) as $item): ?>
-                                <article class="gallery-card">
-                                    <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="gallery-image">
-                                    <div class="gallery-copy">
-                                        <h3><?php echo htmlspecialchars($item['title']); ?></h3>
-                                        <p><?php echo htmlspecialchars($item['text']); ?></p>
-                                    </div>
-                                </article>
+                    <?php if ($homepageGallery !== []): ?>
+                        <div class="kha-gallery-grid kha-gallery-grid-home">
+                            <?php foreach (array_slice($homepageGallery, 0, 8) as $item): ?>
+                                <a href="/MUBUGA-TSS/pages/gallery.php" class="kha-gallery-card kha-gallery-card-home" aria-label="<?php echo htmlspecialchars((string) $item['title']); ?>">
+                                    <img src="<?php echo htmlspecialchars((string) $item['image']); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="kha-gallery-image">
+                                    <span class="kha-gallery-badge"><?php echo htmlspecialchars((string) ($item['category_label'] ?? 'Campus')); ?></span>
+                                </a>
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
                     <div class="section-more">
-                        <a href="/MUBUGA-TSS/pages/gallery.php" class="inline-link">View More Gallery →</a>
+                        <a href="/MUBUGA-TSS/pages/gallery.php" class="inline-link">View More Gallery &rarr;</a>
                     </div>
                 </div>
             </section>
@@ -401,7 +394,7 @@ $galleryMore = array_slice($gallery, 5, 4);
                     <div class="leadership-grid">
                         <?php foreach ($leadership as $member): ?>
                             <article class="leader-card">
-                                <img src="<?php echo htmlspecialchars($member['photo'] ?? 'assets/images/master.jpeg'); ?>" alt="<?php echo htmlspecialchars($member['name']); ?>" class="leader-image">
+                                <img src="<?php echo htmlspecialchars($member['photo'] ?? 'assets/images/master.jpeg'); ?>" alt="<?php echo htmlspecialchars($member['name']); ?>" class="leader-image photo-viewer">
                                 <span><?php echo htmlspecialchars($member['role']); ?></span>
                                 <h3><?php echo htmlspecialchars($member['name']); ?></h3>
                                 <p><?php echo htmlspecialchars($member['text']); ?></p>
@@ -443,7 +436,7 @@ $galleryMore = array_slice($gallery, 5, 4);
                         <?php foreach ($news as $item): ?>
                             <article class="news-card">
                                 <?php if (!empty($item['image'])): ?>
-                                    <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="news-image">
+                                    <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="news-image photo-viewer">
                                 <?php endif; ?>
                                 <div class="news-card-body">
                                     <p class="news-tag">Mubuga TSS</p>
@@ -605,3 +598,4 @@ $galleryMore = array_slice($gallery, 5, 4);
     <script src="/MUBUGA-TSS/assets/js/site.js"></script>
 </body>
 </html>
+

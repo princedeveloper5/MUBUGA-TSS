@@ -69,6 +69,7 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
     if ($logoPath === '') {
         $logoPath = 'assets/images/MUBUGA%20LOGO%20SN.PNG';
     }
+    $logoSize = max(32, min(140, (int) ($siteMeta['logo_size'] ?? 52)));
     $facebookUrl = (string) ($siteMeta['facebook_url'] ?? '#');
     $instagramUrl = (string) ($siteMeta['instagram_url'] ?? '#');
     $twitterUrl = (string) ($siteMeta['twitter_url'] ?? '#');
@@ -128,7 +129,7 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
         <header class="main-header">
             <div class="container nav-wrap">
                 <a class="brand" href="/MUBUGA-TSS/" aria-label="<?php echo htmlspecialchars($schoolName); ?> home">
-                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="brand-logo">
+                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="brand-logo" style="width: <?php echo $logoSize; ?>px; height: auto;">
                     <span class="brand-text">
                         <strong><?php echo htmlspecialchars($schoolName); ?></strong>
                         <small>Technical Secondary School</small>
@@ -197,12 +198,13 @@ function renderInnerHero(string $eyebrow, string $title, string $text, string $i
     if ($logoPath === '') {
         $logoPath = 'assets/images/MUBUGA%20LOGO%20SN.PNG';
     }
+    $logoSize = max(32, min(140, (int) ($siteMeta['logo_size'] ?? 52)));
     ?>
         <section class="inner-hero">
             <div class="container inner-hero-grid">
                 <div class="inner-hero-copy">
                     <div class="inner-hero-seal">
-                        <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> emblem" class="inner-hero-seal-logo">
+                        <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> emblem" class="inner-hero-seal-logo" style="width: <?php echo min(96, $logoSize); ?>px; height: auto;">
                     </div>
                     <p class="eyebrow"><?php echo htmlspecialchars($eyebrow); ?></p>
                     <h1 class="inner-title"><?php echo htmlspecialchars($title); ?></h1>
@@ -233,6 +235,7 @@ function renderSiteFooter(string $schoolName): void
     if ($logoPath === '') {
         $logoPath = 'assets/images/MUBUGA%20LOGO%20SN.PNG';
     }
+    $logoSize = max(32, min(140, (int) ($siteMeta['logo_size'] ?? 52)));
     $facebookUrl = (string) ($siteMeta['facebook_url'] ?? '#');
     $instagramUrl = (string) ($siteMeta['instagram_url'] ?? '#');
     $emailAddress = (string) ($contacts[0]['value'] ?? '');
@@ -257,7 +260,7 @@ function renderSiteFooter(string $schoolName): void
                     <!-- Brand Section -->
                     <div class="footer-section footer-brand-section">
                         <div class="footer-brand">
-                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="footer-brand-logo">
+                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="footer-brand-logo" style="width: <?php echo min(72, $logoSize); ?>px; height: auto;">
                             <div>
                                 <strong><?php echo htmlspecialchars($schoolName); ?></strong>
                                 <span>Technical Secondary School</span>

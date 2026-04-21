@@ -39,8 +39,6 @@
     const zoomOutButton = document.getElementById('galleryZoomOut');
     const zoomResetButton = document.getElementById('galleryZoomReset');
 
-    const galleryItems = document.querySelectorAll('[data-gallery-item], img.photo-viewer, [data-photo-viewer]');
-    
     let currentIndex = 0;
     let galleryData = [];
     let currentMedia = null;
@@ -59,26 +57,43 @@
     // =========================
     // BUILD DATA
     // =========================
+    const processedItems = new WeakSet();
+
+    function getGalleryItems() {
+        return document.querySelectorAll('[data-gallery-item], img.photo-viewer, [data-photo-viewer]');
+    }
+
     function buildGalleryData() {
-        galleryData = [];
-        galleryItems.forEach((item, index) => {
+        let newIndex = galleryData.length;
+        const galleryItems = getGalleryItems();
+
+        galleryItems.forEach((item) => {
+            // Skip items that already have listeners
+            if (processedItems.has(item)) return;
+
             const el = item.querySelector('.gallery-grid-image') || item;
             const src = el.dataset.gallerySrc || el.dataset.src || el.src || el.getAttribute('data-src');
             const title = el.dataset.galleryTitle || el.alt || 'Image';
             const type = src && src.endsWith('.mp4') ? 'video' : 'image';
 
             if (src) {
+                const currentIndex = newIndex++;
                 galleryData.push({
                     src: src,
                     title: title,
                     type: type
                 });
 
-                item.addEventListener('click', () => openLightbox(index));
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openLightbox(currentIndex);
+                });
                 item.style.cursor = 'pointer';
+                processedItems.add(item);
             }
         });
-        
+
         // Update total counter
         const totalElement = document.getElementById('galleryLightboxTotal');
         if (totalElement) {
@@ -101,9 +116,20 @@
     }
 
     function closeLightbox() {
+        // Stop any playing video before closing
+        const video = lightboxStage.querySelector('video');
+        if (video) {
+            video.pause();
+            video.src = '';
+            video.load();
+        }
         lightbox.classList.remove('is-open');
         document.body.style.overflow = '';
         resetZoom();
+        // Clear the stage content after a short delay
+        setTimeout(() => {
+            lightboxStage.innerHTML = '';
+        }, 300);
     }
 
     // =========================
@@ -121,10 +147,20 @@
 
         if (item.type === 'video') {
             lightboxStage.innerHTML = `
-                <video controls autoplay class="gallery-lightbox-media">
+                <video controls class="gallery-lightbox-media video" playsinline>
                     <source src="${item.src}" type="video/mp4">
+                    Your browser does not support the video tag.
                 </video>
             `;
+            // Auto-play after a short delay to ensure proper sizing
+            setTimeout(() => {
+                const video = lightboxStage.querySelector('video');
+                if (video) {
+                    video.play().catch(() => {
+                        // Autoplay blocked, that's okay
+                    });
+                }
+            }, 100);
         } else {
             lightboxStage.innerHTML = `
                 <img src="${item.src}" alt="${item.title}" class="gallery-lightbox-media">
@@ -193,14 +229,53 @@
         const nextBtn = document.querySelector('.gallery-lightbox-next');
         const overlay = document.querySelector('.gallery-lightbox-overlay');
 
-        if (closeBtn) closeBtn.onclick = closeLightbox;
-        if (prevBtn) prevBtn.onclick = prevImage;
-        if (nextBtn) nextBtn.onclick = nextImage;
-        if (overlay) overlay.onclick = closeLightbox;
+        // Use addEventListener for better compatibility
+        if (closeBtn) {
+            closeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                closeLightbox();
+            });
+        }
+        if (prevBtn) {
+            prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                prevImage();
+            });
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                nextImage();
+            });
+        }
+        if (overlay) {
+            overlay.addEventListener('click', closeLightbox);
+        }
 
-        if (zoomInButton) zoomInButton.onclick = () => setZoom(scale + zoomStep);
-        if (zoomOutButton) zoomOutButton.onclick = () => setZoom(scale - zoomStep);
-        if (zoomResetButton) zoomResetButton.onclick = resetZoom;
+        if (zoomInButton) {
+            zoomInButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setZoom(scale + zoomStep);
+            });
+        }
+        if (zoomOutButton) {
+            zoomOutButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setZoom(scale - zoomStep);
+            });
+        }
+        if (zoomResetButton) {
+            zoomResetButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                resetZoom();
+            });
+        }
 
         // Scroll zoom
         lightboxStage.addEventListener('wheel', (e) => {
@@ -253,10 +328,14 @@
         });
     }
 
-    // Initialize
+    // Initialize - with flag to prevent duplicate listeners
+    let isInitialized = false;
     function init() {
         buildGalleryData();
-        setupEventListeners();
+        if (!isInitialized) {
+            setupEventListeners();
+            isInitialized = true;
+        }
     }
 
     // Run initialization when DOM is ready

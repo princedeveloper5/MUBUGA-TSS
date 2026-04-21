@@ -2406,6 +2406,143 @@ h3 {
     color: inherit;
 }
 
+.school-gallery-home-shell {
+    display: grid;
+    gap: 26px;
+}
+
+.school-gallery-home-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.7fr);
+    gap: 22px;
+    align-items: stretch;
+}
+
+.school-gallery-home-copy,
+.school-gallery-home-stats {
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(13, 53, 77, 0.08);
+    border-radius: 24px;
+    box-shadow: 0 20px 48px rgba(10, 29, 44, 0.08);
+}
+
+.school-gallery-home-copy {
+    padding: 28px;
+}
+
+.school-gallery-home-text {
+    margin: 0;
+    max-width: 760px;
+    color: var(--muted);
+    line-height: 1.75;
+}
+
+.school-gallery-home-stats {
+    padding: 22px;
+    display: grid;
+    gap: 14px;
+    align-content: start;
+}
+
+.school-gallery-home-stat {
+    padding: 16px 18px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(240, 247, 255, 0.98), rgba(255, 255, 255, 0.98));
+    border: 1px solid rgba(61, 142, 232, 0.14);
+}
+
+.school-gallery-home-stat strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--green);
+    font-size: 1.35rem;
+}
+
+.school-gallery-home-stat span {
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
+.school-gallery-home-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.school-gallery-home-card {
+    display: block;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(13, 53, 77, 0.08);
+    box-shadow: 0 18px 42px rgba(10, 29, 44, 0.08);
+    transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.school-gallery-home-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 48px rgba(10, 29, 44, 0.14);
+}
+
+.school-gallery-home-media {
+    position: relative;
+    aspect-ratio: 1 / 0.82;
+    overflow: hidden;
+}
+
+.school-gallery-home-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(180deg, rgba(7, 24, 41, 0.08), rgba(7, 24, 41, 0.38));
+    opacity: 0;
+    transition: opacity 220ms ease;
+}
+
+.school-gallery-home-card:hover .school-gallery-home-overlay {
+    opacity: 1;
+}
+
+.school-gallery-home-card:hover .kha-gallery-image {
+    transform: scale(1.1);
+}
+
+.school-gallery-home-icon {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.96);
+    color: #103452;
+    font-size: 1.15rem;
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.18);
+}
+
+.school-gallery-home-body {
+    display: grid;
+    gap: 8px;
+    padding: 18px 18px 20px;
+}
+
+.school-gallery-home-body h3 {
+    margin: 0;
+    color: var(--green);
+    font-size: 1.05rem;
+    line-height: 1.35;
+}
+
+.school-gallery-home-body p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.94rem;
+    line-height: 1.6;
+}
+
 .kha-gallery-badge {
     position: absolute;
     left: 14px;
@@ -2553,6 +2690,10 @@ h3 {
     .kha-video-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .school-gallery-home-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 720px) {
@@ -2563,6 +2704,11 @@ h3 {
 
     .kha-gallery-card {
         aspect-ratio: 4 / 3;
+    }
+
+    .school-gallery-home-intro,
+    .school-gallery-home-grid {
+        grid-template-columns: 1fr;
     }
 }
 

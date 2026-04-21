@@ -363,21 +363,45 @@ $galleryMore = array_slice($homepageGallery, 5, 4);
 
             <section class="section gallery-section" id="gallery">
                 <div class="container">
-                    <div class="section-heading">
-                        <p class="eyebrow">School Gallery</p>
-                        <h2>A closer look at campus life, workshop practice, and student activity.</h2>
-                    </div>
-
-                    <?php if ($homepageGallery !== []): ?>
-                        <div class="kha-gallery-grid kha-gallery-grid-home">
-                            <?php foreach (array_slice($homepageGallery, 0, 8) as $item): ?>
-                                <a href="/MUBUGA-TSS/pages/gallery.php" class="kha-gallery-card kha-gallery-card-home" aria-label="<?php echo htmlspecialchars((string) $item['title']); ?>">
-                                    <img src="<?php echo htmlspecialchars((string) $item['image']); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="kha-gallery-image">
-                                    <span class="kha-gallery-badge"><?php echo htmlspecialchars((string) ($item['category_label'] ?? 'Campus')); ?></span>
-                                </a>
-                            <?php endforeach; ?>
+                    <div class="school-gallery-home-shell">
+                        <div class="school-gallery-home-intro">
+                            <div class="school-gallery-home-copy">
+                                <p class="eyebrow">School Gallery</p>
+                                <h2>A professional view of campus life, workshops, and student activity.</h2>
+                                <p class="school-gallery-home-text">Explore selected highlights from Mubuga TSS. The gallery showcases practical learning, school spaces, and the everyday environment that shapes student growth.</p>
+                            </div>
+                            <div class="school-gallery-home-stats">
+                                <div class="school-gallery-home-stat">
+                                    <strong><?php echo count($homepageGallery); ?></strong>
+                                    <span>Photo highlights</span>
+                                </div>
+                                <div class="school-gallery-home-stat">
+                                    <strong><?php echo count(array_unique(array_map(static fn(array $item): string => (string) ($item['category_label'] ?? 'Campus'), $homepageGallery))); ?></strong>
+                                    <span>Gallery topics</span>
+                                </div>
+                            </div>
                         </div>
-                    <?php endif; ?>
+
+                        <?php if ($homepageGallery !== []): ?>
+                            <div class="school-gallery-home-grid">
+                                <?php foreach (array_slice($homepageGallery, 0, 6) as $item): ?>
+                                    <a href="/MUBUGA-TSS/pages/gallery.php" class="school-gallery-home-card" aria-label="<?php echo htmlspecialchars((string) $item['title']); ?>">
+                                        <div class="school-gallery-home-media">
+                                            <img src="<?php echo htmlspecialchars((string) $item['image']); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="kha-gallery-image">
+                                            <span class="school-gallery-home-overlay" aria-hidden="true">
+                                                <span class="school-gallery-home-icon">&#128269;</span>
+                                            </span>
+                                            <span class="kha-gallery-badge"><?php echo htmlspecialchars((string) ($item['category_label'] ?? 'Campus')); ?></span>
+                                        </div>
+                                        <div class="school-gallery-home-body">
+                                            <h3><?php echo htmlspecialchars((string) $item['title']); ?></h3>
+                                            <p><?php echo htmlspecialchars((string) $item['text']); ?></p>
+                                        </div>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                     <div class="section-more">
                         <a href="/MUBUGA-TSS/pages/gallery.php" class="inline-link">View More Gallery &rarr;</a>
                     </div>

@@ -313,6 +313,7 @@ $welcomeHighlights = [
 
 $siteMeta = [
     'logo_path' => $imageSet['logo'],
+    'logo_size' => 52,
     'facebook_url' => '#',
     'instagram_url' => '#',
     'twitter_url' => '#',
@@ -430,6 +431,7 @@ if ($pdo instanceof PDO) {
         ['label' => 'Location', 'value' => $settings['school_address'] ?? $contacts[2]['value']],
     ];
     $siteMeta['logo_path'] = $settings['school_logo'] ?? $siteMeta['logo_path'];
+    $siteMeta['logo_size'] = max(32, min(140, (int) ($settings['site_logo_size'] ?? $siteMeta['logo_size'])));
     $siteMeta['facebook_url'] = $settings['school_facebook'] ?? $siteMeta['facebook_url'];
     $siteMeta['instagram_url'] = $settings['school_instagram'] ?? $siteMeta['instagram_url'];
     $siteMeta['twitter_url'] = $settings['school_twitter'] ?? $siteMeta['twitter_url'];

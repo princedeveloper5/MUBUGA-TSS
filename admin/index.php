@@ -37,6 +37,9 @@ if ($requestMethod === 'POST') {
     <title>Mubuga TSS Admin Login</title>
 
     <link rel="icon" type="image/png" href="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/admin.css">
     <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/photo-viewer.css">
 </head>

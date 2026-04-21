@@ -647,6 +647,7 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
             display: flex !important;
             justify-content: space-between !important;
             align-items: center !important;
+            gap: 16px !important;
             min-height: auto !important;
             padding: 16px 20px !important;
             border-radius: 24px !important;
@@ -662,12 +663,16 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
             align-items: center !important;
             gap: 10px !important;
             flex-wrap: wrap !important;
+            justify-content: flex-end !important;
+            flex: 1 1 auto !important;
         }
 
         .dashboard-top-link {
             display: inline-flex !important;
             align-items: center !important;
+            justify-content: center !important;
             gap: 8px !important;
+            min-height: 44px !important;
             padding: 0.72rem 1rem !important;
             border-radius: 999px !important;
             background: rgba(255,255,255,0.92) !important;
@@ -677,6 +682,7 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
             font-weight: 700 !important;
             text-decoration: none !important;
             box-shadow: 0 10px 20px rgba(26, 72, 122, 0.08) !important;
+            white-space: nowrap !important;
         }
 
         .dashboard-top-link svg {
@@ -691,6 +697,19 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
             color: #fff !important;
             border-color: transparent !important;
             box-shadow: 0 14px 28px rgba(33, 99, 166, 0.18) !important;
+        }
+
+        .dashboard-top-link-home {
+            background: linear-gradient(135deg, #1f5fa3 0%, #153f6b 100%) !important;
+            color: #fff !important;
+            border-color: transparent !important;
+            box-shadow: 0 14px 28px rgba(21, 63, 107, 0.22) !important;
+            margin-left: 6px !important;
+        }
+
+        .dashboard-top-link-home:hover {
+            background: linear-gradient(135deg, #2f7dd1 0%, #1f5fa3 100%) !important;
+            color: #fff !important;
         }
 
         .dashboard-header-brand {
@@ -811,10 +830,43 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
             border: 1px solid rgba(148, 163, 184, 0.16) !important;
         }
 
+        .admin-form label > span {
+            color: #1b4876 !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.01em !important;
+        }
+
         .admin-form label.checkbox {
             display: flex !important;
             align-items: center !important;
             gap: 10px !important;
+        }
+
+        .admin-form input[type="text"],
+        .admin-form input[type="email"],
+        .admin-form input[type="url"],
+        .admin-form input[type="number"],
+        .admin-form select,
+        .admin-form textarea {
+            width: 100% !important;
+            padding: 0.95rem 1rem !important;
+            border-radius: 14px !important;
+            border: 1px solid rgba(148, 163, 184, 0.22) !important;
+            background: #ffffff !important;
+            color: #173c61 !important;
+            font-size: 0.95rem !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.88) !important;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease !important;
+        }
+
+        .admin-form input:focus,
+        .admin-form select:focus,
+        .admin-form textarea:focus {
+            outline: none !important;
+            border-color: rgba(61, 142, 232, 0.5) !important;
+            box-shadow: 0 0 0 4px rgba(61, 142, 232, 0.12) !important;
+            transform: translateY(-1px) !important;
         }
 
         .admin-form textarea,
@@ -828,6 +880,25 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
             border-radius: 14px !important;
             border: 1px dashed rgba(59, 130, 246, 0.28) !important;
             background: rgba(239, 246, 255, 0.88) !important;
+        }
+
+        .admin-form button[type="submit"] {
+            min-height: 52px !important;
+            padding: 0.95rem 1.3rem !important;
+            border: 0 !important;
+            border-radius: 16px !important;
+            background: linear-gradient(135deg, #2f7dd1 0%, #1f5fa3 100%) !important;
+            color: #fff !important;
+            font-size: 0.95rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.01em !important;
+            box-shadow: 0 16px 30px rgba(31, 95, 163, 0.2) !important;
+            cursor: pointer !important;
+        }
+
+        .admin-form button[type="submit"]:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 18px 32px rgba(31, 95, 163, 0.24) !important;
         }
 
         .logo-preview-grid {
@@ -954,6 +1025,125 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
 
         .table-list {
             margin-top: 0 !important;
+            display: grid !important;
+            gap: 14px !important;
+        }
+
+        .table-item {
+            padding: 16px !important;
+        }
+
+        .table-item-layout {
+            display: grid !important;
+            grid-template-columns: 88px minmax(0, 1fr) !important;
+            gap: 14px !important;
+            align-items: center !important;
+        }
+
+        .table-thumb {
+            width: 88px !important;
+            height: 72px !important;
+            border-radius: 16px !important;
+            object-fit: cover !important;
+            background: #dbeaff !important;
+            border: 1px solid rgba(61, 142, 232, 0.14) !important;
+            box-shadow: 0 10px 18px rgba(25, 74, 124, 0.08) !important;
+        }
+
+        .table-item-content {
+            display: grid !important;
+            gap: 5px !important;
+            min-width: 0 !important;
+        }
+
+        .table-item-content strong {
+            color: #173c61 !important;
+            font-size: 1rem !important;
+            line-height: 1.25 !important;
+        }
+
+        .table-item-content span {
+            color: #6c839b !important;
+            font-size: 0.84rem !important;
+            line-height: 1.45 !important;
+        }
+
+        .item-actions {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            flex-wrap: wrap !important;
+            margin-top: 14px !important;
+        }
+
+        .action-link,
+        .action-button {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 40px !important;
+            padding: 0.7rem 1rem !important;
+            border-radius: 12px !important;
+            border: 1px solid rgba(61, 142, 232, 0.14) !important;
+            background: rgba(239, 246, 255, 0.92) !important;
+            color: #225b92 !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
+            text-decoration: none !important;
+            box-shadow: 0 8px 18px rgba(31, 95, 163, 0.06) !important;
+            cursor: pointer !important;
+        }
+
+        .danger-button {
+            background: rgba(255, 241, 242, 0.98) !important;
+            border-color: rgba(244, 114, 182, 0.12) !important;
+            color: #c24168 !important;
+        }
+
+        .news-filter-bar {
+            display: flex !important;
+            gap: 10px !important;
+            flex-wrap: wrap !important;
+            margin-top: 18px !important;
+        }
+
+        .news-filter-link {
+            display: inline-flex !important;
+            align-items: center !important;
+            padding: 0.58rem 0.92rem !important;
+            border-radius: 999px !important;
+            background: rgba(239, 246, 255, 0.9) !important;
+            border: 1px solid rgba(61, 142, 232, 0.12) !important;
+            color: #255a8f !important;
+            font-size: 0.8rem !important;
+            font-weight: 700 !important;
+            text-decoration: none !important;
+        }
+
+        .news-filter-link.is-active {
+            background: linear-gradient(135deg, #3d8ee8 0%, #2163a6 100%) !important;
+            color: #fff !important;
+            border-color: transparent !important;
+        }
+
+        .alert {
+            border-radius: 18px !important;
+            padding: 14px 16px !important;
+            margin-bottom: 18px !important;
+            font-weight: 600 !important;
+            box-shadow: 0 14px 24px rgba(15, 23, 42, 0.05) !important;
+        }
+
+        .alert.success {
+            background: linear-gradient(180deg, rgba(236, 253, 245, 0.96), rgba(255,255,255,0.96)) !important;
+            border: 1px solid rgba(34, 197, 94, 0.16) !important;
+            color: #17603f !important;
+        }
+
+        .alert.error {
+            background: linear-gradient(180deg, rgba(255, 241, 242, 0.96), rgba(255,255,255,0.96)) !important;
+            border: 1px solid rgba(244, 63, 94, 0.16) !important;
+            color: #a63453 !important;
         }
 
         .dashboard-status-ribbon {
@@ -1099,6 +1289,11 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
                 align-items: flex-start !important;
             }
 
+            .dashboard-top-menu {
+                width: 100% !important;
+                justify-content: flex-start !important;
+            }
+
             .dashboard-stats-strip {
                 grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
             }
@@ -1117,6 +1312,17 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
 
             .dashboard-top-menu {
                 width: 100% !important;
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+
+            .dashboard-top-link {
+                width: 100% !important;
+            }
+
+            .dashboard-top-link-home {
+                margin-left: 0 !important;
+                grid-column: 1 / -1 !important;
             }
 
             .dashboard-welcome h2 {
@@ -1216,6 +1422,10 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
                     <a href="#settings-panel" class="dashboard-top-link dashboard-card-link">
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.23-1.13.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94L2.83 14.52a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.4 1.05.72 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.84a.5.5 0 0 0 .5-.42l.36-2.54c.58-.23 1.13-.54 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5z" fill="currentColor"/></svg>
                         <span>Settings</span>
+                    </a>
+                    <a href="/MUBUGA-TSS/index.php" class="dashboard-top-link dashboard-top-link-home" title="Open user homepage" aria-label="Open user homepage">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 5h5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 14 19 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span>User Homepage</span>
                     </a>
                 </nav>
             </header>

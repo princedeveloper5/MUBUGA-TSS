@@ -190,7 +190,7 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
 <?php
 }
 
-function renderInnerHero(string $eyebrow, string $title, string $text, string $image): void
+function renderInnerHero(string $eyebrow, string $title, string $text, string $image, bool $showSeal = true): void
 {
     global $siteMeta, $schoolName;
     $logoPath = (string) ($siteMeta['logo_path'] ?? '');
@@ -203,9 +203,11 @@ function renderInnerHero(string $eyebrow, string $title, string $text, string $i
         <section class="inner-hero">
             <div class="container inner-hero-grid">
                 <div class="inner-hero-copy">
-                    <div class="inner-hero-seal">
-                        <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> emblem" class="inner-hero-seal-logo" style="width: <?php echo min(96, $logoSize); ?>px; height: auto;">
-                    </div>
+                    <?php if ($showSeal): ?>
+                        <div class="inner-hero-seal">
+                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> emblem" class="inner-hero-seal-logo" style="width: <?php echo min(96, $logoSize); ?>px; height: auto;">
+                        </div>
+                    <?php endif; ?>
                     <p class="eyebrow"><?php echo htmlspecialchars($eyebrow); ?></p>
                     <h1 class="inner-title"><?php echo htmlspecialchars($title); ?></h1>
                     <p class="hero-text"><?php echo htmlspecialchars($text); ?></p>

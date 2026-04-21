@@ -137,15 +137,27 @@ $imageSet = [
 $programs = [
     [
         'title' => 'Software Development',
-        'summary' => 'Learn coding, web building, and digital problem-solving.',
-        'focus' => ['Coding practice', 'Project-based learning', 'Digital innovation'],
+        'summary' => 'Students learn programming, website development, and how to use computers to solve problems.',
+        'focus' => ['Programming lessons', 'Website development', 'Practical computer projects'],
+        'subjects' => ['Programming', 'Web development', 'Database basics', 'Computer applications'],
+        'practical' => ['Build websites', 'Write and test programs', 'Complete class projects'],
+        'tools' => ['Computers', 'Programming software', 'Internet and digital tools'],
+        'requirements' => 'Interest in computer work, regular practice, and readiness to learn step by step.',
+        'duration' => 'Three years',
+        'careers' => ['Junior developer', 'ICT support', 'Further studies in software and technology'],
         'image' => $imageSet['software_primary'],
         'link' => '/MUBUGA-TSS/pages/programs.php',
     ],
     [
         'title' => 'Electrical Technology',
-        'summary' => 'Build strong skills in installation, safety, and maintenance.',
-        'focus' => ['Hands-on circuits', 'Power systems basics', 'Industry safety culture'],
+        'summary' => 'Students learn electrical installation, wiring, maintenance, and safe workshop practice.',
+        'focus' => ['Electrical wiring', 'Installation practice', 'Maintenance and safety'],
+        'subjects' => ['Electrical installation', 'Wiring systems', 'Maintenance', 'Workshop safety'],
+        'practical' => ['Wire circuits', 'Install electrical systems', 'Maintain equipment safely'],
+        'tools' => ['Electrical tools', 'Testing equipment', 'Workshop materials'],
+        'requirements' => 'Readiness for practical work, safety discipline, and technical learning.',
+        'duration' => 'Three years',
+        'careers' => ['Electrical technician', 'Installer', 'Further studies in electrical engineering'],
         'image' => $imageSet['electrical_primary'],
         'link' => '/MUBUGA-TSS/pages/programs.php',
     ],
@@ -442,20 +454,39 @@ if ($pdo instanceof PDO) {
 
     $programRows = $pdo->query('SELECT title, short_description, cover_image FROM programs WHERE status = "active" ORDER BY id ASC')->fetchAll();
     if ($programRows) {
+        $programCatalog = [];
+        foreach ($programs as $program) {
+            $programCatalog[$program['title']] = $program;
+        }
+
         $programImages = [
             'Software Development' => $imageSet['software_primary'],
             'Electrical Technology' => $imageSet['electrical_primary'],
         ];
         $programFocus = [
-            'Software Development' => ['Coding practice', 'Project-based learning', 'Digital innovation'],
-            'Electrical Technology' => ['Hands-on circuits', 'Power systems basics', 'Industry safety culture'],
+            'Software Development' => ['Programming lessons', 'Website development', 'Practical computer projects'],
+            'Electrical Technology' => ['Electrical wiring', 'Installation practice', 'Maintenance and safety'],
         ];
-        $programs = array_map(function (array $row) use ($programImages, $programFocus, $imageSet): array {
+        $programs = array_map(function (array $row) use ($programCatalog, $programImages, $programFocus, $imageSet): array {
             $title = $row['title'];
+            $base = $programCatalog[$title] ?? [
+                'subjects' => ['Technical subjects', 'Classroom learning', 'Practical training', 'Skill development'],
+                'practical' => ['Workshop practice', 'Guided projects', 'Hands-on activities'],
+                'tools' => ['Training tools', 'Learning equipment', 'Workshop materials'],
+                'requirements' => 'Interest in technical learning and readiness for practical study.',
+                'duration' => 'Three years',
+                'careers' => ['Technical work', 'Further studies', 'Skilled practice'],
+            ];
             return [
                 'title' => $title,
                 'summary' => $row['short_description'] ?: 'A practical pathway for technical learning.',
                 'focus' => $programFocus[$title] ?? ['Technical skills', 'Practical learning', 'Career readiness'],
+                'subjects' => $base['subjects'],
+                'practical' => $base['practical'],
+                'tools' => $base['tools'],
+                'requirements' => $base['requirements'],
+                'duration' => $base['duration'],
+                'careers' => $base['careers'],
                 'image' => resolveSiteImage($row['cover_image'] ?: ($programImages[$title] ?? $imageSet['students'])),
                 'link' => '/MUBUGA-TSS/pages/programs.php',
             ];

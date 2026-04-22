@@ -255,10 +255,10 @@ function renderSiteFooter(string $schoolName): void
     $locationText = (string) ($contacts[2]['value'] ?? 'Mubuga, Rwanda');
     ?>
         <div class="floating-actions">
+            <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
             <a href="/MUBUGA-TSS/pages/admissions.php" class="floating-link">Apply</a>
             <a href="/MUBUGA-TSS/pages/contact.php" class="floating-link floating-link-secondary">Contact</a>
         </div>
-        <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
         <footer class="site-footer">
             <div class="container footer-main">
                 <div class="footer-topline">
@@ -269,8 +269,8 @@ function renderSiteFooter(string $schoolName): void
                     <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Apply Now</a>
                 </div>
                 <div class="footer-grid">
-                    <!-- Brand Section -->
-                    <div class="footer-section footer-brand-section">
+                    <!-- Brand & Contact Combined -->
+                    <div class="footer-section">
                         <div class="footer-brand">
                             <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="footer-brand-logo" style="width: <?php echo min(72, $logoSize); ?>px; height: auto;">
                             <div>
@@ -347,7 +347,6 @@ function renderSiteFooter(string $schoolName): void
                                 <span><?php echo htmlspecialchars($locationText); ?></span>
                             </div>
                         </div>
-                        
                     </div>
                 </div>
             </div>
@@ -355,10 +354,9 @@ function renderSiteFooter(string $schoolName): void
             <!-- Footer Bottom -->
             <div class="footer-bottom">
                 <div class="container footer-bottom-content">
-                    <p class="footer-copyright">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
+                    <p class="footer-copyright" style="text-align: center;">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
                     <div class="footer-bottom-links">
                         <a href="/MUBUGA-TSS/pages/admissions.php" class="footer-bottom-link">Admissions</a>
-                        <a href="/MUBUGA-TSS/pages/fees.php" class="footer-bottom-link">Fees</a>
                         <a href="/MUBUGA-TSS/pages/gallery.php" class="footer-bottom-link">Gallery</a>
                         <a href="/MUBUGA-TSS/pages/contact.php" class="footer-bottom-link">Contacts</a>
                     </div>

@@ -14,45 +14,60 @@ renderSiteHeader($page['title'], $schoolName, $contacts, 'programs', [
     'description' => $page['excerpt'],
     'image' => $page['image'],
 ]);
-renderInnerHero('OUR PROGRAMS', $page['content'], $page['excerpt'], $page['image'], false);
+
+$programIcons = [
+    'Software Development' => 'code',
+    'Electrical Technology' => 'bolt',
+];
 ?>
 <main id="main-content" class="programs-page">
+    <section class="programs-hero-banner">
+        <div class="container programs-hero-banner-inner">
+            <div class="programs-hero-copy">
+                <p class="programs-hero-breadcrumb"><a href="/MUBUGA-TSS/">Home</a><span>&gt;</span><span>Programs</span></p>
+                <h1>Our Programs</h1>
+                <span class="programs-hero-accent" aria-hidden="true"></span>
+                <p>We offer high quality technical and professional programs designed to equip students with practical skills and knowledge for a successful future.</p>
+            </div>
+            <div class="programs-hero-image-wrap">
+                <img src="/MUBUGA-TSS/assets/images/school view 2.jpg" alt="Mubuga TSS campus" class="programs-hero-image photo-viewer">
+            </div>
+        </div>
+    </section>
     <section class="section programs-page-section">
         <div class="container">
-            <div class="section-heading programs-page-heading">
-                <p class="eyebrow">Training Pathways</p>
-                <h2>Our programs help students learn in class and practice real technical work.</h2>
-                <p>Each program gives students knowledge, practical skills, and preparation for future work or further study.</p>
+            <div class="section-heading programs-page-heading programs-page-heading-centered">
+                <h2>Programs We Offer</h2>
+                <p>Choose a program that matches your passion and build a career for tomorrow.</p>
             </div>
-            <div class="program-grid">
+            <div class="program-showcase-grid">
                 <?php foreach ($programs as $program): ?>
-                    <article class="program-card">
-                        <div class="program-card-media">
-                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($program['image']); ?>" alt="<?php echo htmlspecialchars($program['title']); ?>" class="program-image">
+                    <?php $iconType = $programIcons[$program['title']] ?? 'code'; ?>
+                    <?php $programHighlights = array_slice(array_values(array_unique(array_merge($program['focus'], $program['subjects']))), 0, 4); ?>
+                    <article class="program-showcase-card">
+                        <div class="program-showcase-media">
+                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($program['image']); ?>" alt="<?php echo htmlspecialchars($program['title']); ?>" class="program-showcase-image photo-viewer">
                         </div>
-                        <div class="program-card-body">
-                            <p class="card-label">School Program</p>
+                        <div class="program-showcase-body">
+                            <div class="program-showcase-icon" aria-hidden="true">
+                                <?php if ($iconType === 'bolt'): ?>
+                                    <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+                                        <path d="M13 2L5 14h5l-1 8 8-12h-5l1-8z" fill="currentColor"></path>
+                                    </svg>
+                                <?php else: ?>
+                                    <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+                                        <path d="M8 8h8v2H8V8zm0 6h5v2H8v-2zm10-9H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 12H6V7h12v10z" fill="currentColor"></path>
+                                    </svg>
+                                <?php endif; ?>
+                            </div>
                             <h3><?php echo htmlspecialchars($program['title']); ?></h3>
                             <p><?php echo htmlspecialchars($program['summary']); ?></p>
-                            <div class="program-meta">
-                                <span><strong>Duration:</strong> <?php echo htmlspecialchars($program['duration']); ?></span>
-                                <span><strong>Level:</strong> Technical Secondary School</span>
-                                <span><strong>Mode:</strong> Theory and practical learning</span>
-                                <span><strong>Admission:</strong> Required</span>
-                            </div>
-                            <div class="program-focus-wrap">
-                                <p class="program-focus-title">Key Areas</p>
-                                <ul class="program-focus-list">
-                                    <?php foreach ($program['focus'] as $item): ?>
-                                        <li><span><?php echo htmlspecialchars($item); ?></span></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </div>
-                            <div class="program-basic-note">
-                                <strong>Basic information:</strong>
-                                <span><?php echo htmlspecialchars($program['requirements']); ?></span>
-                            </div>
-                            <a href="/MUBUGA-TSS/pages/admissions.php" class="inline-link">Apply for this program</a>
+                            <ul class="program-showcase-list">
+                                <?php foreach ($programHighlights as $item): ?>
+                                    <li><?php echo htmlspecialchars($item); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary program-showcase-link">Learn More <span aria-hidden="true">&rarr;</span></a>
                         </div>
                     </article>
                 <?php endforeach; ?>

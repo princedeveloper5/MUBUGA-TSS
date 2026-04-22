@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: /MUBUGA-TSS/sitemap.php

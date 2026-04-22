@@ -6,9 +6,9 @@ require_once __DIR__ . '/../portal/header.php';
 require_once __DIR__ . '/../portal/footer.php';
 
 $page = sitePageContent('our-team', [
-    'title' => 'Our Team',
-    'excerpt' => 'Meet our team.',
-    'content' => 'Technical education experts.',
+    'title' => 'Mubuga TSS - Meet Our Team',
+    'excerpt' => 'Dedicated to Guiding & Inspiring Our Students',
+    'content' => 'Get to know the leaders and educators of Mubuga TSS',
     'image' => 'assets/images/master.jpeg',
 ]);
 
@@ -16,84 +16,138 @@ renderSiteHeader($page['title'], $schoolName, $contacts, 'team', [
     'description' => $page['excerpt'],
     'image' => $page['image'],
 ]);
-renderInnerHero('OUR TEAM', $page['content'], $page['excerpt'], $page['image']);
 ?>
-<main>
-    <!-- Team Main Section -->
-    <section class="section team-main-section">
-        <div class="container">
-            <div class="section-intro">
-                <p class="eyebrow">Meet Our Team</p>
-                <h2>Professional Excellence</h2>
-                <p>Technical education experts for student success.</p>
-            </div>
-            
-            <!-- Team Unified Image -->
-            <div class="team-unified-image">
-                <img src="assets/images/team-photo.jpg" alt="Mubuga TSS Team" class="team-main-image">
-                <div class="team-image-overlay">
-                    <h3>Our Professional Team</h3>
-                    <p>Educators and staff for your success</p>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Our Team</h1>
+        <p>Professional educators dedicated to excellence</p>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="team">
+    <div class="team-container">
+
+        <!-- Administration -->
+        <div class="team-section admin">
+            <h2>Administration</h2>
+            <div class="profiles">
+                <div class="profile-card">
+                    <img src="/MUBUGA-TSS/assets/images/master.jpeg" alt="Principal John Karangwa">
+                    <h3>Principal</h3>
+                    <p>John Karangwa</p>
+                    <button class="btn-blue">View Profile</button>
                 </div>
-            </div>
-            
-            <!-- Team Categories Grid -->
-            <div class="team-categories-grid">
-                <div class="team-category-card">
-                    <h3>Teaching Staff</h3>
-                    <ul>
-                        <li>Technical Instructors</li>
-                        <li>Lab Coordinators</li>
-                        <li>Curriculum Developers</li>
-                        <li>Academic Advisors</li>
-                    </ul>
+                <div class="profile-card">
+                    <img src="/MUBUGA-TSS/assets/images/master.jpeg" alt="Head of ICT Alice Nshimiyimana">
+                    <h3>Head of ICT</h3>
+                    <p>Alice Nshimiyimana</p>
+                    <button class="btn-blue">View Profile</button>
                 </div>
-                
-                <div class="team-category-card">
-                    <h3>Administrative Team</h3>
-                    <ul>
-                        <li>School Principal</li>
-                        <li>Academic Director</li>
-                        <li>Student Affairs</li>
-                        <li>Finance Administrator</li>
-                    </ul>
+                <div class="profile-card">
+                    <img src="/MUBUGA-TSS/assets/images/master.jpeg" alt="Academic Director Eric Mugisha">
+                    <h3>Academic Director</h3>
+                    <p>Eric Mugisha</p>
+                    <button class="btn-blue">View Profile</button>
                 </div>
-                
-                <div class="team-category-card">
-                    <h3>Support Staff</h3>
-                    <ul>
-                        <li>Counselors</li>
-                        <li>Librarians</li>
-                        <li>Health Officer</li>
-                        <li>Sports Coaches</li>
-                    </ul>
+                <div class="profile-card">
+                    <img src="/MUBUGA-TSS/assets/images/master.jpeg" alt="Finance Officer Grace Uwimana">
+                    <h3>Finance Officer</h3>
+                    <p>Grace Uwimana</p>
+                    <button class="btn-blue">View Profile</button>
                 </div>
-            </div>
-            
-            <!-- Team Members Grid -->
-            <div class="team-members-grid">
-                <?php 
-                $count = 0;
-                foreach ($leadership as $member): 
-                    if ($count < 2): // Show only first 2 members
-                ?>
-                    <article class="team-member-card">
-                        <div class="member-photo">
-                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($member['photo']); ?>" alt="<?php echo htmlspecialchars($member['name']); ?>" class="member-image">
-                        </div>
-                        <div class="member-info">
-                            <div class="member-role"><?php echo htmlspecialchars($member['role']); ?></div>
-                            <h3><?php echo htmlspecialchars($member['name']); ?></h3>
-                            <p><?php echo htmlspecialchars($member['text']); ?></p>
-                        </div>
-                    </article>
-                <?php 
-                    endif;
-                    $count++;
-                    endforeach; 
-                ?>
+                <div class="profile-card">
+                    <img src="/MUBUGA-TSS/assets/images/master.jpeg" alt="Student Affairs David Mukamana">
+                    <h3>Student Affairs</h3>
+                    <p>David Mukamana</p>
+                    <button class="btn-blue">View Profile</button>
+                </div>
+                <div class="profile-card">
+                    <img src="/MUBUGA-TSS/assets/images/master.jpeg" alt="Administrative Assistant Sarah Niyonzima">
+                    <h3>Administrative Assistant</h3>
+                    <p>Sarah Niyonzima</p>
+                    <button class="btn-blue">View Profile</button>
+                </div>
             </div>
         </div>
-    </section>
-</main>
+
+        <!-- Teaching Staff -->
+        <div class="team-section teaching">
+            <h2>Teaching Staff</h2>
+            <div class="profiles">
+                <div class="profile-card">
+                    <img src="/MUBUGA-TSS/assets/images/master.jpeg" alt="ICT Instructor Eric Mukamana">
+                    <h3>ICT Instructor</h3>
+                    <p>Eric Mukamana</p>
+                    <button class="btn-yellow">View Profile</button>
+                </div>
+                <div class="profile-card">
+                    <img src="/MUBUGA-TSS/assets/images/master.jpeg" alt="Electrical Instructor David Mugisha">
+                    <h3>Electrical Instructor</h3>
+                    <p>David Mugisha</p>
+                    <button class="btn-yellow">View Profile</button>
+                </div>
+                <div class="profile-card">
+                    <img src="/MUBUGA-TSS/assets/images/master.jpeg" alt="Math Teacher Grace Uwimana">
+                    <h3>Math Teacher</h3>
+                    <p>Grace Uwimana</p>
+                    <button class="btn-yellow">View Profile</button>
+                </div>
+                <div class="profile-card">
+                    <img src="/MUBUGA-TSS/assets/images/master.jpeg" alt="Physics Teacher John Karangwa">
+                    <h3>Physics Teacher</h3>
+                    <p>John Karangwa</p>
+                    <button class="btn-yellow">View Profile</button>
+                </div>
+                <div class="profile-card">
+                    <img src="/MUBUGA-TSS/assets/images/master.jpeg" alt="English Teacher Alice Nshimiyimana">
+                    <h3>English Teacher</h3>
+                    <p>Alice Nshimiyimana</p>
+                    <button class="btn-yellow">View Profile</button>
+                </div>
+                <div class="profile-card">
+                    <img src="/MUBUGA-TSS/assets/images/master.jpeg" alt="Chemistry Teacher Sarah Mukamana">
+                    <h3>Chemistry Teacher</h3>
+                    <p>Sarah Mukamana</p>
+                    <button class="btn-yellow">View Profile</button>
+                </div>
+                <div class="profile-card">
+                    <img src="/MUBUGA-TSS/assets/images/master.jpeg" alt="Biology Teacher Eric Niyonzima">
+                    <h3>Biology Teacher</h3>
+                    <p>Eric Niyonzima</p>
+                    <button class="btn-yellow">View Profile</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Facilities -->
+    <div class="facilities">
+        <div class="facility-card">
+            <img src="/MUBUGA-TSS/assets/images/software development.jpg" alt="ICT Labs">
+            <h4>ICT Labs</h4>
+            <button class="btn-blue">View Profile</button>
+        </div>
+        <div class="facility-card">
+            <img src="/MUBUGA-TSS/assets/images/electrical technology.JPG" alt="Electrical Workshops">
+            <h4>Electrical Workshops</h4>
+            <button class="btn-blue">View Profile</button>
+        </div>
+        <div class="facility-card">
+            <img src="/MUBUGA-TSS/assets/images/students.jfif" alt="Student Support">
+            <h4>Student Support</h4>
+            <button class="btn-blue">View Profile</button>
+        </div>
+    </div>
+
+    <!-- Footer Buttons -->
+    <div class="footer-buttons">
+        <button class="btn-blue">View All Administration</button>
+        <button class="btn-yellow">View All Teaching Staff</button>
+    </div>
+</section>
+
 <?php renderSiteFooter($schoolName); ?>

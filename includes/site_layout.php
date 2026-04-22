@@ -256,7 +256,7 @@ function renderSiteFooter(string $schoolName): void
     ?>
         <div class="floating-actions">
             <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
-            <a href="/MUBUGA-TSS/pages/admissions.php" class="floating-link">Apply</a>
+            <a href="/MUBUGA-TSS/apply.php" class="floating-link">Apply</a>
             <a href="/MUBUGA-TSS/pages/contact.php" class="floating-link floating-link-secondary">Contact</a>
         </div>
         <footer class="site-footer">
@@ -266,7 +266,7 @@ function renderSiteFooter(string $schoolName): void
                         <p class="eyebrow">Mubuga TSS</p>
                         <h2>Short path. Big future.</h2>
                     </div>
-                    <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Apply Now</a>
+                    <a href="/MUBUGA-TSS/apply.php" class="button button-primary">Apply Now</a>
                 </div>
                 <div class="footer-grid">
                     <!-- Brand & Contact Combined -->

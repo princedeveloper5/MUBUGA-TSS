@@ -215,170 +215,7 @@ renderInnerHero('ADMISSIONS', 'Your Path to Technical Excellence', 'Join Mubuga 
         </div>
     </section>
     
-    <!-- Timeline Section -->
-    <section class="section admission-timeline-section">
-        <div class="container">
-            <div class="section-intro">
-                <p class="eyebrow">Important Dates</p>
-                <h2>Admission Timeline</h2>
-                <p>Mark these dates. Our process ensures fair consideration.</p>
-            </div>
-            
-            <div class="timeline-grid">
-                <div class="timeline-item">
-                    <div class="timeline-date">Jan 15 - Mar 30</div>
-                    <div class="timeline-content">
-                        <h4>Application Period</h4>
-                        <p>Submit complete application with all documents. Early applications encouraged.</p>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-date">Apr 1 - Apr 15</div>
-                    <div class="timeline-content">
-                        <h4>Exams & Interviews</h4>
-                        <p>Attend written exams and interviews. Bring original documents.</p>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-date">Apr 30</div>
-                    <div class="timeline-content">
-                        <h4>Results Announcement</h4>
-                        <p>Successful candidates notified via email and SMS.</p>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-date">May 1 - May 15</div>
-                    <div class="timeline-content">
-                        <h4>Registration & Orientation</h4>
-                        <p>Complete registration, pay fees, attend orientation.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Career Opportunities Section -->
-    <section class="section career-opportunities-section">
-        <div class="container">
-            <div class="section-intro">
-                <p class="eyebrow">Career Pathways</p>
-                <h2>Job Opportunities</h2>
-                <p>Graduates get excellent jobs with competitive salaries.</p>
-            </div>
-            
-            <div class="careers-grid">
-                <div class="career-card">
-                    <h3>Software Development Jobs</h3>
-                    <ul>
-                        <li>Full-Stack Developer</li>
-                        <li>Mobile App Developer</li>
-                        <li>Web Developer</li>
-                        <li>Database Administrator</li>
-                        <li>Software QA Engineer</li>
-                        <li>DevOps Engineer</li>
-                        <li>Cloud Specialist</li>
-                        <li>IT Project Manager</li>
-                    </ul>
-                    <p><strong>Industries:</strong> Tech, Finance, Healthcare</p>
-                </div>
-                
-                <div class="career-card">
-                    <h3>Electrical Technology Jobs</h3>
-                    <ul>
-                        <li>Electrical Engineer</li>
-                        <li>Industrial Automation Tech</li>
-                        <li>Power Systems Tech</li>
-                        <li>Renewable Energy Specialist</li>
-                        <li>Control Systems Engineer</li>
-                        <li>Maintenance Supervisor</li>
-                        <li>Electrical Project Manager</li>
-                        <li>Smart Grid Tech</li>
-                    </ul>
-                    <p><strong>Industries:</strong> Manufacturing, Energy, Construction</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Student Life Section -->
-    <section class="section student-life-section">
-        <div class="container">
-            <div class="section-intro">
-                <p class="eyebrow">Campus Life</p>
-                <h2>Student Experience</h2>
-                <p>Modern facilities, sports programs, clubs, supportive community.</p>
-            </div>
-            
-            <div class="student-life-grid">
-                <div class="life-card">
-                    <h3>Academic Support</h3>
-                    <p>Tutoring, academic advising, study groups, library resources.</p>
-                </div>
-                
-                <div class="life-card">
-                    <h3>Sports & Recreation</h3>
-                    <p>Football field, basketball courts, volleyball, athletics track.</p>
-                </div>
-                
-                <div class="life-card">
-                    <h3>Clubs & Organizations</h3>
-                    <p>Coding club, engineering society, entrepreneurship club, debate team.</p>
-                </div>
-                
-                <div class="life-card">
-                    <h3>Housing & Dining</h3>
-                    <p>Safe hostel accommodation with meal plans, 24/7 security.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- FAQ Section -->
-    <section class="section faq-section">
-        <div class="container">
-            <div class="section-intro">
-                <p class="eyebrow">FAQ</p>
-                <h2>Admission Questions</h2>
-                <p>Find answers about admission, programs, requirements.</p>
-            </div>
-            
-            <div class="faq-grid">
-                <div class="faq-item">
-                    <h4>What are tuition fees and payment options?</h4>
-                    <p>Fees vary by program and level. We offer installment payments, scholarships.</p>
-                </div>
-                
-                <div class="faq-item">
-                    <h4>Are there internship opportunities?</h4>
-                    <p>Yes, we partner with leading companies for industrial attachments.</p>
-                </div>
-                
-                <div class="faq-item">
-                    <h4>What certification will I receive?</h4>
-                    <p>Graduates receive nationally recognized technical certificates, industry certifications.</p>
-                </div>
-                
-                <div class="faq-item">
-                    <h4>Is accommodation available?</h4>
-                    <p>Yes, we provide secure hostel accommodation with separate facilities.</p>
-                </div>
-                
-                <div class="faq-item">
-                    <h4>What support services are available?</h4>
-                    <p>We offer academic counseling, career guidance, health services, mentorship.</p>
-                </div>
-                
-                <div class="faq-item">
-                    <h4>Can I transfer credits from another institution?</h4>
-                    <p>Yes, we accept transfer credits from accredited institutions.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Application Form Section -->
+        <!-- Application Form Section -->
     <section class="section admission-form-section" id="application">
         <div class="container">
             <div class="section-intro">
@@ -387,7 +224,7 @@ renderInnerHero('ADMISSIONS', 'Your Path to Technical Excellence', 'Join Mubuga 
                 <p>Ready to join Mubuga TSS? Complete the application form below.</p>
                 <div class="cta-urgent">
                     <p><strong>Application Deadline: March 30</strong></p>
-                    <a href="#application" class="btn btn-primary btn-large">Apply Today</a>
+                    <a href="/MUBUGA-TSS/apply.php" class="btn btn-primary btn-large">Apply Today</a>
                 </div>
             </div>
             
@@ -456,7 +293,9 @@ renderInnerHero('ADMISSIONS', 'Your Path to Technical Excellence', 'Join Mubuga 
                     </div>
                 <?php endif; ?>
 
-                <form method="POST" action="" class="admission-form" id="admissionForm" enctype="multipart/form-data">
+                <form method="POST" action="/MUBUGA-TSS/handlers/site_forms.php" class="admission-form" id="admissionForm" enctype="multipart/form-data">
+                    <input type="hidden" name="form_action" value="student_registration">
+                    <input type="hidden" name="redirect_to" value="/MUBUGA-TSS/pages/admissions.php">
                     <div id="registration" class="form-heading form-heading-left">
                         <h2>Student Application Form</h2>
                         <p>Please complete all required fields accurately.</p>
@@ -464,11 +303,11 @@ renderInnerHero('ADMISSIONS', 'Your Path to Technical Excellence', 'Join Mubuga 
                     <div class="form-grid form-grid--two">
                         <div class="form-group">
                             <label for="first_name">First Name</label>
-                            <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required>
+                            <input type="text" id="first_name" name="first_name" placeholder="e.g., John" required>
                         </div>
                         <div class="form-group">
                             <label for="last_name">Last Name</label>
-                            <input type="text" id="last_name" name="last_name" placeholder="Enter your last name" required>
+                            <input type="text" id="last_name" name="last_name" placeholder="e.g., Doe" required>
                         </div>
                         <div class="form-group">
                             <label for="preferred_program_id">Program Selection</label>
@@ -505,7 +344,7 @@ renderInnerHero('ADMISSIONS', 'Your Path to Technical Excellence', 'Join Mubuga 
                         </div>
                         <div class="form-group">
                             <label for="guardian_phone">Guardian Phone Number</label>
-                            <input type="tel" id="guardian_phone" name="guardian_phone" placeholder="Enter guardian's phone number">
+                            <input type="tel" id="guardian_phone" name="guardian_phone" placeholder="e.g., +250 7XX XXX XXX">
                         </div>
                         <div class="form-group">
                             <label for="father_name">Father's Full Name</label>

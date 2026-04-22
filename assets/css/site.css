@@ -3919,6 +3919,8 @@ h3 {
     .faq-item,
     .admission-highlight-card,
     .program-card,
+    .journey-card,
+    .program-detail-card,
     .requirement-card,
     .timeline-item {
         padding: 16px;
@@ -3937,6 +3939,14 @@ h3 {
     
     .career-card ul {
         grid-template-columns: 1fr;
+    }
+
+    .program-detail-block {
+        padding: 18px;
+    }
+
+    .programs-cta-panel {
+        padding: 26px;
     }
 }
 
@@ -5081,6 +5091,132 @@ h3 {
     color: #6e5624;
 }
 
+.program-journey-section,
+.program-details-section,
+.programs-cta-section {
+    position: relative;
+}
+
+.program-journey-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 34px;
+}
+
+.journey-card {
+    padding: 28px;
+    border-radius: 24px;
+    background: rgba(255, 250, 242, 0.96);
+    border: 1px solid rgba(175, 156, 104, 0.18);
+    box-shadow: 0 18px 38px rgba(122, 106, 62, 0.1);
+}
+
+.journey-step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 18px;
+    border-radius: 50%;
+    background: rgba(214, 198, 143, 0.36);
+    color: #7a5a31;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.journey-card h3,
+.program-detail-card h3,
+.programs-cta-panel h2 {
+    margin: 0 0 12px;
+    color: #6a472b;
+}
+
+.journey-card p,
+.program-detail-card p,
+.program-detail-list li,
+.programs-cta-panel p {
+    color: #806753;
+}
+
+.program-detail-stack {
+    display: grid;
+    gap: 26px;
+    margin-top: 34px;
+}
+
+.program-detail-card {
+    padding: 32px;
+    border-radius: 28px;
+    background: linear-gradient(180deg, rgba(255, 252, 246, 0.98) 0%, rgba(249, 240, 228, 0.98) 100%);
+    border: 1px solid rgba(175, 156, 104, 0.2);
+    box-shadow: 0 22px 46px rgba(122, 106, 62, 0.12);
+}
+
+.program-detail-intro {
+    max-width: 760px;
+    margin-bottom: 24px;
+}
+
+.program-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.program-detail-block {
+    padding: 22px;
+    border-radius: 22px;
+    background: rgba(255, 252, 245, 0.88);
+    border: 1px solid rgba(175, 156, 104, 0.16);
+}
+
+.program-detail-block h4 {
+    margin: 0 0 14px;
+    color: #8b603a;
+}
+
+.program-detail-list {
+    margin: 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 10px;
+}
+
+.programs-cta-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 34px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, rgba(113, 82, 43, 0.94), rgba(159, 122, 76, 0.92));
+    box-shadow: 0 26px 56px rgba(82, 58, 29, 0.22);
+}
+
+.programs-cta-panel .eyebrow,
+.programs-cta-panel h2,
+.programs-cta-panel p {
+    color: #fff8ef;
+}
+
+.programs-cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.programs-cta-actions .button-secondary {
+    background: rgba(255, 248, 239, 0.14);
+    color: #fff8ef;
+    border-color: rgba(255, 248, 239, 0.34);
+}
+
+.programs-cta-actions .button-secondary:hover {
+    background: rgba(255, 248, 239, 0.22);
+}
+
 .value-card:nth-child(3),
 .news-card:nth-child(3),
 .facility-card:nth-child(3),
@@ -5123,6 +5259,10 @@ h3 {
     }
 
     .program-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .program-journey-grid {
         grid-template-columns: 1fr;
     }
 
@@ -5179,6 +5319,11 @@ h3 {
 
     .footer-main {
         padding: 48px 0 32px;
+    }
+
+    .programs-cta-panel {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
 

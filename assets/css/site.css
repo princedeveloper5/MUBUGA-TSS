@@ -15,6 +15,32 @@
     --container: min(1160px, calc(100% - 32px));
 }
 
+body.site-theme-dark {
+    --bg: #0c1b2c;
+    --paper: #10263b;
+    --surface: rgba(16, 38, 59, 0.96);
+    --ink: #edf5ff;
+    --muted: #adc3db;
+    --line: rgba(194, 219, 245, 0.14);
+    --green-soft: rgba(30, 74, 117, 0.7);
+    --shadow: 0 22px 64px rgba(0, 0, 0, 0.28);
+}
+
+.site-notice-bar {
+    background: linear-gradient(135deg, var(--gold-deep), var(--clay));
+    color: #fff;
+}
+
+.site-notice-bar .container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 0;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
 /* Gallery collections redesign */
 .gallery-section {
     position: relative;
@@ -113,7 +139,7 @@
     overflow: hidden;
     border-radius: 20px;
     aspect-ratio: 1.2 / 0.86;
-    background: #e9f1f8;
+    background: #4FC3F7;
 }
 
 .gallery-collection-feature-empty {
@@ -524,7 +550,7 @@ img {
 
 .topbar {
     border-bottom: 1px solid var(--line);
-    background: linear-gradient(90deg, #1c5e9d 0%, #2d7dcb 100%);
+    background: #4FC3F7;
     color: #f8fbff;
 }
 
@@ -540,12 +566,12 @@ img {
 }
 
 .form-feedback-success {
-    background: rgba(31, 77, 140, 0.12);
+    background: #4FC3F7;
     color: var(--green);
 }
 
 .form-feedback-error {
-    background: rgba(181, 61, 32, 0.12);
+    background: #4FC3F7;
     color: #8d2a12;
 }
 
@@ -618,7 +644,7 @@ img {
     top: 0;
     z-index: 20;
     backdrop-filter: blur(16px);
-    background: rgba(255, 255, 255, 0.94);
+    background: rgba(79, 195, 247, 0.85);
     border-bottom: 1px solid rgba(23, 71, 122, 0.08);
     box-shadow: 0 10px 28px rgba(24, 91, 158, 0.06);
 }
@@ -829,7 +855,7 @@ h3 {
 
 .back-to-top {
     position: fixed;
-    right: 18px;
+    left: 18px;
     bottom: 136px;
     z-index: 35;
     border: 0;
@@ -1622,7 +1648,7 @@ h1 {
 }
 
 .section {
-    padding: 74px 0;
+    padding: 40px 0;
 }
 
 .section .container {
@@ -1643,7 +1669,7 @@ h1 {
 
 .section-heading {
     max-width: 740px;
-    margin: 0 auto 28px auto;
+    margin: 0 auto 16px auto;
     text-align: center;
 }
 
@@ -1689,7 +1715,7 @@ h3 {
 .value-card,
 .facility-card,
 .contact-card {
-    padding: 26px;
+    padding: 18px;
     background: var(--surface);
     border: 1px solid rgba(23, 71, 122, 0.1);
     backdrop-filter: blur(10px);
@@ -1738,7 +1764,7 @@ h3 {
 .leadership-grid,
 .news-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 28px;
+    gap: 16px;
 }
 
 .expanded-values {
@@ -4277,7 +4303,7 @@ h3 {
     font-size: 1.2rem;
     font-weight: 700;
     color: white;
-    background: linear-gradient(135deg, var(--gold) 0%, var(--clay) 100%);
+    background: linear-gradient(135deg, #4FC3F7 0%, #4FC3F7 100%);
 }
 
 .admission-step p {
@@ -5444,6 +5470,70 @@ h3 {
     background: linear-gradient(135deg, #f8fafc, #ffffff);
 }
 
+/* Admissions Steps and News Section CTA Styling */
+.admissions-cta,
+.news-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    padding: 20px;
+}
+
+.admissions-cta .button,
+.news-cta .button {
+    min-width: 200px;
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 300ms ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.admissions-cta .button::before,
+.news-cta .button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 500ms ease;
+}
+
+.admissions-cta .button:hover::before,
+.news-cta .button:hover::before {
+    left: 100%;
+}
+
+.admissions-cta .button-primary {
+    background: linear-gradient(135deg, #4a90e2, #2563eb);
+    border: 2px solid #4a90e2;
+    color: white;
+    box-shadow: 0 8px 25px rgba(74, 144, 226, 0.3);
+}
+
+.admissions-cta .button-primary:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 35px rgba(74, 144, 226, 0.4);
+    background: linear-gradient(135deg, #2563eb, #4a90e2);
+}
+
+.news-cta .button-primary {
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    border: 2px solid #0ea5e9;
+    color: white;
+    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.3);
+}
+
+.news-cta .button-primary:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 35px rgba(14, 165, 233, 0.4);
+    background: linear-gradient(135deg, #0284c7, #0ea5e9);
+}
+
 /* About Us Section New Styling */
 .about-grid {
     display: grid;
@@ -6129,10 +6219,14 @@ h3 {
 /* News Cards with Background Images */
 .news-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 40px;
-    margin-top: 40px;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
     padding: 0;
+}
+
+.news-grid .news-card {
+    grid-column: span 1;
+    grid-row: span 1;
 }
 
 .news-card {
@@ -6245,6 +6339,13 @@ h3 {
     
     .news-content p {
         font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .news-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
     }
 }
 

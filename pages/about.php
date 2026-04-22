@@ -2,6 +2,8 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/site_data.php';
 require_once __DIR__ . '/../includes/site_layout.php';
+require_once __DIR__ . '/../portal/header.php';
+require_once __DIR__ . '/../portal/footer.php';
 $page = sitePageContent('about-us', [
     'title' => 'About Us',
     'excerpt' => 'Learn the story, mission, vision, and values that shape Mubuga TSS.',

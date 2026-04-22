@@ -3,6 +3,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/site_data.php';
 require_once __DIR__ . '/../includes/site_layout.php';
 require_once __DIR__ . '/../includes/admin_upload.php';
+require_once __DIR__ . '/../portal/header.php';
+require_once __DIR__ . '/../portal/footer.php';
 
 $message = '';
 $messageType = '';

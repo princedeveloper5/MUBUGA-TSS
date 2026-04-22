@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/includes/site_data.php';
 require_once __DIR__ . '/includes/site_layout.php';
+require_once __DIR__ . '/portal/header.php';
+require_once __DIR__ . '/portal/footer.php';
 
 $homepageGallery = array_values(array_filter($gallery, static function (array $item): bool {
     return (string) ($item['media_type'] ?? 'image') !== 'video';
@@ -359,6 +361,9 @@ if (isset($_GET['form_status']) && isset($_GET['form_message'])) {
                         </div>
                     </div>
                 </div>
+                <div class="admissions-cta">
+                    <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Start Application</a>
+                </div>
             </div>
         </section>
 
@@ -366,80 +371,48 @@ if (isset($_GET['form_status']) && isset($_GET['form_message'])) {
         <section class="section news" id="news">
             <div class="container">
                 <div class="section-heading">
-                    <h2>Latest News</h2>
-                    <p>Latest from Mubuga TSS</p>
+                    <h2>Latest Updates</h2>
+                    <p>News, Events & Announcements</p>
                 </div>
                 
                 <div class="news-grid">
-                    <?php foreach ($news as $item): ?>
-                        <article class="news-card" 
-                            <?php if (!empty($item['image'])): ?>
-                                style="background-image: url('<?php echo htmlspecialchars($item['image']); ?>');"
-                            <?php endif; ?>
-                        >
-                            <div class="news-card-overlay">
-                                <div class="news-content">
-                                    <h3><?php echo htmlspecialchars($item['title']); ?></h3>
-                                    <p><?php echo htmlspecialchars($item['text']); ?></p>
-                                    <a href="<?php echo htmlspecialchars($item['link'] ?? '/MUBUGA-TSS/pages/news.php'); ?>" class="button button-primary">Read More</a>
-                                </div>
+                    <!-- All News Card -->
+                    <article class="news-card" style="background-image: url('assets/images/events.jpg');">
+                        <div class="news-card-overlay">
+                            <div class="news-content">
+                                <h3>All News</h3>
+                                <p>Stay updated with the latest news and announcements from Mubuga TSS.</p>
+                                <a href="/MUBUGA-TSS/pages/news.php" class="button button-primary">View All News</a>
                             </div>
-                        </article>
-                    <?php endforeach; ?>
+                        </div>
+                    </article>
+                    
+                    <!-- Events Card -->
+                    <article class="news-card" style="background-image: url('assets/images/events.jpg');">
+                        <div class="news-card-overlay">
+                            <div class="news-content">
+                                <h3>Upcoming Events</h3>
+                                <p>Join us for exciting events and activities at our school.</p>
+                                <a href="/MUBUGA-TSS/pages/events.php" class="button button-primary">View All Events</a>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <!-- Announcements Card -->
+                    <article class="news-card" style="background-image: url('assets/images/events.jpg');">
+                        <div class="news-card-overlay">
+                            <div class="news-content">
+                                <h3>Announcements</h3>
+                                <p>Important announcements and updates for students and parents.</p>
+                                <a href="/MUBUGA-TSS/pages/announcements.php" class="button button-primary">View All Announcements</a>
+                            </div>
+                        </div>
+                    </article>
                 </div>
             </div>
         </section>
     </main>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-content">
-                <!-- Contact Info -->
-                <div class="footer-section">
-                    <h3>Contact Info</h3>
-                    <div class="contact-info">
-                        <?php foreach ($contacts as $contact): ?>
-                            <div class="contact-item">
-                                <strong><?php echo htmlspecialchars($contact['label']); ?>:</strong>
-                                <span><?php echo htmlspecialchars($contact['value']); ?></span>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-                
-                <!-- Quick Links -->
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul class="quick-links">
-                        <li><a href="/MUBUGA-TSS/pages/about.php">About Us</a></li>
-                        <li><a href="/MUBUGA-TSS/pages/programs.php">Programs</a></li>
-                        <li><a href="/MUBUGA-TSS/pages/facilities.php">Facilities</a></li>
-                        <li><a href="/MUBUGA-TSS/pages/gallery.php">Gallery</a></li>
-                        <li><a href="/MUBUGA-TSS/pages/contact.php">Contact</a></li>
-                    </ul>
-                </div>
-                
-                <!-- Newsletter Signup -->
-                <div class="footer-section">
-                    <h3>Newsletter Signup</h3>
-                    <p>Get updates on admissions and school news.</p>
-                    <form class="newsletter-form" method="post" action="/MUBUGA-TSS/handlers/site_forms.php">
-                        <input type="hidden" name="form_action" value="newsletter_subscribe">
-                        <input type="hidden" name="source" value="footer">
-                        <div class="form-group">
-                            <input type="email" name="email" placeholder="Your email address" required>
-                            <button type="submit" class="button button-primary">Subscribe</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+<?php renderSiteFooter($schoolName); ?>
 
 <script>
 // Hero Background Rotation with Corresponding Text

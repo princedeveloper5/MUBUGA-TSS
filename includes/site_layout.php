@@ -73,6 +73,8 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
     $facebookUrl = (string) ($siteMeta['facebook_url'] ?? '#');
     $instagramUrl = (string) ($siteMeta['instagram_url'] ?? '#');
     $twitterUrl = (string) ($siteMeta['twitter_url'] ?? '#');
+    $themeMode = (string) ($siteMeta['theme_mode'] ?? 'light');
+    $homepageNotice = trim((string) ($siteMeta['homepage_notice'] ?? ''));
     ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -88,7 +90,7 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
     <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/site.css">
     <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/photo-viewer.css">
 </head>
-<body>
+<body class="site-theme-<?php echo htmlspecialchars($themeMode); ?>" data-site-theme="<?php echo htmlspecialchars($themeMode); ?>">
     <div class="project-loader" data-project-loader>
         <div class="project-loader-card">
             <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="project-loader-logo">
@@ -180,6 +182,14 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
                 </nav>
             </div>
         </header>
+        <?php if ($homepageNotice !== ''): ?>
+            <div class="site-notice-bar">
+                <div class="container">
+                    <strong>School Notice:</strong>
+                    <span><?php echo htmlspecialchars($homepageNotice); ?></span>
+                </div>
+            </div>
+        <?php endif; ?>
         <?php if ($formStatus !== '' && $formMessage !== ''): ?>
             <div class="container form-feedback-wrap">
                 <div class="form-feedback form-feedback-<?php echo htmlspecialchars($formStatus); ?>">
@@ -245,10 +255,10 @@ function renderSiteFooter(string $schoolName): void
     $locationText = (string) ($contacts[2]['value'] ?? 'Mubuga, Rwanda');
     ?>
         <div class="floating-actions">
+            <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
             <a href="/MUBUGA-TSS/pages/admissions.php" class="floating-link">Apply</a>
             <a href="/MUBUGA-TSS/pages/contact.php" class="floating-link floating-link-secondary">Contact</a>
         </div>
-        <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
         <footer class="site-footer">
             <div class="container footer-main">
                 <div class="footer-topline">
@@ -259,8 +269,8 @@ function renderSiteFooter(string $schoolName): void
                     <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Apply Now</a>
                 </div>
                 <div class="footer-grid">
-                    <!-- Brand Section -->
-                    <div class="footer-section footer-brand-section">
+                    <!-- Brand & Contact Combined -->
+                    <div class="footer-section">
                         <div class="footer-brand">
                             <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="footer-brand-logo" style="width: <?php echo min(72, $logoSize); ?>px; height: auto;">
                             <div>
@@ -277,38 +287,6 @@ function renderSiteFooter(string $schoolName): void
                                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 21.6c-5.3 0-9.6-4.3-9.6-9.6s4.3-9.6 9.6-9.6 9.6 4.3 9.6 9.6-4.3 9.6-9.6 9.6zm0-15.6c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm5.6-1.8c0 .79.64 1.43 1.43 1.43s1.43-.64 1.43-1.43-.64-1.43-1.43-1.43-1.43.64-1.43 1.43z"/></svg>
                             </a>
                         </div>
-                    </div>
-
-                    <!-- Quick Links -->
-                    <div class="footer-section">
-                        <h3 class="footer-heading">Quick Links</h3>
-                        <ul class="footer-links">
-                            <li><a href="/MUBUGA-TSS/pages/about.php">About Us</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/programs.php">Our Programs</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/facilities.php">Facilities</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/team.php">Our Team</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/gallery.php">Gallery</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/news.php">News &amp; Updates</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/events.php">Events</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/announcements.php">Announcements</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Admissions -->
-                    <div class="footer-section">
-                        <h3 class="footer-heading">Programs</h3>
-                        <ul class="footer-links">
-                            <li><a href="/MUBUGA-TSS/pages/programs.php">Software Development</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/programs.php">Electrical Technology</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/programs.php">View All Programs</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/fees.php">Fees &amp; Requirements</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/registration.php">Student Registration</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Contact Info & Newsletter -->
-                    <div class="footer-section">
-                        <h3 class="footer-heading">Contact</h3>
                         <div class="footer-contact-info">
                             <?php if ($phoneNumber): ?>
                                 <a href="tel:<?php echo htmlspecialchars($phoneNumber); ?>" class="contact-link">
@@ -327,8 +305,28 @@ function renderSiteFooter(string $schoolName): void
                                 <span><?php echo htmlspecialchars($locationText); ?></span>
                             </div>
                         </div>
-                        
-                        <h3 class="footer-heading footer-heading-newsletter">Newsletter</h3>
+                    </div>
+
+                    <!-- Quick Links & Programs Combined -->
+                    <div class="footer-section">
+                        <h3 class="footer-heading">Quick Links</h3>
+                        <ul class="footer-links">
+                            <li><a href="/MUBUGA-TSS/pages/about.php">About Us</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/programs.php">Programs</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/facilities.php">Facilities</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/team.php">Our Team</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/gallery.php">Gallery</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/news.php">News</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/events.php">Events</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/announcements.php">Announcements</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/fees.php">Fees</a></li>
+                            <li><a href="/MUBUGA-TSS/pages/registration.php">Registration</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Newsletter -->
+                    <div class="footer-section">
+                        <h3 class="footer-heading">Newsletter</h3>
                         <p class="footer-newsletter-desc">Get admissions and school updates.</p>
                         <form class="footer-newsletter-form" method="post" action="/MUBUGA-TSS/handlers/site_forms.php">
                             <input type="hidden" name="form_action" value="newsletter_subscribe">
@@ -346,10 +344,9 @@ function renderSiteFooter(string $schoolName): void
             <!-- Footer Bottom -->
             <div class="footer-bottom">
                 <div class="container footer-bottom-content">
-                    <p class="footer-copyright">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
+                    <p class="footer-copyright" style="text-align: center;">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
                     <div class="footer-bottom-links">
                         <a href="/MUBUGA-TSS/pages/admissions.php" class="footer-bottom-link">Admissions</a>
-                        <a href="/MUBUGA-TSS/pages/fees.php" class="footer-bottom-link">Fees</a>
                         <a href="/MUBUGA-TSS/pages/gallery.php" class="footer-bottom-link">Gallery</a>
                         <a href="/MUBUGA-TSS/pages/contact.php" class="footer-bottom-link">Contacts</a>
                     </div>

@@ -952,6 +952,27 @@ $filteredGalleryCount = 0;
 $mediaPageCount = 1;
 $mediaPerPage = 8;
 $logoPath = 'assets/images/MUBUGA%20LOGO%20SN.PNG';
+$activeDashboardPanel = 'dashboard-panel';
+$adminName = trim((string) (($admin['name'] ?? $admin['full_name'] ?? 'Administrator')));
+$currentDateLabel = date('l, d M Y');
+$siteLogoSize = 52;
+$adminLogoSize = 34;
+$settingsLogoPath = $logoPath;
+$settingsLogoPreviewUrl = adminResolveMediaUrl($logoPath);
+$imageMediaItems = [];
+$videoMediaItems = [];
+$announcementItems = [];
+$imageCount = 0;
+$videoCount = 0;
+$announcementCount = 0;
+$userCount = 1;
+$storageUsedBytes = 0;
+$storageLimitBytes = 50 * 1024 * 1024;
+$storageUsagePercent = 0;
+$mostViewedMedia = [];
+$summaryCards = [];
+$availableNotificationTypes = [];
+$unreadNotificationCount = 0;
 $staffForm = [
     'id' => 0,
     'full_name' => '',
@@ -1005,185 +1026,186 @@ $pageForm = [
 ];
 
 if ($pdo instanceof PDO) {
-    foreach ($pdo->query('SELECT setting_key, setting_value FROM settings')->fetchAll() as $row) {
-        $settings[$row['setting_key']] = $row['setting_value'];
-    }
-    if (!empty($settings['school_logo'])) {
-        $logoPath = (string) $settings['school_logo'];
-    }
-    $programs = $pdo->query('SELECT id, title, slug, short_description, duration, department, cover_image, status FROM programs ORDER BY id DESC')->fetchAll();
-    $staff = $pdo->query('SELECT id, full_name, job_title, bio, photo, display_order, is_featured, status FROM staff ORDER BY display_order ASC, id DESC')->fetchAll();
-    $news = $pdo->query('SELECT id, title, slug, summary, content, featured_image, published_at, status FROM news ORDER BY published_at DESC, id DESC')->fetchAll();
-    foreach ($news as &$newsItem) {
-        $decodedNewsContent = adminDecodeNewsContent((string) ($newsItem['content'] ?? ''));
-        $newsItem['category'] = $decodedNewsContent['category'];
-        $newsItem['content'] = $decodedNewsContent['content'];
-        $metaStatement = $pdo->prepare('SELECT is_pinned, scheduled_for, view_count FROM news_admin_meta WHERE news_id = :news_id LIMIT 1');
-        $metaStatement->execute(['news_id' => (int) $newsItem['id']]);
-        $newsMeta = $metaStatement->fetch() ?: [];
-        $newsItem['is_pinned'] = (int) ($newsMeta['is_pinned'] ?? 0);
-        $newsItem['scheduled_for'] = (string) ($newsMeta['scheduled_for'] ?? '');
-        $newsItem['view_count'] = (int) ($newsMeta['view_count'] ?? 0);
-    }
-    unset($newsItem);
-    adminSortNewsItems($news);
-    $filteredNews = array_values(array_filter($news, static function (array $item) use ($newsFilter): bool {
-        if ($newsFilter === 'all') {
-            return true;
+    try {
+        foreach ($pdo->query('SELECT setting_key, setting_value FROM settings')->fetchAll() as $row) {
+            $settings[$row['setting_key']] = $row['setting_value'];
         }
-
-        return strtolower((string) ($item['status'] ?? 'published')) === $newsFilter;
-    }));
-    adminSortNewsItems($filteredNews);
-
-    $gallery = $pdo->query('SELECT id, title, image_path, caption, category, is_featured, created_at FROM gallery ORDER BY id DESC')->fetchAll();
-    foreach ($gallery as &$galleryItem) {
-        $galleryMeta = adminParseGalleryCategory((string) ($galleryItem['category'] ?? ''));
-        $galleryItem['media_type'] = $galleryMeta['media_type'];
-        $galleryItem['category'] = $galleryMeta['category'];
-        $metaStatement = $pdo->prepare('SELECT album_name, view_count, download_count FROM gallery_admin_meta WHERE gallery_id = :gallery_id LIMIT 1');
-        $metaStatement->execute(['gallery_id' => (int) $galleryItem['id']]);
-        $galleryAdminMeta = $metaStatement->fetch() ?: [];
-        $galleryItem['album_name'] = (string) ($galleryAdminMeta['album_name'] ?? 'General');
-        $galleryItem['view_count'] = (int) ($galleryAdminMeta['view_count'] ?? 0);
-        $galleryItem['download_count'] = (int) ($galleryAdminMeta['download_count'] ?? 0);
-        $galleryItem['download_url'] = adminResolveMediaUrl((string) $galleryItem['image_path']);
-        $galleryItem['link'] = '/MUBUGA-TSS/admin/dashboard.php?edit=gallery&id=' . (int) $galleryItem['id'] . '#gallery-panel';
-        $galleryItem['meta'] = ucfirst((string) $galleryItem['media_type']) . ' in ' . ucfirst((string) $galleryItem['category']);
-        $galleryItem = array_merge($galleryItem, adminMediaMetadata((string) ($galleryItem['image_path'] ?? '')));
-    }
-    unset($galleryItem);
-    $filteredGallery = array_values(array_filter($gallery, static function (array $item) use ($mediaFilter, $mediaSearch, $mediaDateFrom, $mediaDateTo): bool {
-        if ($mediaFilter === 'all') {
-            $matchesFilter = true;
-        } elseif (in_array($mediaFilter, ['image', 'video'], true)) {
-            $matchesFilter = (($item['media_type'] ?? 'image') === $mediaFilter);
-        } else {
-            $matchesFilter = strtolower((string) ($item['category'] ?? '')) === $mediaFilter;
+        if (!empty($settings['school_logo'])) {
+            $logoPath = (string) $settings['school_logo'];
         }
-
-        if (!$matchesFilter) {
-            return false;
+        $programs = $pdo->query('SELECT id, title, slug, short_description, duration, department, cover_image, status FROM programs ORDER BY id DESC')->fetchAll();
+        $staff = $pdo->query('SELECT id, full_name, job_title, bio, photo, display_order, is_featured, status FROM staff ORDER BY display_order ASC, id DESC')->fetchAll();
+        $news = $pdo->query('SELECT id, title, slug, summary, content, featured_image, published_at, status FROM news ORDER BY published_at DESC, id DESC')->fetchAll();
+        foreach ($news as &$newsItem) {
+            $decodedNewsContent = adminDecodeNewsContent((string) ($newsItem['content'] ?? ''));
+            $newsItem['category'] = $decodedNewsContent['category'];
+            $newsItem['content'] = $decodedNewsContent['content'];
+            $metaStatement = $pdo->prepare('SELECT is_pinned, scheduled_for, view_count FROM news_admin_meta WHERE news_id = :news_id LIMIT 1');
+            $metaStatement->execute(['news_id' => (int) $newsItem['id']]);
+            $newsMeta = $metaStatement->fetch() ?: [];
+            $newsItem['is_pinned'] = (int) ($newsMeta['is_pinned'] ?? 0);
+            $newsItem['scheduled_for'] = (string) ($newsMeta['scheduled_for'] ?? '');
+            $newsItem['view_count'] = (int) ($newsMeta['view_count'] ?? 0);
         }
+        unset($newsItem);
+        adminSortNewsItems($news);
+        $filteredNews = array_values(array_filter($news, static function (array $item) use ($newsFilter): bool {
+            if ($newsFilter === 'all') {
+                return true;
+            }
 
-        $search = strtolower(trim($mediaSearch));
-        if ($search !== '') {
-            $haystack = strtolower(implode(' ', [
-                (string) ($item['title'] ?? ''),
-                (string) ($item['caption'] ?? ''),
-                (string) ($item['album_name'] ?? ''),
-                (string) ($item['category'] ?? ''),
-                (string) ($item['file_type'] ?? ''),
-            ]));
-            if (!str_contains($haystack, $search)) {
+            return strtolower((string) ($item['status'] ?? 'published')) === $newsFilter;
+        }));
+        adminSortNewsItems($filteredNews);
+
+        $gallery = $pdo->query('SELECT id, title, image_path, caption, category, is_featured, created_at FROM gallery ORDER BY id DESC')->fetchAll();
+        foreach ($gallery as &$galleryItem) {
+            $galleryMeta = adminParseGalleryCategory((string) ($galleryItem['category'] ?? ''));
+            $galleryItem['media_type'] = $galleryMeta['media_type'];
+            $galleryItem['category'] = $galleryMeta['category'];
+            $metaStatement = $pdo->prepare('SELECT album_name, view_count, download_count FROM gallery_admin_meta WHERE gallery_id = :gallery_id LIMIT 1');
+            $metaStatement->execute(['gallery_id' => (int) $galleryItem['id']]);
+            $galleryAdminMeta = $metaStatement->fetch() ?: [];
+            $galleryItem['album_name'] = (string) ($galleryAdminMeta['album_name'] ?? 'General');
+            $galleryItem['view_count'] = (int) ($galleryAdminMeta['view_count'] ?? 0);
+            $galleryItem['download_count'] = (int) ($galleryAdminMeta['download_count'] ?? 0);
+            $galleryItem['download_url'] = adminResolveMediaUrl((string) $galleryItem['image_path']);
+            $galleryItem['link'] = '/MUBUGA-TSS/admin/dashboard.php?edit=gallery&id=' . (int) $galleryItem['id'] . '#gallery-panel';
+            $galleryItem['meta'] = ucfirst((string) $galleryItem['media_type']) . ' in ' . ucfirst((string) $galleryItem['category']);
+            $galleryItem = array_merge($galleryItem, adminMediaMetadata((string) ($galleryItem['image_path'] ?? '')));
+        }
+        unset($galleryItem);
+        $filteredGallery = array_values(array_filter($gallery, static function (array $item) use ($mediaFilter, $mediaSearch, $mediaDateFrom, $mediaDateTo): bool {
+            if ($mediaFilter === 'all') {
+                $matchesFilter = true;
+            } elseif (in_array($mediaFilter, ['image', 'video'], true)) {
+                $matchesFilter = (($item['media_type'] ?? 'image') === $mediaFilter);
+            } else {
+                $matchesFilter = strtolower((string) ($item['category'] ?? '')) === $mediaFilter;
+            }
+
+            if (!$matchesFilter) {
                 return false;
             }
+
+            $search = strtolower(trim($mediaSearch));
+            if ($search !== '') {
+                $haystack = strtolower(implode(' ', [
+                    (string) ($item['title'] ?? ''),
+                    (string) ($item['caption'] ?? ''),
+                    (string) ($item['album_name'] ?? ''),
+                    (string) ($item['category'] ?? ''),
+                    (string) ($item['file_type'] ?? ''),
+                ]));
+                if (!str_contains($haystack, $search)) {
+                    return false;
+                }
+            }
+
+            $createdAt = trim((string) ($item['created_at'] ?? ''));
+            if ($mediaDateFrom !== '' && $createdAt !== '' && strtotime($createdAt) < strtotime($mediaDateFrom . ' 00:00:00')) {
+                return false;
+            }
+            if ($mediaDateTo !== '' && $createdAt !== '' && strtotime($createdAt) > strtotime($mediaDateTo . ' 23:59:59')) {
+                return false;
+            }
+
+            return true;
+        }));
+        usort($filteredGallery, static function (array $left, array $right) use ($mediaSort): int {
+            return match ($mediaSort) {
+                'oldest' => strcmp((string) ($left['created_at'] ?? ''), (string) ($right['created_at'] ?? '')),
+                'most_viewed' => ((int) ($right['view_count'] ?? 0)) <=> ((int) ($left['view_count'] ?? 0)),
+                default => strcmp((string) ($right['created_at'] ?? ''), (string) ($left['created_at'] ?? '')),
+            };
+        });
+        $mediaPerPage = 8;
+        $filteredGalleryCount = count($filteredGallery);
+        $mediaPageCount = max(1, (int) ceil($filteredGalleryCount / $mediaPerPage));
+        $mediaPage = min($mediaPage, $mediaPageCount);
+        $filteredGallery = array_slice($filteredGallery, ($mediaPage - 1) * $mediaPerPage, $mediaPerPage);
+        $admissions = $pdo->query('SELECT id, applicant_name, email, preferred_program_id, status, created_at FROM admissions ORDER BY created_at DESC')->fetchAll();
+        $pages = $pdo->query('SELECT id, title, slug, excerpt, content, banner_image, status, updated_at FROM pages ORDER BY slug ASC, id DESC')->fetchAll();
+        foreach ($pages as &$pageItem) {
+            $pageItem['link'] = '/MUBUGA-TSS/admin/dashboard.php?edit=page&id=' . (int) $pageItem['id'] . '#pages-panel';
+            $pageItem['meta'] = ucfirst((string) ($pageItem['status'] ?? 'published')) . ' page';
+        }
+        unset($pageItem);
+        $contactMessages = $pdo->query('SELECT id, full_name, email, phone, subject, message_body, is_read, created_at FROM contact_messages ORDER BY created_at DESC')->fetchAll();
+        $notifications = $pdo->query('SELECT id, notification_type, title, message, link_target, is_read, created_at FROM admin_notifications ORDER BY created_at DESC LIMIT 12')->fetchAll();
+        $notificationHistory = $pdo->query('SELECT id, notification_type, title, message, link_target, is_read, created_at FROM admin_notifications ORDER BY created_at DESC LIMIT 50')->fetchAll();
+        $notificationHistory = array_values(array_filter($notificationHistory, static function (array $item) use ($notificationFilter, $notificationTypeFilter): bool {
+            $matchesReadState = match ($notificationFilter) {
+                'unread' => (int) ($item['is_read'] ?? 0) === 0,
+                'read' => (int) ($item['is_read'] ?? 0) === 1,
+                default => true,
+            };
+
+            $matchesType = $notificationTypeFilter === 'all'
+                ? true
+                : strtolower((string) ($item['notification_type'] ?? '')) === $notificationTypeFilter;
+
+            return $matchesReadState && $matchesType;
+        }));
+        $activityLog = $pdo->query('SELECT id, action_type, entity_type, entity_id, title, description, created_at FROM admin_activity_log ORDER BY created_at DESC LIMIT 20')->fetchAll();
+        $mediaFiles = adminGetFileEntries([
+            dirname(__DIR__) . '/assets/uploads',
+            dirname(__DIR__) . '/assets/videos',
+        ]);
+
+        if ($editType === 'staff' && $editId > 0) {
+            $stmt = $pdo->prepare('SELECT id, full_name, job_title, bio, photo, display_order, is_featured FROM staff WHERE id = :id LIMIT 1');
+            $stmt->execute(['id' => $editId]);
+            $staffForm = $stmt->fetch() ?: $staffForm;
         }
 
-        $createdAt = trim((string) ($item['created_at'] ?? ''));
-        if ($mediaDateFrom !== '' && $createdAt !== '' && strtotime($createdAt) < strtotime($mediaDateFrom . ' 00:00:00')) {
-            return false;
-        }
-        if ($mediaDateTo !== '' && $createdAt !== '' && strtotime($createdAt) > strtotime($mediaDateTo . ' 23:59:59')) {
-            return false;
+        if ($editType === 'program' && $editId > 0) {
+            $stmt = $pdo->prepare('SELECT id, title, slug, short_description, description, duration, department, cover_image, status FROM programs WHERE id = :id LIMIT 1');
+            $stmt->execute(['id' => $editId]);
+            $programForm = $stmt->fetch() ?: $programForm;
         }
 
-        return true;
-    }));
-    usort($filteredGallery, static function (array $left, array $right) use ($mediaSort): int {
-        return match ($mediaSort) {
-            'oldest' => strcmp((string) ($left['created_at'] ?? ''), (string) ($right['created_at'] ?? '')),
-            'most_viewed' => ((int) ($right['view_count'] ?? 0)) <=> ((int) ($left['view_count'] ?? 0)),
-            default => strcmp((string) ($right['created_at'] ?? ''), (string) ($left['created_at'] ?? '')),
-        };
-    });
-    $mediaPerPage = 8;
-    $filteredGalleryCount = count($filteredGallery);
-    $mediaPageCount = max(1, (int) ceil($filteredGalleryCount / $mediaPerPage));
-    $mediaPage = min($mediaPage, $mediaPageCount);
-    $filteredGallery = array_slice($filteredGallery, ($mediaPage - 1) * $mediaPerPage, $mediaPerPage);
-    $admissions = $pdo->query('SELECT id, applicant_name, email, preferred_program_id, status, created_at FROM admissions ORDER BY created_at DESC')->fetchAll();
-    $pages = $pdo->query('SELECT id, title, slug, excerpt, content, banner_image, status, updated_at FROM pages ORDER BY slug ASC, id DESC')->fetchAll();
-    foreach ($pages as &$pageItem) {
-        $pageItem['link'] = '/MUBUGA-TSS/admin/dashboard.php?edit=page&id=' . (int) $pageItem['id'] . '#pages-panel';
-        $pageItem['meta'] = ucfirst((string) ($pageItem['status'] ?? 'published')) . ' page';
-    }
-    unset($pageItem);
-    $contactMessages = $pdo->query('SELECT id, full_name, email, phone, subject, message_body, is_read, created_at FROM contact_messages ORDER BY created_at DESC')->fetchAll();
-    $notifications = $pdo->query('SELECT id, notification_type, title, message, link_target, is_read, created_at FROM admin_notifications ORDER BY created_at DESC LIMIT 12')->fetchAll();
-    $notificationHistory = $pdo->query('SELECT id, notification_type, title, message, link_target, is_read, created_at FROM admin_notifications ORDER BY created_at DESC LIMIT 50')->fetchAll();
-    $notificationHistory = array_values(array_filter($notificationHistory, static function (array $item) use ($notificationFilter, $notificationTypeFilter): bool {
-        $matchesReadState = match ($notificationFilter) {
-            'unread' => (int) ($item['is_read'] ?? 0) === 0,
-            'read' => (int) ($item['is_read'] ?? 0) === 1,
-            default => true,
-        };
+        if ($editType === 'news' && $editId > 0) {
+            $stmt = $pdo->prepare('SELECT id, title, slug, summary, content, featured_image, status FROM news WHERE id = :id LIMIT 1');
+            $stmt->execute(['id' => $editId]);
+            $newsForm = $stmt->fetch() ?: $newsForm;
+            $decodedNewsContent = adminDecodeNewsContent((string) ($newsForm['content'] ?? ''));
+            $newsForm['news_category'] = $decodedNewsContent['category'];
+            $newsForm['content'] = $decodedNewsContent['content'];
+            $metaStatement = $pdo->prepare('SELECT is_pinned, scheduled_for FROM news_admin_meta WHERE news_id = :news_id LIMIT 1');
+            $metaStatement->execute(['news_id' => $editId]);
+            $newsMeta = $metaStatement->fetch() ?: [];
+            $newsForm['is_pinned'] = (int) ($newsMeta['is_pinned'] ?? 0);
+            $newsForm['scheduled_for'] = (string) ($newsMeta['scheduled_for'] ?? '');
+        }
 
-        $matchesType = $notificationTypeFilter === 'all'
-            ? true
-            : strtolower((string) ($item['notification_type'] ?? '')) === $notificationTypeFilter;
+        if ($editType === 'gallery' && $editId > 0) {
+            $stmt = $pdo->prepare('SELECT id, title, image_path, caption, category, is_featured FROM gallery WHERE id = :id LIMIT 1');
+            $stmt->execute(['id' => $editId]);
+            $galleryForm = $stmt->fetch() ?: $galleryForm;
+            $galleryMeta = adminParseGalleryCategory((string) ($galleryForm['category'] ?? ''));
+            $galleryForm['media_type'] = $galleryMeta['media_type'];
+            $galleryForm['category'] = $galleryMeta['category'];
+            $metaStatement = $pdo->prepare('SELECT album_name FROM gallery_admin_meta WHERE gallery_id = :gallery_id LIMIT 1');
+            $metaStatement->execute(['gallery_id' => $editId]);
+            $galleryForm['album_name'] = (string) ($metaStatement->fetchColumn() ?: 'General');
+        }
 
-        return $matchesReadState && $matchesType;
-    }));
-    $activityLog = $pdo->query('SELECT id, action_type, entity_type, entity_id, title, description, created_at FROM admin_activity_log ORDER BY created_at DESC LIMIT 20')->fetchAll();
-    $mediaFiles = adminGetFileEntries([
-        dirname(__DIR__) . '/assets/uploads',
-        dirname(__DIR__) . '/assets/videos',
-    ]);
+        if ($editType === 'page' && $editId > 0) {
+            $stmt = $pdo->prepare('SELECT id, title, slug, excerpt, content, banner_image, status FROM pages WHERE id = :id LIMIT 1');
+            $stmt->execute(['id' => $editId]);
+            $pageForm = $stmt->fetch() ?: $pageForm;
+        }
 
-    if ($editType === 'staff' && $editId > 0) {
-        $stmt = $pdo->prepare('SELECT id, full_name, job_title, bio, photo, display_order, is_featured FROM staff WHERE id = :id LIMIT 1');
-        $stmt->execute(['id' => $editId]);
-        $staffForm = $stmt->fetch() ?: $staffForm;
-    }
+        $newsletterSubscribers = $pdo->query('SELECT id, email, is_active, created_at FROM newsletter_subscribers ORDER BY created_at DESC')->fetchAll();
+        $unreadNotificationCount = count(array_filter($notifications, static fn(array $item): bool => (int) ($item['is_read'] ?? 0) === 0));
+        $availableNotificationTypes = array_values(array_unique(array_filter(array_map(
+            static fn(array $item): string => strtolower((string) ($item['notification_type'] ?? '')),
+            $notifications
+        ))));
+        sort($availableNotificationTypes);
 
-    if ($editType === 'program' && $editId > 0) {
-        $stmt = $pdo->prepare('SELECT id, title, slug, short_description, description, duration, department, cover_image, status FROM programs WHERE id = :id LIMIT 1');
-        $stmt->execute(['id' => $editId]);
-        $programForm = $stmt->fetch() ?: $programForm;
-    }
-
-    if ($editType === 'news' && $editId > 0) {
-        $stmt = $pdo->prepare('SELECT id, title, slug, summary, content, featured_image, status FROM news WHERE id = :id LIMIT 1');
-        $stmt->execute(['id' => $editId]);
-        $newsForm = $stmt->fetch() ?: $newsForm;
-        $decodedNewsContent = adminDecodeNewsContent((string) ($newsForm['content'] ?? ''));
-        $newsForm['news_category'] = $decodedNewsContent['category'];
-        $newsForm['content'] = $decodedNewsContent['content'];
-        $metaStatement = $pdo->prepare('SELECT is_pinned, scheduled_for FROM news_admin_meta WHERE news_id = :news_id LIMIT 1');
-        $metaStatement->execute(['news_id' => $editId]);
-        $newsMeta = $metaStatement->fetch() ?: [];
-        $newsForm['is_pinned'] = (int) ($newsMeta['is_pinned'] ?? 0);
-        $newsForm['scheduled_for'] = (string) ($newsMeta['scheduled_for'] ?? '');
-    }
-
-    if ($editType === 'gallery' && $editId > 0) {
-        $stmt = $pdo->prepare('SELECT id, title, image_path, caption, category, is_featured FROM gallery WHERE id = :id LIMIT 1');
-        $stmt->execute(['id' => $editId]);
-        $galleryForm = $stmt->fetch() ?: $galleryForm;
-        $galleryMeta = adminParseGalleryCategory((string) ($galleryForm['category'] ?? ''));
-        $galleryForm['media_type'] = $galleryMeta['media_type'];
-        $galleryForm['category'] = $galleryMeta['category'];
-        $metaStatement = $pdo->prepare('SELECT album_name FROM gallery_admin_meta WHERE gallery_id = :gallery_id LIMIT 1');
-        $metaStatement->execute(['gallery_id' => $editId]);
-        $galleryForm['album_name'] = (string) ($metaStatement->fetchColumn() ?: 'General');
-    }
-
-    if ($editType === 'page' && $editId > 0) {
-        $stmt = $pdo->prepare('SELECT id, title, slug, excerpt, content, banner_image, status FROM pages WHERE id = :id LIMIT 1');
-        $stmt->execute(['id' => $editId]);
-        $pageForm = $stmt->fetch() ?: $pageForm;
-    }
-
-    $newsletterSubscribers = $pdo->query('SELECT id, email, is_active, created_at FROM newsletter_subscribers ORDER BY created_at DESC')->fetchAll();
-    $unreadNotificationCount = count(array_filter($notifications, static fn(array $item): bool => (int) ($item['is_read'] ?? 0) === 0));
-    $availableNotificationTypes = array_values(array_unique(array_filter(array_map(
-        static fn(array $item): string => strtolower((string) ($item['notification_type'] ?? '')),
-        $notifications
-    ))));
-    sort($availableNotificationTypes);
-
-    $summaryCards = [
+        $summaryCards = [
         ['title' => 'Programs', 'value' => count($programs), 'color' => 'purple', 'icon' => 'M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z', 'link' => '#programs-panel'],
         ['title' => 'Staff', 'value' => count($staff), 'color' => 'blue', 'icon' => 'M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z M4 22c0-4.418 3.582-8 8-8s8 3.582 8 8H4z', 'link' => '#staff-panel'],
         ['title' => 'Admissions', 'value' => count($admissions), 'color' => 'pink', 'icon' => 'M12 2C8.691 2 6 4.691 6 8c0 5.25 6 12 6 12s6-6.75 6-12c0-3.309-2.691-6-6-6z', 'link' => '#admissions-panel'],
@@ -1192,39 +1214,39 @@ if ($pdo instanceof PDO) {
         ['title' => 'Subscribers', 'value' => count($newsletterSubscribers), 'color' => 'purple', 'icon' => 'M12 3l8 4v5c0 5-3.5 8.5-8 9-4.5-.5-8-4-8-9V7l8-4z', 'link' => '/MUBUGA-TSS/admin/submissions.php#newsletter-panel'],
     ];
 
-    $activeDashboardPanel = match ($editType) {
-        'program' => 'programs-panel',
-        'staff' => 'staff-panel',
-        'news' => 'news-panel',
-        'gallery' => 'gallery-panel',
-        'page' => 'pages-panel',
-        default => 'dashboard-panel',
-    };
+        $activeDashboardPanel = match ($editType) {
+            'program' => 'programs-panel',
+            'staff' => 'staff-panel',
+            'news' => 'news-panel',
+            'gallery' => 'gallery-panel',
+            'page' => 'pages-panel',
+            default => 'dashboard-panel',
+        };
 
-$adminName = trim((string) (($admin['name'] ?? $admin['full_name'] ?? 'Administrator')));
-$currentDateLabel = date('l, d M Y');
-$siteLogoSize = max(32, min(140, (int) ($settings['site_logo_size'] ?? 52)));
-$adminLogoSize = max(20, min(80, (int) ($settings['admin_logo_size'] ?? 34)));
-$settingsLogoPath = trim((string) ($settings['school_logo'] ?? $logoPath));
-$settingsLogoPreviewUrl = adminResolveMediaUrl($settingsLogoPath !== '' ? $settingsLogoPath : $logoPath);
-$imageMediaItems = array_values(array_filter($gallery, static function (array $item): bool {
+        $adminName = trim((string) (($admin['name'] ?? $admin['full_name'] ?? 'Administrator')));
+        $currentDateLabel = date('l, d M Y');
+        $siteLogoSize = max(32, min(140, (int) ($settings['site_logo_size'] ?? 52)));
+        $adminLogoSize = max(20, min(80, (int) ($settings['admin_logo_size'] ?? 34)));
+        $settingsLogoPath = trim((string) ($settings['school_logo'] ?? $logoPath));
+        $settingsLogoPreviewUrl = adminResolveMediaUrl($settingsLogoPath !== '' ? $settingsLogoPath : $logoPath);
+        $imageMediaItems = array_values(array_filter($gallery, static function (array $item): bool {
         return ($item['media_type'] ?? 'image') === 'image';
-    }));
-    $videoMediaItems = array_values(array_filter($gallery, static function (array $item): bool {
+        }));
+        $videoMediaItems = array_values(array_filter($gallery, static function (array $item): bool {
         return ($item['media_type'] ?? 'image') === 'video';
-    }));
-    $announcementItems = array_values(array_filter($news, static function (array $item): bool {
+        }));
+        $announcementItems = array_values(array_filter($news, static function (array $item): bool {
         return (($item['category'] ?? 'news') === 'announcements');
-    }));
-    usort($announcementItems, static function (array $left, array $right): int {
+        }));
+        usort($announcementItems, static function (array $left, array $right): int {
         return ((int) ($right['is_pinned'] ?? 0)) <=> ((int) ($left['is_pinned'] ?? 0))
             ?: strcmp((string) ($right['published_at'] ?? ''), (string) ($left['published_at'] ?? ''));
-    });
-    $imageCount = count($imageMediaItems);
-    $videoCount = count($videoMediaItems);
-    $announcementCount = count($announcementItems);
-    $userCount = count($staff) + 1;
-    $searchIndex = adminSearchIndex([
+        });
+        $imageCount = count($imageMediaItems);
+        $videoCount = count($videoMediaItems);
+        $announcementCount = count($announcementItems);
+        $userCount = count($staff) + 1;
+        $searchIndex = adminSearchIndex([
         'Media' => $gallery,
         'Announcements' => array_map(static function (array $item): array {
             $item['link'] = '/MUBUGA-TSS/admin/dashboard.php?edit=news&id=' . (int) $item['id'] . '#news-panel';
@@ -1247,14 +1269,19 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
             $item['meta'] = ((int) ($item['is_read'] ?? 0) === 1 ? 'Read' : 'Unread') . ' notification';
             return $item;
         }, $notificationHistory),
-    ]);
-    $chartSeries = adminMonthlySeries($gallery, 'created_at');
-    $storageUsedBytes = adminStorageBytes($mediaFiles);
-    $storageLimitBytes = max(1, (int) ($settings['upload_size_limit_mb'] ?? 50)) * 1024 * 1024;
-    $storageUsagePercent = min(100, (int) round(($storageUsedBytes / $storageLimitBytes) * 100));
-    $mostViewedMedia = $gallery;
-    usort($mostViewedMedia, static fn(array $left, array $right): int => ((int) ($right['view_count'] ?? 0)) <=> ((int) ($left['view_count'] ?? 0)));
-    $mostViewedMedia = array_slice($mostViewedMedia, 0, 5);
+        ]);
+        $chartSeries = adminMonthlySeries($gallery, 'created_at');
+        $storageUsedBytes = adminStorageBytes($mediaFiles);
+        $storageLimitBytes = max(1, (int) ($settings['upload_size_limit_mb'] ?? 50)) * 1024 * 1024;
+        $storageUsagePercent = min(100, (int) round(($storageUsedBytes / $storageLimitBytes) * 100));
+        $mostViewedMedia = $gallery;
+        usort($mostViewedMedia, static fn(array $left, array $right): int => ((int) ($right['view_count'] ?? 0)) <=> ((int) ($left['view_count'] ?? 0)));
+        $mostViewedMedia = array_slice($mostViewedMedia, 0, 5);
+    } catch (Throwable $exception) {
+        if ($error === '') {
+            $error = 'Dashboard data could not be loaded completely. Please verify that all required database tables exist.';
+        }
+    }
 }
 ?>
 <html lang="en">

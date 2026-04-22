@@ -141,9 +141,6 @@ $galleryMore = array_slice($homepageGallery, 5, 4);
             <section class="hero" id="home">
                 <div class="container hero-grid">
                     <div class="hero-copy" data-hero-slider>
-                        <div class="hero-topline">
-                        </div>
-
                         <div class="brand-ribbon">
                             <div class="brand-seal">
                                 <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> emblem" class="brand-seal-logo">
@@ -164,7 +161,11 @@ $galleryMore = array_slice($homepageGallery, 5, 4);
                             </div>
                         </div>
 
-                        <div class="hero-metrics" aria-label="School overview">
+                        <div class="hero-statement">
+                            <p>Practical learning, workshop discipline, and modern technical training are at the center of the Mubuga TSS experience.</p>
+                        </div>
+
+                        <div class="hero-metrics hero-metrics-compact" aria-label="School overview">
                             <?php foreach ($stats as $stat): ?>
                                 <article class="hero-metric">
                                     <strong><?php echo htmlspecialchars($stat['value']); ?></strong>
@@ -173,7 +174,7 @@ $galleryMore = array_slice($homepageGallery, 5, 4);
                             <?php endforeach; ?>
                         </div>
 
-                        <div class="hero-slider-mock" role="tablist" aria-label="Homepage highlights">
+                        <div class="hero-slider-mock hero-storyline" role="tablist" aria-label="Homepage highlights">
                             <?php foreach ($heroSlides as $index => $slide): ?>
                                 <button
                                     type="button"
@@ -218,6 +219,21 @@ $galleryMore = array_slice($homepageGallery, 5, 4);
                                 <a href="/MUBUGA-TSS/pages/gallery.php" class="hero-overlay-link">View school gallery</a>
                             </div>
                         </div>
+                        <div class="hero-editorial-strip">
+                            <article class="hero-editorial-card hero-editorial-card-primary">
+                                <p class="card-label">School Identity</p>
+                                <h2>Competence. Discipline. Innovation.</h2>
+                                <p>A confident school environment shaped by practical projects, clear routines, and career-focused learning.</p>
+                            </article>
+                            <article class="hero-editorial-card">
+                                <p class="card-label">Student Journey</p>
+                                <div class="hero-journey-list">
+                                    <span>Discover your trade</span>
+                                    <span>Build practical skills</span>
+                                    <span>Grow into work-ready confidence</span>
+                                </div>
+                            </article>
+                        </div>
                         <div class="hero-slider-dots" aria-label="Hero slide pagination">
                             <?php foreach ($heroSlides as $index => $slide): ?>
                                 <button
@@ -230,17 +246,16 @@ $galleryMore = array_slice($homepageGallery, 5, 4);
                                 ></button>
                             <?php endforeach; ?>
                         </div>
-                        <div class="hero-panel-grid">
+                        <div class="hero-panel-grid hero-panel-grid-stacked">
                             <article class="hero-card">
                                 <p class="card-label">Quick Links</p>
-                                <h2>Explore Mubuga TSS</h2>
-                                <div class="hero-shortcuts">
+                                <div class="hero-shortcuts hero-shortcuts-vertical">
                                     <a href="/MUBUGA-TSS/pages/programs.php" class="shortcut-link">View Programs</a>
                                     <a href="/MUBUGA-TSS/pages/gallery.php" class="shortcut-link">See Gallery</a>
                                     <a href="/MUBUGA-TSS/pages/contact.php" class="shortcut-link">Contact Us</a>
                                 </div>
                             </article>
-                            <article class="hero-card">
+                            <article class="hero-card hero-card-accent-soft">
                                 <p class="card-label">Why Choose Us</p>
                                 <ul class="hero-points">
                                     <?php foreach ($highlights as $highlight): ?>
@@ -249,8 +264,6 @@ $galleryMore = array_slice($homepageGallery, 5, 4);
                                 </ul>
                             </article>
                         </div>
-                        <div class="hero-badge">Competence. Discipline. Innovation.</div>
-                        <p class="hero-support-copy">A practical school environment inspired by the clear, confidence-building hero structure of the reference site, but tailored to Mubuga TSS.</p>
                     </div>
                 </div>
             </section>
@@ -263,14 +276,19 @@ $galleryMore = array_slice($homepageGallery, 5, 4);
                         <p class="eyebrow">Welcome To</p>
                         <h2>Mubuga TSS</h2>
                         <p><?php echo htmlspecialchars($schoolName); ?> is a TVET-focused school committed to practical education, student discipline, and career-ready technical skills. The school is centered on two specialized trades: Software Development and Electrical Technology.</p>
-                        <div class="about-facts">
-                            <article class="about-fact">
+                        <div class="about-facts about-facts-editorial">
+                            <article class="about-fact about-fact-feature">
                                 <span>School Direction</span>
                                 <strong>Competency-based learning</strong>
+                                <p>Students grow through guided practice, real tools, and clear technical standards.</p>
                             </article>
                             <article class="about-fact">
                                 <span>Training Focus</span>
                                 <strong>Practical trades for modern careers</strong>
+                            </article>
+                            <article class="about-fact">
+                                <span>Learning Culture</span>
+                                <strong>Discipline, teamwork, and confidence</strong>
                             </article>
                         </div>
                         <a href="/MUBUGA-TSS/pages/about.php" class="inline-link">Read More</a>

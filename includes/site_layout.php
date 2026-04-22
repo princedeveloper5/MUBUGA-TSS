@@ -73,6 +73,8 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
     $facebookUrl = (string) ($siteMeta['facebook_url'] ?? '#');
     $instagramUrl = (string) ($siteMeta['instagram_url'] ?? '#');
     $twitterUrl = (string) ($siteMeta['twitter_url'] ?? '#');
+    $themeMode = (string) ($siteMeta['theme_mode'] ?? 'light');
+    $homepageNotice = trim((string) ($siteMeta['homepage_notice'] ?? ''));
     ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -88,7 +90,7 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
     <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/site.css">
     <link rel="stylesheet" href="/MUBUGA-TSS/assets/css/photo-viewer.css">
 </head>
-<body>
+<body class="site-theme-<?php echo htmlspecialchars($themeMode); ?>" data-site-theme="<?php echo htmlspecialchars($themeMode); ?>">
     <div class="project-loader" data-project-loader>
         <div class="project-loader-card">
             <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="project-loader-logo">
@@ -180,6 +182,14 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
                 </nav>
             </div>
         </header>
+        <?php if ($homepageNotice !== ''): ?>
+            <div class="site-notice-bar">
+                <div class="container">
+                    <strong>School Notice:</strong>
+                    <span><?php echo htmlspecialchars($homepageNotice); ?></span>
+                </div>
+            </div>
+        <?php endif; ?>
         <?php if ($formStatus !== '' && $formMessage !== ''): ?>
             <div class="container form-feedback-wrap">
                 <div class="form-feedback form-feedback-<?php echo htmlspecialchars($formStatus); ?>">

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/content_metrics.php';
 
 function resolveSiteImage(string $path, string $fallback = 'assets/images/students.jfif'): string
 {
@@ -329,6 +330,8 @@ $siteMeta = [
     'facebook_url' => '#',
     'instagram_url' => '#',
     'twitter_url' => '#',
+    'theme_mode' => 'light',
+    'homepage_notice' => '',
 ];
 
 $values = [
@@ -447,6 +450,8 @@ if ($pdo instanceof PDO) {
     $siteMeta['facebook_url'] = $settings['school_facebook'] ?? $siteMeta['facebook_url'];
     $siteMeta['instagram_url'] = $settings['school_instagram'] ?? $siteMeta['instagram_url'];
     $siteMeta['twitter_url'] = $settings['school_twitter'] ?? $siteMeta['twitter_url'];
+    $siteMeta['theme_mode'] = ($settings['theme_mode'] ?? 'light') === 'dark' ? 'dark' : 'light';
+    $siteMeta['homepage_notice'] = trim((string) ($settings['homepage_notice'] ?? ''));
 
     if (!empty($settings['school_motto'])) {
         $heroSlides[0]['title'] = $settings['school_motto'];
@@ -505,11 +510,33 @@ if ($pdo instanceof PDO) {
         }, $staffRows);
     }
 
-    $newsRows = $pdo->query('SELECT title, slug, summary, content, featured_image, published_at FROM news WHERE status = "published" ORDER BY published_at DESC, id DESC LIMIT 18')->fetchAll();
+    ensureContentMetricTables($pdo);
+
+    $newsRows = $pdo->query('
+        SELECT
+            news.id,
+            news.title,
+            news.slug,
+            news.summary,
+            news.content,
+            news.featured_image,
+            COALESCE(news_admin_meta.scheduled_for, news.published_at) AS published_at,
+            COALESCE(news_admin_meta.is_pinned, 0) AS is_pinned,
+            COALESCE(news_admin_meta.view_count, 0) AS view_count
+        FROM news
+        LEFT JOIN news_admin_meta ON news_admin_meta.news_id = news.id
+        WHERE news.status = "published"
+          AND COALESCE(news_admin_meta.scheduled_for, news.published_at, NOW()) <= NOW()
+        ORDER BY COALESCE(news_admin_meta.is_pinned, 0) DESC,
+                 COALESCE(news_admin_meta.scheduled_for, news.published_at) DESC,
+                 news.id DESC
+        LIMIT 18
+    ')->fetchAll();
     if ($newsRows) {
         $news = array_map(function (array $row) use ($imageSet): array {
             $decodedContent = decodeNewsContent($row['content'] ?? '');
             return [
+                'id' => (int) ($row['id'] ?? 0),
                 'title' => $row['title'],
                 'slug' => $row['slug'] ?? '',
                 'category' => $decodedContent['category'],
@@ -517,22 +544,40 @@ if ($pdo instanceof PDO) {
                 'content' => $decodedContent['content'] ?: $row['summary'] ?: 'Latest update from Mubuga TSS.',
                 'image' => resolveSiteImage($row['featured_image'] ?: $imageSet['students']),
                 'published_at' => $row['published_at'] ?? '',
+                'is_pinned' => (int) ($row['is_pinned'] ?? 0),
+                'view_count' => (int) ($row['view_count'] ?? 0),
                 'link' => '/MUBUGA-TSS/pages/news.php' . (!empty($row['slug']) ? '?slug=' . urlencode((string) $row['slug']) : ''),
             ];
         }, $newsRows);
     }
 
-    $galleryRows = $pdo->query('SELECT title, caption, image_path, category FROM gallery ORDER BY is_featured DESC, id DESC LIMIT 9')->fetchAll();
+    $galleryRows = $pdo->query('
+        SELECT
+            gallery.id,
+            gallery.title,
+            gallery.caption,
+            gallery.image_path,
+            gallery.category,
+            COALESCE(gallery_admin_meta.view_count, 0) AS view_count,
+            COALESCE(gallery_admin_meta.download_count, 0) AS download_count
+        FROM gallery
+        LEFT JOIN gallery_admin_meta ON gallery_admin_meta.gallery_id = gallery.id
+        ORDER BY gallery.is_featured DESC, gallery.id DESC
+        LIMIT 9
+    ')->fetchAll();
     if ($galleryRows) {
         $gallery = array_map(function (array $row): array {
             $media = parseGalleryCategory($row['category'] ?? '', (string) $row['image_path']);
             return [
+                'id' => (int) ($row['id'] ?? 0),
                 'title' => $row['title'],
                 'text' => $row['caption'] ?: 'A moment from Mubuga TSS.',
                 'image' => isVideoMediaPath((string) $row['image_path']) ? (string) $row['image_path'] : resolveSiteImage((string) $row['image_path']),
                 'category' => $media['category'],
                 'media_type' => $media['media_type'],
                 'category_label' => $media['category_label'],
+                'view_count' => (int) ($row['view_count'] ?? 0),
+                'download_count' => (int) ($row['download_count'] ?? 0),
             ];
         }, $galleryRows);
     }

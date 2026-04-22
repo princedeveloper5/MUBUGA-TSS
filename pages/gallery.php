@@ -442,12 +442,16 @@ $galleryMedia = array_values(array_map(
         $resolvedSrc = preg_match('~^(?:https?:)?/~', $src) ? $src : '/MUBUGA-TSS/' . ltrim($src, '/');
 
         return [
+            'id' => (int) ($item['id'] ?? 0),
             'index' => $index,
             'title' => (string) ($item['title'] ?? 'Gallery item'),
             'text' => (string) ($item['text'] ?? 'A moment from Mubuga TSS.'),
             'src' => $resolvedSrc,
             'category_label' => (string) ($item['category_label'] ?? 'Campus'),
             'media_type' => (string) ($item['media_type'] ?? 'image'),
+            'view_count' => (int) ($item['view_count'] ?? 0),
+            'download_count' => (int) ($item['download_count'] ?? 0),
+            'download_link' => '/MUBUGA-TSS/handlers/media_download.php?id=' . (int) ($item['id'] ?? 0),
         ];
     },
     $gallery,
@@ -526,10 +530,12 @@ foreach ($photoItems as $item) {
                                 class="kha-gallery-card"
                                 type="button"
                                 data-gallery-item
+                                data-gallery-id="<?php echo (int) ($item['id'] ?? 0); ?>"
                                 data-gallery-src="<?php echo htmlspecialchars((string) $item['src']); ?>"
                                 data-gallery-title="<?php echo htmlspecialchars((string) $item['title']); ?>"
                                 data-gallery-text="<?php echo htmlspecialchars((string) $item['text']); ?>"
                                 data-gallery-type="image"
+                                data-gallery-download="<?php echo htmlspecialchars((string) ($item['download_link'] ?? '#')); ?>"
                             >
                                 <div class="kha-gallery-media-frame">
                                     <img src="<?php echo htmlspecialchars((string) $item['src']); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="kha-gallery-image">
@@ -541,6 +547,7 @@ foreach ($photoItems as $item) {
                                 <div class="kha-gallery-card-body">
                                     <h3 class="kha-gallery-card-title"><?php echo htmlspecialchars((string) $item['title']); ?></h3>
                                     <p class="kha-gallery-card-text"><?php echo htmlspecialchars((string) $item['text']); ?></p>
+                                    <p class="kha-gallery-card-text">Views: <?php echo (int) ($item['view_count'] ?? 0); ?> | Downloads: <?php echo (int) ($item['download_count'] ?? 0); ?></p>
                                 </div>
                             </button>
                         <?php endforeach; ?>
@@ -567,17 +574,19 @@ foreach ($photoItems as $item) {
                                         class="kha-video-trigger"
                                         type="button"
                                         data-gallery-item
+                                        data-gallery-id="<?php echo (int) ($item['id'] ?? 0); ?>"
                                         data-gallery-src="<?php echo htmlspecialchars((string) $item['src']); ?>"
                                         data-gallery-title="<?php echo htmlspecialchars((string) $item['title']); ?>"
                                         data-gallery-text="<?php echo htmlspecialchars((string) $item['text']); ?>"
                                         data-gallery-type="video"
+                                        data-gallery-download="<?php echo htmlspecialchars((string) ($item['download_link'] ?? '#')); ?>"
                                     >
                                         <video class="kha-video-preview" muted playsinline preload="metadata" src="<?php echo htmlspecialchars((string) $item['src']); ?>"></video>
                                         <span class="kha-video-play">&#9658;</span>
                                     </button>
                                     <div class="kha-video-copy">
                                         <strong><?php echo htmlspecialchars((string) $item['title']); ?></strong>
-                                        <span><?php echo htmlspecialchars((string) $item['category_label']); ?></span>
+                                        <span><?php echo htmlspecialchars((string) $item['category_label']); ?> | Views: <?php echo (int) ($item['view_count'] ?? 0); ?> | Downloads: <?php echo (int) ($item['download_count'] ?? 0); ?></span>
                                     </div>
                                 </article>
                             <?php endforeach; ?>
@@ -604,6 +613,7 @@ foreach ($photoItems as $item) {
                                 <strong id="galleryLightboxTitle">Gallery item</strong>
                                 <span id="galleryLightboxText">View school moments clearly.</span>
                             </div>
+                            <a href="#" class="inline-link" id="galleryLightboxDownload" download>Download media</a>
                             <span class="gallery-lightbox-counter"><span id="galleryLightboxCurrent">1</span> / <span id="galleryLightboxTotal"><?php echo count($galleryMedia); ?></span></span>
                         </div>
                     </div>
@@ -621,6 +631,7 @@ foreach ($photoItems as $item) {
     const lightboxCurrent = document.getElementById('galleryLightboxCurrent');
     const lightboxTitle = document.getElementById('galleryLightboxTitle');
     const lightboxText = document.getElementById('galleryLightboxText');
+    const lightboxDownload = document.getElementById('galleryLightboxDownload');
     const filterButtons = Array.from(document.querySelectorAll('[data-gallery-filter]'));
     const panels = Array.from(document.querySelectorAll('[data-gallery-panel]'));
     const galleryItems = Array.from(document.querySelectorAll('[data-gallery-item]'));
@@ -629,12 +640,15 @@ foreach ($photoItems as $item) {
     const closeButton = document.querySelector('.gallery-lightbox-close');
     const overlay = document.querySelector('.gallery-lightbox-overlay');
     const galleryData = galleryItems.map((item) => ({
+        id: Number(item.dataset.galleryId || '0'),
         src: item.dataset.gallerySrc || '',
         title: item.dataset.galleryTitle || 'Gallery item',
         text: item.dataset.galleryText || 'A moment from Mubuga TSS.',
-        type: item.dataset.galleryType || 'image'
+        type: item.dataset.galleryType || 'image',
+        downloadLink: item.dataset.galleryDownload || '#'
     }));
     let currentIndex = 0;
+    const viewedMedia = new Set();
 
     if (lightbox && lightbox.parentElement !== document.body) {
         document.body.appendChild(lightbox);
@@ -671,11 +685,30 @@ foreach ($photoItems as $item) {
         lightboxTitle.textContent = item.title;
         lightboxText.textContent = item.text;
         lightboxCurrent.textContent = String(index + 1);
+        if (lightboxDownload) {
+            lightboxDownload.href = item.downloadLink || item.src;
+        }
 
         if (item.type === 'video') {
             lightboxStage.innerHTML = `<video class="gallery-lightbox-media" controls autoplay playsinline src="${item.src}"></video>`;
         } else {
             lightboxStage.innerHTML = `<img src="${item.src}" alt="${item.title}" class="gallery-lightbox-media gallery-lightbox-image">`;
+        }
+
+        if (item.id > 0 && !viewedMedia.has(item.id)) {
+            viewedMedia.add(item.id);
+            const payload = new URLSearchParams();
+            payload.set('action', 'media_view');
+            payload.set('id', String(item.id));
+
+            fetch('/MUBUGA-TSS/handlers/content_analytics.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                body: payload.toString(),
+                keepalive: true
+            }).catch(() => {});
         }
     }
 

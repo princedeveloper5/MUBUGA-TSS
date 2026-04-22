@@ -15,6 +15,90 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+function adminSessionTimeoutSeconds(): int
+{
+    static $timeoutSeconds = null;
+
+    if ($timeoutSeconds !== null) {
+        return $timeoutSeconds;
+    }
+
+    $defaultSeconds = 30 * 60;
+
+    try {
+        $pdo = getDatabaseConnection();
+        if ($pdo instanceof PDO) {
+            $statement = $pdo->prepare('SELECT setting_value FROM settings WHERE setting_key = :key LIMIT 1');
+            $statement->execute(['key' => 'session_timeout_minutes']);
+            $rawMinutes = (int) ($statement->fetchColumn() ?: 30);
+            $timeoutSeconds = max(5, min(240, $rawMinutes)) * 60;
+            return $timeoutSeconds;
+        }
+    } catch (Throwable $exception) {
+        // Fall back to a safe default if settings are unavailable.
+    }
+
+    $timeoutSeconds = $defaultSeconds;
+    return $timeoutSeconds;
+}
+
+function adminRefreshSessionActivity(): void
+{
+    $lastActivity = (int) ($_SESSION['admin_last_activity'] ?? 0);
+    $timeoutSeconds = adminSessionTimeoutSeconds();
+
+    if ($lastActivity > 0 && (time() - $lastActivity) > $timeoutSeconds) {
+        adminLogout();
+        $_SESSION = [];
+        return;
+    }
+
+    $_SESSION['admin_last_activity'] = time();
+}
+
+adminRefreshSessionActivity();
+
+function adminPrimaryAccount(): ?array
+{
+    static $primaryAccount = null;
+    static $loaded = false;
+
+    if ($loaded) {
+        return $primaryAccount;
+    }
+
+    $loaded = true;
+    $pdo = getDatabaseConnection();
+
+    if (!$pdo instanceof PDO) {
+        return null;
+    }
+
+    $statement = $pdo->query('
+        SELECT id, full_name, email, role, is_active
+        FROM users
+        WHERE is_active = 1 AND role IN ("super_admin", "admin")
+        ORDER BY id ASC
+        LIMIT 1
+    ');
+
+    $result = $statement->fetch();
+    $primaryAccount = is_array($result) ? $result : null;
+
+    return $primaryAccount;
+}
+
+function adminIsAllowedAccount(array $user): bool
+{
+    $primaryAccount = adminPrimaryAccount();
+
+    if ($primaryAccount === null) {
+        return false;
+    }
+
+    return (int) ($user['id'] ?? 0) === (int) ($primaryAccount['id'] ?? 0);
+}
+
 function adminIsLoggedIn(): bool
 {
     return !empty($_SESSION['admin_user']);
@@ -41,11 +125,20 @@ function attemptAdminLogin(string $email, string $password): bool
         return false;
     }
 
-    $statement = $pdo->prepare('SELECT id, full_name, email, password_hash, role, is_active FROM users WHERE email = :email LIMIT 1');
+    $statement = $pdo->prepare('
+        SELECT id, full_name, email, password_hash, role, is_active
+        FROM users
+        WHERE email = :email AND role IN ("super_admin", "admin")
+        LIMIT 1
+    ');
     $statement->execute(['email' => $email]);
     $user = $statement->fetch();
 
     if (!$user || (int) $user['is_active'] !== 1) {
+        return false;
+    }
+
+    if (!adminIsAllowedAccount($user)) {
         return false;
     }
 
@@ -59,6 +152,7 @@ function attemptAdminLogin(string $email, string $password): bool
         'email' => $user['email'],
         'role' => $user['role'],
     ];
+    $_SESSION['admin_last_activity'] = time();
 
     $update = $pdo->prepare('UPDATE users SET last_login_at = NOW() WHERE id = :id');
     $update->execute(['id' => $user['id']]);

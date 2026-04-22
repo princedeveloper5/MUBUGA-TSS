@@ -21,6 +21,11 @@ if ($requestedSlug !== '') {
 }
 
 if ($selectedNews !== null) {
+    $pdo = getDatabaseConnection();
+    if ($pdo instanceof PDO) {
+        incrementNewsViewCount($pdo, (int) ($selectedNews['id'] ?? 0));
+    }
+
     renderSiteHeader($selectedNews['title'], $schoolName, $contacts, 'news', [
         'description' => (string) ($selectedNews['text'] ?? ''),
         'image' => (string) ($selectedNews['image'] ?? ''),
@@ -49,6 +54,7 @@ if ($selectedNews !== null) {
                     <p class="news-tag"><?php echo htmlspecialchars(newsCategoryLabel((string) $selectedNews['category'])); ?></p>
                     <h2><?php echo htmlspecialchars($selectedNews['title']); ?></h2>
                     <p class="story-date"><?php echo htmlspecialchars((string) $selectedNews['published_label']); ?></p>
+                    <p class="story-date">Views: <?php echo (int) (($selectedNews['view_count'] ?? 0) + 1); ?></p>
                     <p><?php echo nl2br(htmlspecialchars($selectedNews['content'] ?? $selectedNews['text'])); ?></p>
                     <p><a href="/MUBUGA-TSS/pages/news.php" class="inline-link">Back to all news</a></p>
                 </article>
@@ -77,6 +83,7 @@ if ($selectedNews !== null) {
                                 <p class="news-tag"><?php echo htmlspecialchars(newsCategoryLabel((string) $item['category'])); ?></p>
                                 <h3><?php echo htmlspecialchars((string) $item['title']); ?></h3>
                                 <p class="story-date"><?php echo htmlspecialchars((string) $item['published_label']); ?></p>
+                                <p class="story-date">Views: <?php echo (int) ($item['view_count'] ?? 0); ?></p>
                                 <p><?php echo htmlspecialchars((string) $item['text']); ?></p>
                                 <a href="<?php echo htmlspecialchars((string) $item['link']); ?>" class="inline-link">Read More</a>
                             </div>

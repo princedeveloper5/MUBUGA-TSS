@@ -128,14 +128,19 @@ if ($pdo instanceof PDO) {
 
         <main class="admin-main submissions-main">
             <header class="admin-topbar">
-                <div>
+                <div class="submissions-hero-copy">
                     <p class="admin-eyebrow">Submissions</p>
                     <h2>Public Submissions</h2>
                     <p>Track website messages and newsletter subscriptions in one place.</p>
+                    <div class="submissions-hero-links">
+                        <a href="#messages-panel" class="news-filter-link">Open Messages</a>
+                        <a href="#newsletter-panel" class="news-filter-link">Open Newsletter</a>
+                    </div>
                 </div>
-                <div class="admin-topbar-badges">
+                <div class="admin-topbar-badges submissions-badges">
                     <span class="admin-topbar-badge">Messages</span>
-                    <span class="admin-topbar-badge">Newsletter</span>
+                    <span class="admin-topbar-badge"><?php echo $unreadMessages; ?> unread</span>
+                    <span class="admin-topbar-badge"><?php echo $activeSubscribers; ?> active subscribers</span>
                 </div>
             </header>
 
@@ -187,19 +192,27 @@ if ($pdo instanceof PDO) {
                         <?php else: ?>
                             <?php foreach ($contactMessages as $messageItem): ?>
                                 <div class="table-item">
-                                    <strong><?php echo htmlspecialchars($messageItem['full_name']); ?></strong>
-                                    <span><?php echo htmlspecialchars($messageItem['email']); ?></span>
-                                    <?php if (!empty($messageItem['phone'])): ?>
-                                        <span><?php echo htmlspecialchars($messageItem['phone']); ?></span>
-                                    <?php endif; ?>
-                                    <?php if (!empty($messageItem['subject'])): ?>
-                                        <span><?php echo htmlspecialchars($messageItem['subject']); ?></span>
-                                    <?php endif; ?>
+                                    <div class="submission-item-head">
+                                        <div class="submission-item-title">
+                                            <strong><?php echo htmlspecialchars($messageItem['full_name']); ?></strong>
+                                            <span class="submission-item-time"><?php echo htmlspecialchars(date('d M Y, H:i', strtotime((string) $messageItem['created_at']))); ?></span>
+                                        </div>
+                                        <span class="status status-<?php echo (int) $messageItem['is_read'] === 1 ? 'accepted' : 'pending'; ?>">
+                                            <?php echo (int) $messageItem['is_read'] === 1 ? 'Read' : 'Unread'; ?>
+                                        </span>
+                                    </div>
+                                    <div class="submission-meta-row">
+                                        <span class="submission-meta-pill"><?php echo htmlspecialchars($messageItem['email']); ?></span>
+                                        <?php if (!empty($messageItem['phone'])): ?>
+                                            <span class="submission-meta-pill"><?php echo htmlspecialchars($messageItem['phone']); ?></span>
+                                        <?php endif; ?>
+                                        <?php if (!empty($messageItem['subject'])): ?>
+                                            <span class="submission-meta-pill"><?php echo htmlspecialchars($messageItem['subject']); ?></span>
+                                        <?php endif; ?>
+                                    </div>
                                     <p class="table-paragraph"><?php echo htmlspecialchars($messageItem['message_body']); ?></p>
-                                    <span class="status status-<?php echo (int) $messageItem['is_read'] === 1 ? 'accepted' : 'pending'; ?>">
-                                        <?php echo (int) $messageItem['is_read'] === 1 ? 'Read' : 'Unread'; ?>
-                                    </span>
                                     <div class="item-actions">
+                                        <a href="mailto:<?php echo rawurlencode((string) $messageItem['email']); ?>" class="action-link">Reply</a>
                                         <?php if ((int) $messageItem['is_read'] !== 1): ?>
                                             <form method="post" class="inline-form">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">
@@ -229,12 +242,21 @@ if ($pdo instanceof PDO) {
                         <?php else: ?>
                             <?php foreach ($newsletterSubscribers as $subscriber): ?>
                                 <div class="table-item">
-                                    <strong><?php echo htmlspecialchars($subscriber['email']); ?></strong>
-                                    <span><?php echo htmlspecialchars((string) ($subscriber['source'] ?? 'website')); ?></span>
-                                    <span class="status status-<?php echo (int) $subscriber['is_active'] === 1 ? 'accepted' : 'draft'; ?>">
-                                        <?php echo (int) $subscriber['is_active'] === 1 ? 'Active' : 'Inactive'; ?>
-                                    </span>
+                                    <div class="submission-item-head">
+                                        <div class="submission-item-title">
+                                            <strong><?php echo htmlspecialchars($subscriber['email']); ?></strong>
+                                            <span class="submission-item-time"><?php echo htmlspecialchars(date('d M Y, H:i', strtotime((string) $subscriber['created_at']))); ?></span>
+                                        </div>
+                                        <span class="status status-<?php echo (int) $subscriber['is_active'] === 1 ? 'accepted' : 'draft'; ?>">
+                                            <?php echo (int) $subscriber['is_active'] === 1 ? 'Active' : 'Inactive'; ?>
+                                        </span>
+                                    </div>
+                                    <div class="submission-meta-row">
+                                        <span class="submission-meta-pill"><?php echo htmlspecialchars((string) ($subscriber['source'] ?? 'website')); ?></span>
+                                        <span class="submission-meta-pill"><?php echo (int) $subscriber['is_active'] === 1 ? 'Receiving updates' : 'Not receiving updates'; ?></span>
+                                    </div>
                                     <div class="item-actions">
+                                        <a href="mailto:<?php echo rawurlencode((string) $subscriber['email']); ?>" class="action-link">Email</a>
                                         <?php if ((int) $subscriber['is_active'] === 1): ?>
                                             <form method="post" class="inline-form" onsubmit="return confirm('Mark this subscriber as inactive?');">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(adminCsrfToken()); ?>">

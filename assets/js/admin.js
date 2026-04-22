@@ -10,7 +10,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoUploadInput = document.querySelector('[data-logo-upload-input]');
     const logoSizeInputs = document.querySelectorAll('[data-logo-size-input]');
     const logoPreviewImages = document.querySelectorAll('[data-logo-preview-image]');
+    const searchInput = document.querySelector('[data-dashboard-search-input]');
+    const searchResults = document.querySelector('[data-dashboard-search-results]');
+    const notificationMenu = document.querySelector('[data-notification-menu]');
+    const notificationTrigger = document.querySelector('[data-notification-trigger]');
+    const notificationDropdown = document.querySelector('[data-notification-dropdown]');
+    const adminModals = document.querySelectorAll('[data-admin-modal]');
     const initialDashboardView = document.body.dataset.dashboardInitial || 'dashboard-panel';
+
+    const openModal = (modalId) => {
+        const modal = document.getElementById(modalId);
+        if (!modal) {
+            return;
+        }
+
+        modal.hidden = false;
+        document.body.classList.add('has-admin-modal');
+    };
+
+    const closeModal = (modal) => {
+        if (!modal) {
+            return;
+        }
+
+        modal.hidden = true;
+        if (![...adminModals].some((item) => !item.hidden)) {
+            document.body.classList.remove('has-admin-modal');
+        }
+    };
 
     if (adminLoader) {
         const hideAdminLoader = () => {
@@ -128,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { label: 'H3', wrap: ['<h3>', '</h3>'] },
             { label: 'P', wrap: ['<p>', '</p>'] },
             { label: 'Bold', wrap: ['<strong>', '</strong>'] },
+            { label: 'Italic', wrap: ['<em>', '</em>'] },
             { label: 'List', wrap: ['<ul>\n<li>', '</li>\n</ul>'] },
             { label: 'Link', wrap: ['<a href="https://">', '</a>'] },
         ];
@@ -352,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dropzone = document.createElement('button');
         dropzone.type = 'button';
         dropzone.className = 'upload-dropzone';
-        dropzone.innerHTML = '<strong>Drop image here</strong><span>or click to choose a file</span>';
+        dropzone.innerHTML = '<strong>Drop file here</strong><span>or click to choose a file</span>';
 
         input.insertAdjacentElement('afterend', dropzone);
         input.classList.add('upload-input');
@@ -365,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            dropzone.innerHTML = '<strong>Drop image here</strong><span>or click to choose a file</span>';
+            dropzone.innerHTML = '<strong>Drop file here</strong><span>or click to choose a file</span>';
             dropzone.classList.remove('has-file');
         };
 
@@ -394,6 +422,311 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('change', syncDropLabel);
         syncDropLabel();
     });
+
+    document.querySelectorAll('[data-modal-open]').forEach((trigger) => {
+        trigger.addEventListener('click', () => {
+            const modalId = trigger.getAttribute('data-modal-open');
+            if (modalId) {
+                openModal(modalId);
+            }
+        });
+    });
+
+    adminModals.forEach((modal) => {
+        modal.querySelectorAll('[data-modal-close]').forEach((closeButton) => {
+            closeButton.addEventListener('click', () => closeModal(modal));
+        });
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') {
+            return;
+        }
+
+        adminModals.forEach((modal) => {
+            if (!modal.hidden) {
+                closeModal(modal);
+            }
+        });
+    });
+
+    const previewModal = document.getElementById('gallery-preview-modal');
+    const previewStage = previewModal ? previewModal.querySelector('[data-gallery-preview-stage]') : null;
+    const previewTitle = previewModal ? previewModal.querySelector('[data-gallery-preview-title]') : null;
+    const previewCaption = previewModal ? previewModal.querySelector('[data-gallery-preview-caption]') : null;
+    const previewMeta = previewModal ? previewModal.querySelector('[data-gallery-preview-meta]') : null;
+    const previewDownload = previewModal ? previewModal.querySelector('[data-gallery-preview-download]') : null;
+    const previewEdit = previewModal ? previewModal.querySelector('[data-gallery-preview-edit]') : null;
+    const previewDelete = previewModal ? previewModal.querySelector('[data-gallery-preview-delete]') : null;
+    const deleteModal = document.getElementById('gallery-delete-modal');
+    const deleteIdInput = deleteModal ? deleteModal.querySelector('[data-gallery-delete-id]') : null;
+    const deleteMessage = deleteModal ? deleteModal.querySelector('[data-gallery-delete-message]') : null;
+
+    const setDeleteTarget = (id, title) => {
+        if (deleteIdInput) {
+            deleteIdInput.value = id || '0';
+        }
+        if (deleteMessage) {
+            deleteMessage.textContent = title
+                ? `Are you sure you want to remove "${title}" from the media library?`
+                : 'Are you sure you want to remove this media item?';
+        }
+    };
+
+    document.querySelectorAll('[data-gallery-delete-open]').forEach((button) => {
+        button.addEventListener('click', () => {
+            setDeleteTarget(button.dataset.mediaId || '0', button.dataset.mediaTitle || '');
+            openModal('gallery-delete-modal');
+        });
+    });
+
+    document.querySelectorAll('[data-gallery-preview-open]').forEach((trigger) => {
+        trigger.addEventListener('click', () => {
+            if (!previewModal || !previewStage || !previewTitle || !previewCaption || !previewMeta || !previewDownload || !previewEdit || !previewDelete) {
+                return;
+            }
+
+            const type = trigger.dataset.mediaType || 'image';
+            const url = trigger.dataset.mediaUrl || '';
+            const title = trigger.dataset.mediaTitle || 'Media preview';
+            const caption = trigger.dataset.mediaCaption || '';
+            const category = trigger.dataset.mediaCategory || 'General';
+            const album = trigger.dataset.mediaAlbum || 'General';
+            const size = trigger.dataset.mediaSize || 'Unknown size';
+            const fileType = trigger.dataset.mediaFiletype || 'FILE';
+            const dimensions = trigger.dataset.mediaDimensions || '';
+            const createdAt = trigger.dataset.mediaDate || '';
+            const mediaId = trigger.dataset.mediaId || '0';
+            const downloadUrl = trigger.dataset.mediaDownload || '#';
+
+            previewTitle.textContent = title;
+            previewCaption.textContent = caption || 'No description provided for this media item.';
+            previewMeta.innerHTML = [
+                `Type: ${fileType}`,
+                `Category: ${category}`,
+                `Album: ${album}`,
+                `File size: ${size}`,
+                dimensions ? `Dimensions: ${dimensions}` : '',
+                createdAt ? `Uploaded: ${createdAt}` : '',
+            ].filter(Boolean).map((item) => `<span class="inline-meta">${escapeHtml(item)}</span>`).join('');
+
+            previewDownload.href = downloadUrl;
+            previewEdit.href = `/MUBUGA-TSS/admin/dashboard.php?edit=gallery&id=${encodeURIComponent(mediaId)}#gallery-panel`;
+            previewDelete.onclick = () => {
+                setDeleteTarget(mediaId, title);
+                closeModal(previewModal);
+                openModal('gallery-delete-modal');
+            };
+
+            previewStage.innerHTML = '';
+            if (type === 'video') {
+                const video = document.createElement('video');
+                video.src = url;
+                video.controls = true;
+                video.playsInline = true;
+                video.preload = 'metadata';
+                previewStage.appendChild(video);
+            } else {
+                const image = document.createElement('img');
+                image.src = url;
+                image.alt = title;
+                previewStage.appendChild(image);
+            }
+
+            openModal('gallery-preview-modal');
+        });
+    });
+
+    const selectAllCheckbox = document.querySelector('[data-gallery-select-all]');
+    const selectedCheckboxes = document.querySelectorAll('[data-gallery-select]');
+    if (selectAllCheckbox && selectedCheckboxes.length > 0) {
+        selectAllCheckbox.addEventListener('change', () => {
+            selectedCheckboxes.forEach((checkbox) => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+        });
+    }
+
+    const bulkDeleteButton = document.querySelector('[data-gallery-bulk-delete]');
+    if (bulkDeleteButton) {
+        bulkDeleteButton.addEventListener('click', (event) => {
+            const selectedCount = [...document.querySelectorAll('[data-gallery-select]:checked')].length;
+            if (selectedCount === 0) {
+                event.preventDefault();
+                window.alert('Select at least one media item first.');
+                return;
+            }
+
+            if (!window.confirm(`Delete ${selectedCount} selected media item(s)?`)) {
+                event.preventDefault();
+            }
+        });
+    }
+
+    const galleryUploadForm = document.querySelector('[data-gallery-upload-form]');
+    const galleryUploadProgress = document.querySelector('[data-gallery-upload-progress]');
+    const galleryUploadProgressBar = document.querySelector('[data-gallery-upload-progress-bar]');
+    const galleryUploadProgressLabel = document.querySelector('[data-gallery-upload-progress-label]');
+    const galleryUploadFeedback = document.querySelector('[data-gallery-upload-feedback]');
+    if (galleryUploadForm && galleryUploadProgress && galleryUploadProgressBar && galleryUploadProgressLabel) {
+        galleryUploadForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(galleryUploadForm);
+            const submitButton = galleryUploadForm.querySelector('button[type="submit"]');
+            const request = new XMLHttpRequest();
+
+            if (galleryUploadFeedback) {
+                galleryUploadFeedback.hidden = true;
+                galleryUploadFeedback.className = 'gallery-upload-feedback';
+                galleryUploadFeedback.textContent = '';
+            }
+
+            galleryUploadProgress.hidden = false;
+            galleryUploadProgressBar.style.width = '0%';
+            galleryUploadProgressLabel.textContent = 'Starting upload...';
+
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+
+            request.open('POST', galleryUploadForm.getAttribute('action') || window.location.href, true);
+            request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            request.upload.addEventListener('progress', (progressEvent) => {
+                if (!progressEvent.lengthComputable) {
+                    galleryUploadProgressBar.style.width = '45%';
+                    galleryUploadProgressLabel.textContent = 'Uploading media...';
+                    return;
+                }
+
+                const percent = Math.max(4, Math.min(100, Math.round((progressEvent.loaded / progressEvent.total) * 100)));
+                galleryUploadProgressBar.style.width = `${percent}%`;
+                galleryUploadProgressLabel.textContent = `Uploading media... ${percent}%`;
+            });
+
+            request.addEventListener('load', () => {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                }
+
+                let payload = null;
+                try {
+                    payload = JSON.parse(request.responseText || '{}');
+                } catch (error) {
+                    payload = null;
+                }
+
+                if (!payload || request.status < 200 || request.status >= 300 || payload.success !== true) {
+                    galleryUploadProgressBar.style.width = '100%';
+                    galleryUploadProgressLabel.textContent = 'Upload failed.';
+                    if (galleryUploadFeedback) {
+                        galleryUploadFeedback.hidden = false;
+                        galleryUploadFeedback.className = 'gallery-upload-feedback is-error';
+                        galleryUploadFeedback.textContent = payload && payload.error
+                            ? payload.error
+                            : 'The upload could not be completed. Please try again.';
+                    }
+                    return;
+                }
+
+                galleryUploadProgressBar.style.width = '100%';
+                galleryUploadProgressLabel.textContent = 'Upload complete.';
+                if (galleryUploadFeedback) {
+                    galleryUploadFeedback.hidden = false;
+                    galleryUploadFeedback.className = 'gallery-upload-feedback is-success';
+                    galleryUploadFeedback.textContent = payload.message || 'Media uploaded successfully.';
+                }
+
+                window.setTimeout(() => {
+                    window.location.href = payload.redirect || '/MUBUGA-TSS/admin/dashboard.php#gallery-panel';
+                }, 500);
+            });
+
+            request.addEventListener('error', () => {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                }
+                galleryUploadProgressBar.style.width = '100%';
+                galleryUploadProgressLabel.textContent = 'Upload failed.';
+                if (galleryUploadFeedback) {
+                    galleryUploadFeedback.hidden = false;
+                    galleryUploadFeedback.className = 'gallery-upload-feedback is-error';
+                    galleryUploadFeedback.textContent = 'A network error interrupted the upload. Please try again.';
+                }
+            });
+
+            request.send(formData);
+        });
+    }
+
+    if (window.location.hash === '#gallery-panel' && window.location.search.includes('edit=gallery')) {
+        openModal('gallery-upload-modal');
+    }
+
+    if (notificationMenu && notificationTrigger && notificationDropdown) {
+        notificationTrigger.addEventListener('click', () => {
+            const isHidden = notificationDropdown.hidden;
+            notificationDropdown.hidden = !isHidden;
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!notificationMenu.contains(event.target)) {
+                notificationDropdown.hidden = true;
+            }
+        });
+    }
+
+    if (searchInput && searchResults) {
+        const dataElement = document.getElementById('dashboard-search-data');
+        let searchData = [];
+
+        if (dataElement && dataElement.textContent) {
+            try {
+                searchData = JSON.parse(dataElement.textContent);
+            } catch (error) {
+                searchData = [];
+            }
+        }
+
+        const renderSearchResults = (query) => {
+            const normalized = query.trim().toLowerCase();
+
+            if (normalized.length < 2) {
+                searchResults.hidden = true;
+                searchResults.innerHTML = '';
+                return;
+            }
+
+            const matches = searchData
+                .filter((item) => item.text.includes(normalized))
+                .slice(0, 8);
+
+            if (matches.length === 0) {
+                searchResults.hidden = false;
+                searchResults.innerHTML = '<div class="notification-empty">No matches found.</div>';
+                return;
+            }
+
+            searchResults.hidden = false;
+            searchResults.innerHTML = matches.map((item) => `
+                <a href="${escapeHtml(item.link)}" class="dashboard-search-result">
+                    <strong>${escapeHtml(item.label)}</strong>
+                    <small>${escapeHtml(item.section)}${item.meta ? ` • ${escapeHtml(item.meta)}` : ''}</small>
+                </a>
+            `).join('');
+        };
+
+        searchInput.addEventListener('input', (event) => {
+            renderSearchResults(event.target.value || '');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!searchResults.contains(event.target) && event.target !== searchInput) {
+                searchResults.hidden = true;
+            }
+        });
+    }
 });
 
 function wrapSelection(textarea, before, after) {

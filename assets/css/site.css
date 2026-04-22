@@ -15,6 +15,32 @@
     --container: min(1160px, calc(100% - 32px));
 }
 
+body.site-theme-dark {
+    --bg: #0c1b2c;
+    --paper: #10263b;
+    --surface: rgba(16, 38, 59, 0.96);
+    --ink: #edf5ff;
+    --muted: #adc3db;
+    --line: rgba(194, 219, 245, 0.14);
+    --green-soft: rgba(30, 74, 117, 0.7);
+    --shadow: 0 22px 64px rgba(0, 0, 0, 0.28);
+}
+
+.site-notice-bar {
+    background: linear-gradient(135deg, var(--gold-deep), var(--clay));
+    color: #fff;
+}
+
+.site-notice-bar .container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 0;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
 /* Gallery collections redesign */
 .gallery-section {
     position: relative;

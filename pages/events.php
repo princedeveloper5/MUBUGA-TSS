@@ -49,6 +49,7 @@ renderInnerHero('EVENTS', $page['title'], $page['excerpt'], $page['image']);
                             <p class="news-tag"><?php echo htmlspecialchars(newsCategoryLabel((string) $item['category'])); ?></p>
                             <h3><?php echo htmlspecialchars((string) $item['title']); ?></h3>
                             <p class="story-date"><?php echo htmlspecialchars((string) $item['published_label']); ?></p>
+                            <p class="story-date">Views: <?php echo (int) ($item['view_count'] ?? 0); ?></p>
                             <p><?php echo htmlspecialchars((string) $item['text']); ?></p>
                             <a href="<?php echo htmlspecialchars((string) $item['link']); ?>" class="inline-link">Read full event</a>
                         </div>

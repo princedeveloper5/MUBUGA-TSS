@@ -14,10 +14,10 @@ renderSiteHeader($page['title'], $schoolName, $contacts, 'programs', [
 ]);
 renderInnerHero('OUR PROGRAMS', $page['content'], $page['excerpt'], $page['image'], false);
 ?>
-<main>
-    <section class="section">
+<main class="programs-page">
+    <section class="section programs-page-section">
         <div class="container">
-            <div class="section-heading">
+            <div class="section-heading programs-page-heading">
                 <p class="eyebrow">Training Pathways</p>
                 <h2>Our programs help students learn in class and practice real technical work.</h2>
                 <p>Each program gives students knowledge, practical skills, and preparation for future work or further study.</p>

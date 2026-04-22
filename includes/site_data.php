@@ -532,3 +532,19 @@ function sitePageContent(string $slug, array $defaults): array
         'image' => resolveSiteImage((string) ($page['banner_image'] ?: $resolvedDefaults['image'])),
     ];
 }
+
+// Gallery highlights for homepage preview
+$electricalEventCard = [
+    'title' => 'Electrical Technology Event',
+    'text' => 'Students showcase their electrical installation and maintenance skills during our annual technology exhibition.',
+    'image' => '/MUBUGA-TSS/assets/images/electrical technology 2.jpeg',
+    'category_label' => 'Electrical Event'
+];
+
+// Get gallery items excluding coding lab and add electrical event as first item
+$galleryItems = $gallery ?? [];
+$filteredItems = array_filter($galleryItems, function($item) {
+    return !str_contains(strtolower($item['title'] ?? ''), 'coding');
+});
+$firstTwoItems = array_slice($filteredItems, 0, 2);
+$galleryHighlights = array_merge([$electricalEventCard], $firstTwoItems);

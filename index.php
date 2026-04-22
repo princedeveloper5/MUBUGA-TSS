@@ -84,6 +84,82 @@ if (isset($_GET['form_status']) && isset($_GET['form_message'])) {
         </section>
 
         
+        <!-- Welcome Message Section -->
+        <section class="section welcome" id="welcome">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Welcome to Mubuga TSS</h2>
+                    <p>Your gateway to technical excellence</p>
+                </div>
+                
+                <div class="welcome-content">
+                    <div class="welcome-text">
+                        <p>At Mubuga Technical Secondary School, we are committed to providing quality technical education that prepares students for successful careers in the modern workforce. Our comprehensive programs combine theoretical knowledge with practical skills to ensure our graduates are ready for the challenges of today's industries.</p>
+                        <p>Join us in shaping the future of technical education and building the next generation of skilled professionals.</p>
+                    </div>
+                    <div class="welcome-cta">
+                        <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Start Your Journey</a>
+                        <a href="/MUBUGA-TSS/pages/programs.php" class="button button-secondary">Explore Programs</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section class="section about" id="about">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>About Us</h2>
+                    <p>Our foundation and values</p>
+                </div>
+                
+                <div class="about-grid">
+                    <div class="about-item">
+                        <div class="about-icon">
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                            </svg>
+                        </div>
+                        <div class="about-content">
+                            <h3>Vision</h3>
+                            <p>To prepare learners for employment, entrepreneurship, and further technical growth through quality training.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="about-item">
+                        <div class="about-icon">
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        </div>
+                        <div class="about-content">
+                            <h3>Mission</h3>
+                            <p>To transform student potential into practical competence through focused technical learning and strong character formation.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="about-item">
+                        <div class="about-icon">
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                        <div class="about-content">
+                            <h3>Core Values</h3>
+                            <ul>
+                                <li>Discipline</li>
+                                <li>Integrity</li>
+                                <li>Practical Excellence</li>
+                                <li>Innovation</li>
+                                <li>Teamwork</li>
+                                <li>Responsibility</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Programs Section -->
         <section class="section programs" id="programs">
             <div class="container">

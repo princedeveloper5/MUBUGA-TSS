@@ -200,7 +200,7 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
 <?php
 }
 
-function renderInnerHero(string $eyebrow, string $title, string $text, string $image, bool $showSeal = true): void
+function renderInnerHero(string $eyebrow, string $title, string $text, string $image): void
 {
     global $siteMeta, $schoolName;
     $logoPath = (string) ($siteMeta['logo_path'] ?? '');
@@ -213,11 +213,9 @@ function renderInnerHero(string $eyebrow, string $title, string $text, string $i
         <section class="inner-hero">
             <div class="container inner-hero-grid">
                 <div class="inner-hero-copy">
-                    <?php if ($showSeal): ?>
-                        <div class="inner-hero-seal">
-                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> emblem" class="inner-hero-seal-logo" style="width: <?php echo min(96, $logoSize); ?>px; height: auto;">
-                        </div>
-                    <?php endif; ?>
+                    <div class="inner-hero-seal">
+                        <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> emblem" class="inner-hero-seal-logo" style="width: <?php echo min(96, $logoSize); ?>px; height: auto;">
+                    </div>
                     <p class="eyebrow"><?php echo htmlspecialchars($eyebrow); ?></p>
                     <h1 class="inner-title"><?php echo htmlspecialchars($title); ?></h1>
                     <p class="hero-text"><?php echo htmlspecialchars($text); ?></p>
@@ -255,10 +253,10 @@ function renderSiteFooter(string $schoolName): void
     $locationText = (string) ($contacts[2]['value'] ?? 'Mubuga, Rwanda');
     ?>
         <div class="floating-actions">
-            <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
-            <a href="/MUBUGA-TSS/apply.php" class="floating-link">Apply</a>
+            <a href="/MUBUGA-TSS/pages/admissions.php" class="floating-link">Apply</a>
             <a href="/MUBUGA-TSS/pages/contact.php" class="floating-link floating-link-secondary">Contact</a>
         </div>
+        <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
         <footer class="site-footer">
             <div class="container footer-main">
                 <div class="footer-topline">
@@ -266,11 +264,11 @@ function renderSiteFooter(string $schoolName): void
                         <p class="eyebrow">Mubuga TSS</p>
                         <h2>Short path. Big future.</h2>
                     </div>
-                    <a href="/MUBUGA-TSS/apply.php" class="button button-primary">Apply Now</a>
+                    <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Apply Now</a>
                 </div>
                 <div class="footer-grid">
-                    <!-- Brand & Contact Combined -->
-                    <div class="footer-section">
+                    <!-- Brand Section -->
+                    <div class="footer-section footer-brand-section">
                         <div class="footer-brand">
                             <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="footer-brand-logo" style="width: <?php echo min(72, $logoSize); ?>px; height: auto;">
                             <div>
@@ -347,6 +345,7 @@ function renderSiteFooter(string $schoolName): void
                                 <span><?php echo htmlspecialchars($locationText); ?></span>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>
@@ -354,9 +353,10 @@ function renderSiteFooter(string $schoolName): void
             <!-- Footer Bottom -->
             <div class="footer-bottom">
                 <div class="container footer-bottom-content">
-                    <p class="footer-copyright" style="text-align: center;">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
+                    <p class="footer-copyright">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
                     <div class="footer-bottom-links">
                         <a href="/MUBUGA-TSS/pages/admissions.php" class="footer-bottom-link">Admissions</a>
+                        <a href="/MUBUGA-TSS/pages/fees.php" class="footer-bottom-link">Fees</a>
                         <a href="/MUBUGA-TSS/pages/gallery.php" class="footer-bottom-link">Gallery</a>
                         <a href="/MUBUGA-TSS/pages/contact.php" class="footer-bottom-link">Contacts</a>
                     </div>

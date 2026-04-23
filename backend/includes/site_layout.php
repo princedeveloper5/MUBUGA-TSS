@@ -123,7 +123,7 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
                     <a href="<?php echo htmlspecialchars($twitterUrl); ?>" class="topbar-social-link" aria-label="Follow us on Twitter" title="Twitter">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.6l-5.165-6.75-5.97 6.75h-3.315l7.73-8.835L.42 2.25h6.75l4.678 6.017L17.474 2.25zM16.6 20.47h1.832L7.06 3.88H5.063L16.6 20.47z"/></svg>
                     </a>
-                    <a href="/MUBUGA-TSS/admin/">Login</a>
+                    <a href="/MUBUGA-TSS/backend/admin/">Login</a>
                 </div>
             </div>
         </header>
@@ -200,7 +200,7 @@ function renderSiteHeader(string $pageTitle, string $schoolName, array $contacts
 <?php
 }
 
-function renderInnerHero(string $eyebrow, string $title, string $text, string $image, bool $showSeal = true): void
+function renderInnerHero(string $eyebrow, string $title, string $text, string $image): void
 {
     global $siteMeta, $schoolName;
     $logoPath = (string) ($siteMeta['logo_path'] ?? '');
@@ -213,11 +213,9 @@ function renderInnerHero(string $eyebrow, string $title, string $text, string $i
         <section class="inner-hero">
             <div class="container inner-hero-grid">
                 <div class="inner-hero-copy">
-                    <?php if ($showSeal): ?>
-                        <div class="inner-hero-seal">
-                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> emblem" class="inner-hero-seal-logo" style="width: <?php echo min(96, $logoSize); ?>px; height: auto;">
-                        </div>
-                    <?php endif; ?>
+                    <div class="inner-hero-seal">
+                        <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> emblem" class="inner-hero-seal-logo" style="width: <?php echo min(96, $logoSize); ?>px; height: auto;">
+                    </div>
                     <p class="eyebrow"><?php echo htmlspecialchars($eyebrow); ?></p>
                     <h1 class="inner-title"><?php echo htmlspecialchars($title); ?></h1>
                     <p class="hero-text"><?php echo htmlspecialchars($text); ?></p>
@@ -255,10 +253,10 @@ function renderSiteFooter(string $schoolName): void
     $locationText = (string) ($contacts[2]['value'] ?? 'Mubuga, Rwanda');
     ?>
         <div class="floating-actions">
-            <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
-            <a href="/MUBUGA-TSS/apply.php" class="floating-link">Apply</a>
+            <a href="/MUBUGA-TSS/pages/admissions.php" class="floating-link">Apply</a>
             <a href="/MUBUGA-TSS/pages/contact.php" class="floating-link floating-link-secondary">Contact</a>
         </div>
+        <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
         <footer class="site-footer">
             <div class="container footer-main">
                 <div class="footer-topline">
@@ -266,11 +264,11 @@ function renderSiteFooter(string $schoolName): void
                         <p class="eyebrow">Mubuga TSS</p>
                         <h2>Short path. Big future.</h2>
                     </div>
-                    <a href="/MUBUGA-TSS/apply.php" class="button button-primary">Apply Now</a>
+                    <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Apply Now</a>
                 </div>
                 <div class="footer-grid">
-                    <!-- Brand & Contact Combined -->
-                    <div class="footer-section">
+                    <!-- Brand Section -->
+                    <div class="footer-section footer-brand-section">
                         <div class="footer-brand">
                             <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="footer-brand-logo" style="width: <?php echo min(72, $logoSize); ?>px; height: auto;">
                             <div>
@@ -315,7 +313,7 @@ function renderSiteFooter(string $schoolName): void
                             <li><a href="/MUBUGA-TSS/pages/registration.php">Student Registration</a></li>
                         </ul>
                         <p class="footer-newsletter-desc">Get admissions and school updates.</p>
-                        <form class="footer-newsletter-form" method="post" action="/MUBUGA-TSS/handlers/site_forms.php">
+                        <form class="footer-newsletter-form" method="post" action="/MUBUGA-TSS/backend/handlers/site_forms.php">
                             <input type="hidden" name="form_action" value="newsletter_subscribe">
                             <input type="hidden" name="source" value="footer">
                             <input type="hidden" name="redirect_to" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? '/MUBUGA-TSS/'); ?>">
@@ -347,6 +345,7 @@ function renderSiteFooter(string $schoolName): void
                                 <span><?php echo htmlspecialchars($locationText); ?></span>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>
@@ -354,9 +353,10 @@ function renderSiteFooter(string $schoolName): void
             <!-- Footer Bottom -->
             <div class="footer-bottom">
                 <div class="container footer-bottom-content">
-                    <p class="footer-copyright" style="text-align: center;">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
+                    <p class="footer-copyright">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
                     <div class="footer-bottom-links">
                         <a href="/MUBUGA-TSS/pages/admissions.php" class="footer-bottom-link">Admissions</a>
+                        <a href="/MUBUGA-TSS/pages/fees.php" class="footer-bottom-link">Fees</a>
                         <a href="/MUBUGA-TSS/pages/gallery.php" class="footer-bottom-link">Gallery</a>
                         <a href="/MUBUGA-TSS/pages/contact.php" class="footer-bottom-link">Contacts</a>
                     </div>

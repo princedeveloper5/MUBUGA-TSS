@@ -387,7 +387,7 @@ renderInnerHero('ADMISSIONS', 'Your Path to Technical Excellence', 'Join Mubuga 
                 <p>Ready to join Mubuga TSS? Complete the application form below.</p>
                 <div class="cta-urgent">
                     <p><strong>Application Deadline: March 30</strong></p>
-                    <a href="#application" class="btn btn-primary btn-large">Apply Today</a>
+                    <a href="/MUBUGA-TSS/apply.php" class="btn btn-primary btn-large">Apply Today</a>
                 </div>
             </div>
             

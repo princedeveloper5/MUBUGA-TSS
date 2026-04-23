@@ -255,10 +255,10 @@ function renderSiteFooter(string $schoolName): void
     $locationText = (string) ($contacts[2]['value'] ?? 'Mubuga, Rwanda');
     ?>
         <div class="floating-actions">
-            <a href="/MUBUGA-TSS/pages/admissions.php" class="floating-link">Apply</a>
+            <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
+            <a href="/MUBUGA-TSS/apply.php" class="floating-link">Apply</a>
             <a href="/MUBUGA-TSS/pages/contact.php" class="floating-link floating-link-secondary">Contact</a>
         </div>
-        <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
         <footer class="site-footer">
             <div class="container footer-main">
                 <div class="footer-topline">
@@ -266,11 +266,11 @@ function renderSiteFooter(string $schoolName): void
                         <p class="eyebrow">Mubuga TSS</p>
                         <h2>Short path. Big future.</h2>
                     </div>
-                    <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Apply Now</a>
+                    <a href="/MUBUGA-TSS/apply.php" class="button button-primary">Apply Now</a>
                 </div>
                 <div class="footer-grid">
-                    <!-- Brand Section -->
-                    <div class="footer-section footer-brand-section">
+                    <!-- Brand & Contact Combined -->
+                    <div class="footer-section">
                         <div class="footer-brand">
                             <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="footer-brand-logo" style="width: <?php echo min(72, $logoSize); ?>px; height: auto;">
                             <div>
@@ -314,6 +314,16 @@ function renderSiteFooter(string $schoolName): void
                             <li><a href="/MUBUGA-TSS/pages/fees.php">Fees &amp; Requirements</a></li>
                             <li><a href="/MUBUGA-TSS/pages/registration.php">Student Registration</a></li>
                         </ul>
+                        <p class="footer-newsletter-desc">Get admissions and school updates.</p>
+                        <form class="footer-newsletter-form" method="post" action="/MUBUGA-TSS/handlers/site_forms.php">
+                            <input type="hidden" name="form_action" value="newsletter_subscribe">
+                            <input type="hidden" name="source" value="footer">
+                            <input type="hidden" name="redirect_to" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? '/MUBUGA-TSS/'); ?>">
+                            <div class="newsletter-input-group">
+                                <input type="email" name="email" placeholder="Your email address" required aria-label="Email address">
+                                <button type="submit" aria-label="Subscribe to newsletter">Send</button>
+                            </div>
+                        </form>
                     </div>
 
                     <!-- Contact Info & Newsletter -->
@@ -337,18 +347,6 @@ function renderSiteFooter(string $schoolName): void
                                 <span><?php echo htmlspecialchars($locationText); ?></span>
                             </div>
                         </div>
-                        
-                        <h3 class="footer-heading footer-heading-newsletter">Newsletter</h3>
-                        <p class="footer-newsletter-desc">Get admissions and school updates.</p>
-                        <form class="footer-newsletter-form" method="post" action="/MUBUGA-TSS/handlers/site_forms.php">
-                            <input type="hidden" name="form_action" value="newsletter_subscribe">
-                            <input type="hidden" name="source" value="footer">
-                            <input type="hidden" name="redirect_to" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? '/MUBUGA-TSS/'); ?>">
-                            <div class="newsletter-input-group">
-                                <input type="email" name="email" placeholder="Your email address" required aria-label="Email address">
-                                <button type="submit" aria-label="Subscribe to newsletter">Send</button>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -356,10 +354,9 @@ function renderSiteFooter(string $schoolName): void
             <!-- Footer Bottom -->
             <div class="footer-bottom">
                 <div class="container footer-bottom-content">
-                    <p class="footer-copyright">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
+                    <p class="footer-copyright" style="text-align: center;">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. All rights reserved.</p>
                     <div class="footer-bottom-links">
                         <a href="/MUBUGA-TSS/pages/admissions.php" class="footer-bottom-link">Admissions</a>
-                        <a href="/MUBUGA-TSS/pages/fees.php" class="footer-bottom-link">Fees</a>
                         <a href="/MUBUGA-TSS/pages/gallery.php" class="footer-bottom-link">Gallery</a>
                         <a href="/MUBUGA-TSS/pages/contact.php" class="footer-bottom-link">Contacts</a>
                     </div>

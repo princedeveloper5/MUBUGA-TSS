@@ -2,624 +2,608 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/site_data.php';
+require_once __DIR__ . '/includes/site_layout.php';
+require_once __DIR__ . '/portal/header.php';
+require_once __DIR__ . '/portal/footer.php';
 
 $homepageGallery = array_values(array_filter($gallery, static function (array $item): bool {
     return (string) ($item['media_type'] ?? 'image') !== 'video';
 }));
 $galleryLead = $homepageGallery[0] ?? null;
-$galleryHighlights = array_slice($homepageGallery, 1, 4);
-$galleryMore = array_slice($homepageGallery, 5, 4);
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($schoolName); ?> | Technical Secondary School</title>
-    <meta name="description" content="Official website of Mubuga TSS, featuring Software Development and Electrical Technology programs.">
-    <link rel="icon" type="image/png" href="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/site.css">
-</head>
-<body>
-    <?php
-    $formStatus = (string) ($_GET['form_status'] ?? '');
-    $formMessage = (string) ($_GET['form_message'] ?? '');
-    $logoPath = (string) ($siteMeta['logo_path'] ?? '');
-    // Use fallback to the default logo if no custom logo is set
-    if ($logoPath === '') {
-        $logoPath = 'assets/images/MUBUGA%20LOGO%20SN.PNG';
-    }
-    $facebookUrl = (string) ($siteMeta['facebook_url'] ?? '#');
-    $instagramUrl = (string) ($siteMeta['instagram_url'] ?? '#');
-    $twitterUrl = (string) ($siteMeta['twitter_url'] ?? '#');
+$galleryHighlights = array_slice($homepageGallery, 1, 3); // Limit to 3 for preview
+
+// Get logo path for footer
+$logoPath = (string) ($siteMeta['logo_path'] ?? '');
+if ($logoPath === '') {
+    $logoPath = 'assets/images/MUBUGA LOGO SN.PNG';
+}
+
+// Get social media URLs - ensure they're always defined
+$facebookUrl = '#';
+$instagramUrl = '#';
+$twitterUrl = '#';
+
+// Try to get from siteMeta if available
+if (isset($siteMeta['facebook_url'])) {
+    $facebookUrl = (string) $siteMeta['facebook_url'];
+}
+if (isset($siteMeta['instagram_url'])) {
+    $instagramUrl = (string) $siteMeta['instagram_url'];
+}
+if (isset($siteMeta['twitter_url'])) {
+    $twitterUrl = (string) $siteMeta['twitter_url'];
+}
+
+// Render the proper header
+renderSiteHeader('Home', $schoolName, $contacts, 'home', [
+    'description' => 'Official website of Mubuga TSS, featuring Software Development and Electrical Technology programs.',
+    'image' => 'assets/images/student in practical.jpeg',
+]);
+
+// Add form feedback if present
+if (isset($_GET['form_status']) && isset($_GET['form_message'])) {
+    $formStatus = (string) $_GET['form_status'];
+    $formMessage = (string) $_GET['form_message'];
     ?>
-    <div class="project-loader" data-project-loader>
-        <div class="project-loader-card">
-            <?php if ($logoPath !== ''): ?>
-                <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="project-loader-logo">
-            <?php else: ?>
-                <img src="/MUBUGA-TSS/assets/images/MUBUGA%20LOGO%20SN.PNG" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="project-loader-logo">
-            <?php endif; ?>
-            <div class="project-spinner" aria-hidden="true">
-                <span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span>
-            </div>
-            <strong>Loading <?php echo htmlspecialchars($schoolName); ?></strong>
+    <div class="container form-feedback-wrap">
+        <div class="form-feedback form-feedback-<?php echo htmlspecialchars($formStatus); ?>">
+            <?php echo htmlspecialchars($formMessage); ?>
         </div>
     </div>
-    <a href="#main-content" class="skip-link">Skip to content</a>
-    <div class="site-shell">
-        <div class="scroll-progress" aria-hidden="true">
-            <span class="scroll-progress-bar"></span>
-        </div>
-        <header class="topbar">
-            <div class="container topbar-inner">
-                <div class="topbar-meta">
-                    <span><?php echo htmlspecialchars($contacts[0]['value']); ?></span>
-                    <span><?php echo htmlspecialchars($contacts[1]['value']); ?></span>
-                    <span>Open: 7AM - 5PM</span>
-                </div>
-                <div class="topbar-links">
-                    <a href="<?php echo htmlspecialchars($facebookUrl); ?>" class="topbar-social-link" aria-label="Follow us on Facebook" title="Facebook">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                    </a>
-                    <a href="<?php echo htmlspecialchars($instagramUrl); ?>" class="topbar-social-link" aria-label="Follow us on Instagram" title="Instagram">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 21.6c-5.3 0-9.6-4.3-9.6-9.6s4.3-9.6 9.6-9.6 9.6 4.3 9.6 9.6-4.3 9.6-9.6 9.6zm0-15.6c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm5.6-1.8c0 .79.64 1.43 1.43 1.43s1.43-.64 1.43-1.43-.64-1.43-1.43-1.43-1.43.64-1.43 1.43z"/></svg>
-                    </a>
-                    <a href="<?php echo htmlspecialchars($twitterUrl); ?>" class="topbar-social-link" aria-label="Follow us on Twitter" title="Twitter">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.6l-5.165-6.75-5.97 6.75h-3.315l7.73-8.835L.42 2.25h6.75l4.678 6.017L17.474 2.25zM16.6 20.47h1.832L7.06 3.88H5.063L16.6 20.47z"/></svg>
-                    </a>
-                    <a href="/MUBUGA-TSS/admin/">Login</a>
-                </div>
-            </div>
-        </header>
-        <?php if ($formStatus !== '' && $formMessage !== ''): ?>
-            <div class="container form-feedback-wrap">
-                <div class="form-feedback form-feedback-<?php echo htmlspecialchars($formStatus); ?>">
-                    <?php echo htmlspecialchars($formMessage); ?>
-                </div>
-            </div>
-        <?php endif; ?>
+    <?php
+}
+?>
 
-        <header class="main-header">
-            <div class="container nav-wrap">
-                <a class="brand" href="/MUBUGA-TSS/" aria-label="Mubuga TSS home">
-                    <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="brand-logo">
-                    <span class="brand-text">
-                        <strong><?php echo htmlspecialchars($schoolName); ?></strong>
-                        <small>Technical Secondary School</small>
-                    </span>
-                </a>
-
-                <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-
-                <nav class="site-nav" id="site-nav">
-                    <a href="/MUBUGA-TSS/">Home</a>
-                    <a href="/MUBUGA-TSS/pages/about.php">About Us</a>
-                    <a href="/MUBUGA-TSS/pages/programs.php">Our Programs</a>
-                    <a href="/MUBUGA-TSS/pages/facilities.php">Facilities</a>
-                    
-                    <div class="dropdown">
-                        <a href="/MUBUGA-TSS/pages/admissions.php">Admission &#9662;</a>
-                        <div class="dropdown-menu">
-                            <a href="/MUBUGA-TSS/pages/admissions.php#requirements">Fees &amp; Requirements</a>
-                            <a href="/MUBUGA-TSS/pages/admissions.php#registration">Student Registration</a>
-                        </div>
-                    </div>
-                    
-                    <a href="/MUBUGA-TSS/pages/team.php">Our Team</a>
-                    
-                    <div class="dropdown">
-                        <a href="/MUBUGA-TSS/pages/news.php">News &#9662;</a>
-                        <div class="dropdown-menu">
-                            <a href="/MUBUGA-TSS/pages/news.php?type=events">Events</a>
-                            <a href="/MUBUGA-TSS/pages/news.php?type=announcements">Announcements</a>
-                        </div>
-                    </div>
-                    
-                    <div class="dropdown">
-                        <a href="/MUBUGA-TSS/pages/gallery.php">Gallery &#9662;</a>
-                        <div class="dropdown-menu">
-                            <a href="/MUBUGA-TSS/pages/gallery.php#pictures">Pictures</a>
-                            <a href="/MUBUGA-TSS/pages/gallery.php#videos">Videos</a>
-                        </div>
-                    </div>
-                    
-                    <a href="/MUBUGA-TSS/pages/contact.php" class="nav-cta">Contacts</a>
-                </nav>
-            </div>
-        </header>
-
-        <main id="main-content">
-            <section class="hero" id="home">
-                <div class="container hero-grid">
-                    <div class="hero-copy" data-hero-slider>
-                        <div class="hero-topline">
-                        </div>
-
-                        <div class="brand-ribbon">
-                            <div class="brand-seal">
-                                <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> emblem" class="brand-seal-logo">
-                            </div>
-                            <div>
-                                <strong><?php echo htmlspecialchars($schoolName); ?></strong>
-                                <p>Technical Secondary School</p>
-                            </div>
-                        </div>
-
-                        <div class="hero-intro">
-                            <p class="eyebrow" data-hero-eyebrow><?php echo htmlspecialchars($heroSlides[0]['eyebrow']); ?></p>
-                            <h1 data-hero-title><?php echo htmlspecialchars($heroSlides[0]['title']); ?></h1>
-                            <p class="hero-text" data-hero-text><?php echo htmlspecialchars($heroSlides[0]['text']); ?></p>
+    <main id="main-content">
+        <!-- Hero Banner Section -->
+        <section class="hero-section" id="home">
+            <div class="hero-background" id="hero-background">
+                <div class="container">
+                    <div class="hero-content">
+                        <div class="hero-text">
+                            <h1 id="hero-title">Excellence in technical education</h1>
+                            <p id="hero-description">Join Mubuga TSS and build your future with practical skills in Software Development and Electrical Technology.</p>
                             <div class="hero-actions">
-                                <a href="<?php echo htmlspecialchars($heroSlides[0]['link'] ?? '/MUBUGA-TSS/pages/admissions.php'); ?>" class="button button-primary" data-hero-button><?php echo htmlspecialchars($heroSlides[0]['button']); ?></a>
+                                <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Register</a>
                                 <a href="/MUBUGA-TSS/pages/programs.php" class="button button-secondary">Explore Programs</a>
                             </div>
                         </div>
-
-                        <div class="hero-metrics" aria-label="School overview">
-                            <?php foreach ($stats as $stat): ?>
-                                <article class="hero-metric">
-                                    <strong><?php echo htmlspecialchars($stat['value']); ?></strong>
-                                    <span><?php echo htmlspecialchars($stat['label']); ?></span>
-                                </article>
-                            <?php endforeach; ?>
-                        </div>
-
-                        <div class="hero-slider-mock" role="tablist" aria-label="Homepage highlights">
-                            <?php foreach ($heroSlides as $index => $slide): ?>
-                                <button
-                                    type="button"
-                                    class="slide-card<?php echo $index === 0 ? ' is-active' : ''; ?>"
-                                    data-hero-trigger
-                                    data-index="<?php echo $index; ?>"
-                                    data-eyebrow="<?php echo htmlspecialchars($slide['eyebrow']); ?>"
-                                    data-title="<?php echo htmlspecialchars($slide['title']); ?>"
-                                    data-text="<?php echo htmlspecialchars($slide['text']); ?>"
-                                    data-button="<?php echo htmlspecialchars($slide['button']); ?>"
-                                    data-link="<?php echo htmlspecialchars($slide['link'] ?? '/MUBUGA-TSS/pages/admissions.php'); ?>"
-                                    data-image="<?php echo htmlspecialchars($slide['image'] ?? 'assets/images/students.jfif'); ?>"
-                                    data-spotlight="<?php echo htmlspecialchars($slide['spotlight'] ?? $slide['eyebrow']); ?>"
-                                    aria-selected="<?php echo $index === 0 ? 'true' : 'false'; ?>"
-                                >
-                                    <p class="card-label"><?php echo htmlspecialchars($slide['eyebrow']); ?></p>
-                                    <h3><?php echo htmlspecialchars($slide['title']); ?></h3>
-                                    <p><?php echo htmlspecialchars($slide['text']); ?></p>
-                                    <span><?php echo htmlspecialchars($slide['button']); ?></span>
-                                </button>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-
-                    <div class="hero-panel">
-                        <div class="hero-photo hero-photo-slider">
-                            <?php foreach ($heroSlides as $index => $slide): ?>
-                                <img
-                                    src="/MUBUGA-TSS/<?php echo htmlspecialchars($slide['image'] ?? 'assets/images/students.jfif'); ?>"
-                                    alt="<?php echo htmlspecialchars($slide['title']); ?>"
-                                    class="hero-slide-image<?php echo $index === 0 ? ' is-active' : ''; ?> photo-viewer"
-                                    data-hero-image
-                                >
-                            <?php endforeach; ?>
-                            <div class="hero-photo-controls" aria-label="Hero slide controls">
-                                <button type="button" class="hero-photo-control" data-hero-prev aria-label="Previous slide">&#10094;</button>
-                                <button type="button" class="hero-photo-control" data-hero-next aria-label="Next slide">&#10095;</button>
-                            </div>
-                            <div class="hero-photo-overlay">
-                                <p class="card-label">Featured View</p>
-                                <h2 data-hero-spotlight><?php echo htmlspecialchars($heroSlides[0]['spotlight'] ?? 'Campus and school community'); ?></h2>
-                                <a href="/MUBUGA-TSS/pages/gallery.php" class="hero-overlay-link">View school gallery</a>
-                            </div>
-                        </div>
-                        <div class="hero-slider-dots" aria-label="Hero slide pagination">
-                            <?php foreach ($heroSlides as $index => $slide): ?>
-                                <button
-                                    type="button"
-                                    class="hero-dot<?php echo $index === 0 ? ' is-active' : ''; ?>"
-                                    data-hero-dot
-                                    data-index="<?php echo $index; ?>"
-                                    aria-label="Show slide <?php echo $index + 1; ?>"
-                                    aria-pressed="<?php echo $index === 0 ? 'true' : 'false'; ?>"
-                                ></button>
-                            <?php endforeach; ?>
-                        </div>
-                        <div class="hero-panel-grid">
-                            <article class="hero-card">
-                                <p class="card-label">Quick Links</p>
-                                <h2>Explore Mubuga TSS</h2>
-                                <div class="hero-shortcuts">
-                                    <a href="/MUBUGA-TSS/pages/programs.php" class="shortcut-link">View Programs</a>
-                                    <a href="/MUBUGA-TSS/pages/gallery.php" class="shortcut-link">See Gallery</a>
-                                    <a href="/MUBUGA-TSS/pages/contact.php" class="shortcut-link">Contact Us</a>
-                                </div>
-                            </article>
-                            <article class="hero-card">
-                                <p class="card-label">Why Choose Us</p>
-                                <ul class="hero-points">
-                                    <?php foreach ($highlights as $highlight): ?>
-                                        <li><?php echo htmlspecialchars($highlight); ?></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </article>
-                        </div>
-                        <div class="hero-badge">Competence. Discipline. Innovation.</div>
-                        <p class="hero-support-copy">A practical school environment inspired by the clear, confidence-building hero structure of the reference site, but tailored to Mubuga TSS.</p>
                     </div>
                 </div>
-            </section>
+                
+                <!-- Arrow Controls -->
+                <button class="hero-arrow hero-arrow-prev" id="hero-prev" aria-label="Previous image">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
+                <button class="hero-arrow hero-arrow-next" id="hero-next" aria-label="Next image">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                    </svg>
+                </button>
+            </div>
+        </section>
 
+        
+        <!-- Welcome Message Section -->
+        <section class="section welcome" id="welcome">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Welcome to Mubuga TSS</h2>
+                    <p>Your gateway to technical excellence</p>
+                </div>
+                
+                <div class="welcome-content">
+                    <div class="welcome-text">
+                        <p>At Mubuga Technical Secondary School, we are committed to providing quality technical education that prepares students for successful careers in the modern workforce. Our comprehensive programs combine theoretical knowledge with practical skills to ensure our graduates are ready for the challenges of today's industries.</p>
+                        <p>Join us in shaping the future of technical education and building the next generation of skilled professionals.</p>
+                    </div>
+                    <div class="welcome-cta">
+                        <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Start Your Journey</a>
+                        <a href="/MUBUGA-TSS/pages/programs.php" class="button button-secondary">Explore Programs</a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-
-            <section class="section about" id="about">
-                <div class="container section-grid">
-                    <div class="about-copy">
-                        <p class="eyebrow">Welcome To</p>
-                        <h2>Mubuga TSS</h2>
-                        <p><?php echo htmlspecialchars($schoolName); ?> is a TVET-focused school committed to practical education, student discipline, and career-ready technical skills. The school is centered on two specialized trades: Software Development and Electrical Technology.</p>
-                        <div class="about-facts">
-                            <article class="about-fact">
-                                <span>School Direction</span>
-                                <strong>Competency-based learning</strong>
-                            </article>
-                            <article class="about-fact">
-                                <span>Training Focus</span>
-                                <strong>Practical trades for modern careers</strong>
-                            </article>
+        <!-- About Us Section -->
+        <section class="section about" id="about">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>About Us</h2>
+                    <p>Our foundation and values</p>
+                </div>
+                
+                <div class="about-grid">
+                    <div class="about-item">
+                        <div class="about-icon">
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                            </svg>
                         </div>
-                        <a href="/MUBUGA-TSS/pages/about.php" class="inline-link">Read More</a>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section programs" id="programs">
-                <div class="container">
-                    <div class="section-heading kha-gallery-heading">
-                        <p class="eyebrow">Our Trades</p>
-                        <h2>Two training programs built for modern technical careers.</h2>
-                    </div>
-
-                    <div class="program-grid">
-                        <?php foreach ($programs as $program): ?>
-                            <article class="program-card">
-                                <?php if (!empty($program['image'])): ?>
-                                    <img src="<?php echo htmlspecialchars($program['image']); ?>" alt="<?php echo htmlspecialchars($program['title']); ?>" class="program-image photo-viewer">
-                                <?php endif; ?>
-                                <div class="program-card-body">
-                                    <p class="card-label">Technical Trade</p>
-                                    <h3><?php echo htmlspecialchars($program['title']); ?></h3>
-                                    <p><?php echo htmlspecialchars($program['summary']); ?></p>
-                                    <ul>
-                                        <?php foreach ($program['focus'] as $item): ?>
-                                            <li><?php echo htmlspecialchars($item); ?></li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                    <a href="<?php echo htmlspecialchars($program['link'] ?? '#admissions'); ?>" class="inline-link">View More</a>
-                                </div>
-                            </article>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </section>
-
-
-
-            <section class="section values">
-                <div class="container">
-                    <div class="section-heading kha-gallery-heading">
-                        <p class="eyebrow"><?php echo htmlspecialchars($schoolName); ?></p>
-                        <h2>Our foundation and school values.</h2>
-                    </div>
-
-                    <div class="values-grid expanded-values">
-                        <article class="value-card">
-                            <h3>Our Motto</h3>
-                            <p>Excellence in technical education.</p>
-                        </article>
-                        <article class="value-card">
+                        <div class="about-content">
                             <h3>Vision</h3>
                             <p>To prepare learners for employment, entrepreneurship, and further technical growth through quality training.</p>
-                        </article>
-                        <article class="value-card">
+                        </div>
+                    </div>
+                    
+                    <div class="about-item">
+                        <div class="about-icon">
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        </div>
+                        <div class="about-content">
                             <h3>Mission</h3>
                             <p>To transform student potential into practical competence through focused technical learning and strong character formation.</p>
-                        </article>
-                        <article class="value-card value-list-card">
+                        </div>
+                    </div>
+                    
+                    <div class="about-item">
+                        <div class="about-icon">
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                        <div class="about-content">
                             <h3>Core Values</h3>
-                            <ul class="value-list">
-                                <?php foreach ($values as $value): ?>
-                                    <li><?php echo htmlspecialchars($value); ?></li>
-                                <?php endforeach; ?>
+                            <ul>
+                                <li>Discipline</li>
+                                <li>Integrity</li>
+                                <li>Practical Excellence</li>
+                                <li>Innovation</li>
+                                <li>Teamwork</li>
+                                <li>Responsibility</li>
                             </ul>
-                        </article>
+                        </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section class="section facilities" id="facilities">
-                <div class="container">
-                    <div class="section-heading">
-                        <p class="eyebrow">Facilities and Learning Spaces</p>
-                        <h2>An environment built for technical practice and student growth.</h2>
-                    </div>
+        <!-- Programs Section -->
+        <section class="section programs" id="programs">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Our Programs</h2>
+                    <p>Two specialized technical trades for modern careers</p>
+                </div>
+                
+                <div class="programs-grid">
+                    <?php foreach ($programs as $program): ?>
+                        <article class="program-card">
+                            <?php if (!empty($program['image'])): ?>
+                                <img src="<?php echo htmlspecialchars($program['image']); ?>" alt="<?php echo htmlspecialchars($program['title']); ?>" class="program-image">
+                            <?php endif; ?>
+                            <div class="program-content">
+                                <h3><?php echo htmlspecialchars($program['title']); ?></h3>
+                                <p><?php echo htmlspecialchars($program['summary']); ?></p>
+                                <ul>
+                                    <?php foreach ($program['focus'] as $item): ?>
+                                        <li><?php echo htmlspecialchars($item); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Register Now</a>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
 
-                    <div class="facilities-grid">
-                        <?php foreach ($facilities as $facility): ?>
-                            <article class="facility-card">
-                                <img src="<?php echo htmlspecialchars($facility['image']); ?>" alt="<?php echo htmlspecialchars($facility['title']); ?>" class="section-photo photo-viewer">
+        <!-- Facilities Section -->
+        <section class="section facilities" id="facilities">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Facilities</h2>
+                    <p>Modern learning spaces for technical education</p>
+                </div>
+                
+                <div class="facilities-grid">
+                    <?php foreach ($facilities as $facility): ?>
+                        <article class="facility-card">
+                            <?php if (!empty($facility['image'])): ?>
+                                <img src="<?php echo htmlspecialchars($facility['image']); ?>" alt="<?php echo htmlspecialchars($facility['title']); ?>" class="facility-image">
+                            <?php endif; ?>
+                            <div class="facility-content">
                                 <h3><?php echo htmlspecialchars($facility['title']); ?></h3>
                                 <p><?php echo htmlspecialchars($facility['text']); ?></p>
-                            </article>
-                        <?php endforeach; ?>
-                    </div>
+                                <a href="/MUBUGA-TSS/pages/facilities.php" class="button button-secondary">Learn More</a>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section class="section gallery-section" id="gallery">
-                <div class="container">
-                    <div class="school-gallery-home-shell">
-                        <div class="school-gallery-home-intro">
-                            <div class="school-gallery-home-copy">
-                                <p class="eyebrow">School Gallery</p>
-                                <h2>A professional view of campus life, workshops, and student activity.</h2>
-                                <p class="school-gallery-home-text">Explore selected highlights from Mubuga TSS. The gallery showcases practical learning, school spaces, and the everyday environment that shapes student growth.</p>
-                            </div>
-                            <div class="school-gallery-home-stats">
-                                <div class="school-gallery-home-stat">
-                                    <strong><?php echo count($homepageGallery); ?></strong>
-                                    <span>Photo highlights</span>
-                                </div>
-                                <div class="school-gallery-home-stat">
-                                    <strong><?php echo count(array_unique(array_map(static fn(array $item): string => (string) ($item['category_label'] ?? 'Campus'), $homepageGallery))); ?></strong>
-                                    <span>Gallery topics</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <?php if ($homepageGallery !== []): ?>
-                            <div class="school-gallery-home-grid">
-                                <?php foreach (array_slice($homepageGallery, 0, 6) as $item): ?>
-                                    <a href="/MUBUGA-TSS/pages/gallery.php" class="school-gallery-home-card" aria-label="<?php echo htmlspecialchars((string) $item['title']); ?>">
-                                        <div class="school-gallery-home-media">
-                                            <img src="<?php echo htmlspecialchars((string) $item['image']); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="kha-gallery-image">
-                                            <span class="school-gallery-home-overlay" aria-hidden="true">
-                                                <span class="school-gallery-home-icon">&#128269;</span>
-                                            </span>
-                                            <span class="kha-gallery-badge"><?php echo htmlspecialchars((string) ($item['category_label'] ?? 'Campus')); ?></span>
-                                        </div>
-                                        <div class="school-gallery-home-body">
-                                            <h3><?php echo htmlspecialchars((string) $item['title']); ?></h3>
-                                            <p><?php echo htmlspecialchars((string) $item['text']); ?></p>
-                                        </div>
-                                    </a>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                    <div class="section-more">
-                        <a href="/MUBUGA-TSS/pages/gallery.php" class="inline-link">View More Gallery &rarr;</a>
-                    </div>
+        
+        <!-- Previous Gallery Section -->
+        <section class="section previous-gallery" id="previous-gallery">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Previous Gallery</h2>
+                    <p>More moments from Mubuga TSS</p>
                 </div>
-            </section>
-
-            <section class="section leadership" id="leadership">
-                <div class="container">
-                    <div class="section-heading">
-                        <p class="eyebrow">Leadership</p>
-                        <h2>Meet our school leaders.</h2>
-                    </div>
-
-                    <div class="leadership-grid">
-                        <?php foreach ($leadership as $member): ?>
-                            <article class="leader-card">
-                                <img src="<?php echo htmlspecialchars($member['photo'] ?? 'assets/images/master.jpeg'); ?>" alt="<?php echo htmlspecialchars($member['name']); ?>" class="leader-image photo-viewer">
-                                <span><?php echo htmlspecialchars($member['role']); ?></span>
-                                <h3><?php echo htmlspecialchars($member['name']); ?></h3>
-                                <p><?php echo htmlspecialchars($member['text']); ?></p>
-                            </article>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section admissions" id="admissions">
-                <div class="container admissions-grid">
-                    <div class="admissions-copy">
-                        <p class="eyebrow">Admissions</p>
-                        <h2>Start your journey at Mubuga TSS with a clear path.</h2>
-                        <p>Follow the steps below to apply.</p>
-                    </div>
-                    <div class="admission-steps">
-                        <?php foreach ($admissions as $index => $step): ?>
-                            <article class="admission-step">
-                                <span>0<?php echo $index + 1; ?></span>
-                                <div class="admission-step-copy">
-                                    <strong>Step <?php echo $index + 1; ?></strong>
-                                    <p><?php echo htmlspecialchars($step); ?></p>
-                                </div>
-                            </article>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section news" id="news">
-                <div class="container">
-                    <div class="section-heading">
-                        <p class="eyebrow">School Updates</p>
-                        <h2>Latest News</h2>
-                    </div>
-
-                    <div class="news-grid">
-                        <?php foreach ($news as $item): ?>
-                            <article class="news-card">
-                                <?php if (!empty($item['image'])): ?>
-                                    <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="news-image photo-viewer">
-                                <?php endif; ?>
-                                <div class="news-card-body">
-                                    <p class="news-tag">Mubuga TSS</p>
-                                    <h3><?php echo htmlspecialchars($item['title']); ?></h3>
-                                    <p><?php echo htmlspecialchars($item['text']); ?></p>
-                                    <a href="<?php echo htmlspecialchars($item['link'] ?? '#contact'); ?>" class="inline-link">Read More</a>
-                                </div>
-                            </article>
-                        <?php endforeach; ?>
-                    </div>
-                    <div class="section-more">
-                        <a href="/MUBUGA-TSS/pages/news.php" class="inline-link">View More</a>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section cta" id="contact">
-                <div class="container contact-grid">
-                    <div class="cta-panel">
-                        <div class="cta-copy">
-                            <p class="eyebrow">Join Mubuga TSS</p>
-                            <h2>Ready to study Software Development or Electrical Technology?</h2>
-                            <p>Contact the school office for admissions, reporting dates, and program guidance.</p>
-                        </div>
-                        <div class="cta-actions">
-                            <a href="mailto:info@mubugatss.rw" class="button button-primary">Email The School</a>
-                            <a href="#home" class="button button-secondary">Back To Top</a>
-                        </div>
-                    </div>
-
-                    <aside class="contact-card">
-                        <p class="eyebrow">For More Info</p>
-                        <h3>Reach the school office.</h3>
-                        <div class="contact-list">
-                            <?php foreach ($contacts as $contact): ?>
-                                <div class="contact-item">
-                                    <strong><?php echo htmlspecialchars($contact['label']); ?></strong>
-                                    <span><?php echo htmlspecialchars($contact['value']); ?></span>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <div class="contact-extra">
-                            <div class="contact-extra-item">
-                                <strong>Office Hours</strong>
-                                <span>Monday to Friday, 7AM - 5PM</span>
+                
+                <div class="previous-gallery-grid">
+                    <?php 
+                    // Get gallery items after the first 3 highlights
+                    $previousGalleryItems = array_slice($gallery ?? [], 3, 6);
+                    foreach ($previousGalleryItems as $item): 
+                    ?>
+                        <article class="previous-gallery-card">
+                            <div class="previous-gallery-image">
+                                <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>">
                             </div>
-                            <div class="contact-extra-item">
-                                <strong>Admissions Help</strong>
-                                <span>Contact the school office for guidance on reporting and requirements.</span>
+                            <div class="previous-gallery-content">
+                                <h3><?php echo htmlspecialchars($item['title']); ?></h3>
+                                <p><?php echo htmlspecialchars($item['text']); ?></p>
+                                <span class="gallery-category"><?php echo htmlspecialchars($item['category_label'] ?? 'Gallery'); ?></span>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                    
+                    <!-- Electrical Event Card -->
+                    <article class="previous-gallery-card">
+                        <div class="previous-gallery-image">
+                            <img src="/MUBUGA-TSS/assets/images/electrical technology 2.jpeg" alt="Electrical Technology Event">
+                        </div>
+                        <div class="previous-gallery-content">
+                            <h3>Electrical Technology Event</h3>
+                            <p>Students showcase their electrical installation and maintenance skills during our annual technology exhibition.</p>
+                            <span class="gallery-category">Electrical Event</span>
+                        </div>
+                    </article>
+                    
+                    <!-- Software Computer Lab Card -->
+                    <article class="previous-gallery-card">
+                        <div class="previous-gallery-image">
+                            <img src="/MUBUGA-TSS/assets/images/software development 4.jpeg" alt="Software Computer Lab">
+                        </div>
+                        <div class="previous-gallery-content">
+                            <h3>Software Computer Lab</h3>
+                            <p>Students develop programming skills and work on software projects in our modern computer laboratory.</p>
+                            <span class="gallery-category">Software Lab</span>
+                        </div>
+                    </article>
+                </div>
+                
+                <div class="section-more">
+                    <a href="/MUBUGA-TSS/pages/gallery.php" class="button button-primary">View Full Gallery</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leadership Section -->
+        <section class="section leadership" id="leadership">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Leadership</h2>
+                    <p>Meet our school administration and training team</p>
+                </div>
+                
+                <div class="leadership-categories">
+                    <article class="leadership-category-card" style="background-image: url('/MUBUGA-TSS/assets/images/school view 8.jpeg');">
+                        <div class="category-overlay">
+                            <div class="category-icon">
+                                <svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                </svg>
+                            </div>
+                            <div class="category-content">
+                                <h3>Administration</h3>
+                                <p>School management and administrative staff</p>
+                                <a href="/MUBUGA-TSS/pages/team.php" class="button button-primary">View All</a>
                             </div>
                         </div>
-                    </aside>
+                    </article>
+                    
+                    <article class="leadership-category-card" style="background-image: url('/MUBUGA-TSS/assets/images/software development 4.jpeg');">
+                        <div class="category-overlay">
+                            <div class="category-icon">
+                                <svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor">
+                                    <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
+                                </svg>
+                            </div>
+                            <div class="category-content">
+                                <h3>Teaching Staff</h3>
+                                <p>Experienced teachers and technical instructors</p>
+                                <a href="/MUBUGA-TSS/pages/team.php" class="button button-primary">View All</a>
+                            </div>
+                        </div>
+                    </article>
                 </div>
-            </section>
-        </main>
-
-        <div class="floating-actions">
-            <a href="/MUBUGA-TSS/pages/admissions.php" class="floating-link">Apply</a>
-            <a href="/MUBUGA-TSS/pages/contact.php" class="floating-link floating-link-secondary">Contact</a>
-        </div>
-        <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
-        <footer class="site-footer">
-            <div class="container footer-main">
-                <div class="footer-topline">
-                    <div>
-                        <p class="eyebrow">Mubuga TSS</p>
-                        <h2>Technical training for a confident future.</h2>
+                
+                <!-- Leadership Details Section (Hidden by default) -->
+                <div id="leadership-details" class="leadership-details" style="display: none;">
+                    <div class="details-header">
+                        <h3 id="details-title">Team Members</h3>
+                        <button class="close-button" onclick="hideLeadershipDetails()">×</button>
                     </div>
-                    <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Apply Now</a>
-                </div>
-                <div class="footer-grid">
-                    <!-- Brand Section -->
-                    <div class="footer-section footer-brand-section">
-                        <div class="footer-brand">
-                            <img src="/MUBUGA-TSS/<?php echo htmlspecialchars($logoPath); ?>" alt="<?php echo htmlspecialchars($schoolName); ?> logo" class="footer-brand-logo">
-                            <div>
-                                <strong><?php echo htmlspecialchars($schoolName); ?></strong>
-                                <span>Technical Secondary School</span>
-                            </div>
-                        </div>
-                        <p class="footer-description">Focused technical education in Software Development and Electrical Technology.</p>
-                        <div class="footer-social">
-                            <a href="<?php echo htmlspecialchars($facebookUrl); ?>" class="social-link" aria-label="Follow us on Facebook" title="Facebook">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                            </a>
-                            <a href="<?php echo htmlspecialchars($instagramUrl); ?>" class="social-link" aria-label="Follow us on Instagram" title="Instagram">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 21.6c-5.3 0-9.6-4.3-9.6-9.6s4.3-9.6 9.6-9.6 9.6 4.3 9.6 9.6-4.3 9.6-9.6 9.6zm0-15.6c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm5.6-1.8c0 .79.64 1.43 1.43 1.43s1.43-.64 1.43-1.43-.64-1.43-1.43-1.43-1.43.64-1.43 1.43z"/></svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="footer-section">
-                        <h3 class="footer-heading">Programs</h3>
-                        <ul class="footer-links">
-                            <li><a href="/MUBUGA-TSS/pages/programs.php">Software Development</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/programs.php">Electrical Technology</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/programs.php">View All Programs</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="footer-section">
-                        <h3 class="footer-heading">Quick Links</h3>
-                        <ul class="footer-links">
-                            <li><a href="/MUBUGA-TSS/pages/about.php">About Us</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/facilities.php">Facilities</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/gallery.php">Gallery</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/news.php">News</a></li>
-                            <li><a href="/MUBUGA-TSS/pages/contact.php">Contact Us</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Contact Info & Newsletter -->
-                    <div class="footer-section">
-                        <h3 class="footer-heading">Contact</h3>
-                        <div class="footer-contact-info">
-                            <a href="mailto:<?php echo htmlspecialchars($contacts[0]['value']); ?>" class="contact-link">
-                                <span class="contact-icon">📞</span>
-                                <span><?php echo htmlspecialchars($contacts[0]['value']); ?></span>
-                            </a>
-                            <a href="tel:<?php echo htmlspecialchars($contacts[1]['value']); ?>" class="contact-link">
-                                <span class="contact-icon">✉️</span>
-                                <span><?php echo htmlspecialchars($contacts[1]['value']); ?></span>
-                            </a>
-                            <div class="contact-link">
-                                <span class="contact-icon">📍</span>
-                                <span><?php echo htmlspecialchars($contacts[2]['value'] ?? 'Mubuga, Rwanda'); ?></span>
-                            </div>
-                        </div>
-                        
-                        <h3 class="footer-heading footer-heading-newsletter">Newsletter</h3>
-                        <p class="footer-newsletter-desc">Get updates on admissions and school news.</p>
-                        <form class="footer-newsletter-form" method="post" action="/MUBUGA-TSS/handlers/site_forms.php">
-                            <input type="hidden" name="form_action" value="newsletter_subscribe">
-                            <input type="hidden" name="source" value="footer">
-                            <input type="hidden" name="redirect_to" value="/MUBUGA-TSS/">
-                            <div class="newsletter-input-group">
-                                <input type="email" name="email" placeholder="Your email address" required aria-label="Email address">
-                                <button type="submit" aria-label="Subscribe to newsletter">Send</button>
-                            </div>
-                        </form>
+                    <div class="leadership-grid" id="leadership-members">
+                        <!-- Members will be dynamically loaded here -->
                     </div>
                 </div>
             </div>
+        </section>
 
-            <div class="footer-bottom">
-                <div class="container footer-bottom-content">
-                    <p class="footer-copyright">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($schoolName); ?>. MADE BY 2P company LTD
-                </p>
-                    <div class="footer-bottom-links">
-                        <a href="/MUBUGA-TSS/pages/admissions.php" class="footer-bottom-link">Admissions</a>
-                        <a href="/MUBUGA-TSS/pages/gallery.php" class="footer-bottom-link">Gallery</a>
-                        <a href="/MUBUGA-TSS/pages/contact.php" class="footer-bottom-link">Contacts</a>
+        <!-- Admissions Steps Section -->
+        <section class="section admissions" id="admissions">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Admissions Steps</h2>
+                    <p>How to join Mubuga TSS</p>
+                </div>
+                
+                <div class="admissions-steps">
+                    <div class="admission-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Choose Trade</h3>
+                            <p>Select the technical trade that matches your interests and career goals.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="admission-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Prepare Documents</h3>
+                            <p>Gather your academic records and prepare the necessary registration documents.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="admission-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Contact School</h3>
+                            <p>Reach out to our admissions office for guidance on reporting and requirements.</p>
+                        </div>
                     </div>
                 </div>
+                <div class="admissions-cta">
+                    <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Start Application</a>
+                </div>
             </div>
-        </footer>
-    </div>
+        </section>
 
-    <script src="/MUBUGA-TSS/assets/js/site.js"></script>
+        <!-- Latest News Section -->
+        <section class="section news" id="news">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Latest Updates</h2>
+                    <p>News, Events & Announcements</p>
+                </div>
+                
+                <div class="news-grid">
+                    <!-- All News Card -->
+                    <article class="news-card" style="background-image: url('assets/images/events.jpg');">
+                        <div class="news-card-overlay">
+                            <div class="news-content">
+                                <h3>All News</h3>
+                                <p>Stay updated with the latest news and announcements from Mubuga TSS.</p>
+                                <a href="/MUBUGA-TSS/pages/news.php" class="button button-primary">View All News</a>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <!-- Events Card -->
+                    <article class="news-card" style="background-image: url('assets/images/events.jpg');">
+                        <div class="news-card-overlay">
+                            <div class="news-content">
+                                <h3>Upcoming Events</h3>
+                                <p>Join us for exciting events and activities at our school.</p>
+                                <a href="/MUBUGA-TSS/pages/events.php" class="button button-primary">View All Events</a>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <!-- Announcements Card -->
+                    <article class="news-card" style="background-image: url('assets/images/events.jpg');">
+                        <div class="news-card-overlay">
+                            <div class="news-content">
+                                <h3>Announcements</h3>
+                                <p>Important announcements and updates for students and parents.</p>
+                                <a href="/MUBUGA-TSS/pages/announcements.php" class="button button-primary">View All Announcements</a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+<?php renderSiteFooter($schoolName); ?>
+
+<script>
+// Hero Background Rotation with Corresponding Text
+const heroData = [
+    {
+        image: '/MUBUGA-TSS/assets/images/school view 8.jpeg',
+        title: 'Excellence in technical education',
+        description: 'Join Mubuga TSS and build your future with practical skills in Software Development and Electrical Technology.'
+    },
+    {
+        image: '/MUBUGA-TSS/assets/images/software development 4.jpeg',
+        title: 'Master Software Development',
+        description: 'Learn programming, web development, and digital problem-solving skills for the modern tech world.'
+    },
+    {
+        image: '/MUBUGA-TSS/assets/images/electrical technology 2.jpeg',
+        title: 'Excel in Electrical Technology',
+        description: 'Gain hands-on experience in electrical installation, maintenance, and practical workshop training.'
+    }
+];
+
+let currentSlide = 0;
+const heroBackground = document.getElementById('hero-background');
+const heroTitle = document.getElementById('hero-title');
+const heroDescription = document.getElementById('hero-description');
+
+function updateHeroContent(index) {
+    const slide = heroData[index];
+    
+    // Update background image
+    heroBackground.style.backgroundImage = `url('${slide.image}')`;
+    
+    // Update text with fade effect
+    heroTitle.style.opacity = '0';
+    heroDescription.style.opacity = '0';
+    
+    setTimeout(() => {
+        heroTitle.textContent = slide.title;
+        heroDescription.textContent = slide.description;
+        heroTitle.style.opacity = '1';
+        heroDescription.style.opacity = '1';
+    }, 300);
+}
+
+function rotateHero() {
+    currentSlide = (currentSlide + 1) % heroData.length;
+    updateHeroContent(currentSlide);
+}
+
+// Manual navigation functions
+function goToSlide(index) {
+    currentSlide = index;
+    updateHeroContent(currentSlide);
+}
+
+function nextSlide() {
+    currentSlide = (currentSlide + 1) % heroData.length;
+    updateHeroContent(currentSlide);
+}
+
+function prevSlide() {
+    currentSlide = (currentSlide - 1 + heroData.length) % heroData.length;
+    updateHeroContent(currentSlide);
+}
+
+// Add event listeners for arrow controls
+const heroPrev = document.getElementById('hero-prev');
+const heroNext = document.getElementById('hero-next');
+
+if (heroPrev) {
+    heroPrev.addEventListener('click', (e) => {
+        e.preventDefault();
+        prevSlide();
+    });
+}
+
+if (heroNext) {
+    heroNext.addEventListener('click', (e) => {
+        e.preventDefault();
+        nextSlide();
+    });
+}
+
+// Initialize first slide
+updateHeroContent(0);
+
+// Set up rotation every 5 seconds
+const rotationInterval = setInterval(rotateHero, 5000);
+
+// Pause auto-rotation when user interacts
+function pauseRotation() {
+    clearInterval(rotationInterval);
+}
+
+// Resume auto-rotation after 10 seconds of inactivity
+let resumeTimeout;
+function resumeRotation() {
+    clearTimeout(resumeTimeout);
+    resumeTimeout = setInterval(rotateHero, 5000);
+}
+
+// Add event listeners to pause/resume rotation
+[heroPrev, heroNext].forEach(button => {
+    if (button) {
+        button.addEventListener('click', () => {
+            pauseRotation();
+            resumeRotation();
+        });
+    }
+});
+
+// Add transition styles for text
+heroTitle.style.transition = 'opacity 0.5s ease-in-out';
+heroDescription.style.transition = 'opacity 0.5s ease-in-out';
+
+// Leadership Details Functionality
+function showLeadershipDetails(category) {
+    const detailsSection = document.getElementById('leadership-details');
+    const detailsTitle = document.getElementById('details-title');
+    const leadershipMembers = document.getElementById('leadership-members');
+    
+    // Update title based on category
+    if (category === 'administration') {
+        detailsTitle.textContent = 'Administration Team';
+    } else if (category === 'teaching') {
+        detailsTitle.textContent = 'Teaching Staff';
+    }
+    
+    // Sample leadership data (this should come from your PHP data)
+    const leadershipData = [
+        {
+            name: 'John Smith',
+            role: 'School Director',
+            photo: '/MUBUGA-TSS/assets/images/master.jpeg',
+            text: 'Leading the school with vision and dedication to technical education excellence.',
+            category: 'administration'
+        },
+        {
+            name: 'Jane Doe',
+            role: 'Academic Coordinator',
+            photo: '/MUBUGA-TSS/assets/images/master.jpeg',
+            text: 'Managing curriculum development and academic programs.',
+            category: 'administration'
+        },
+        {
+            name: 'Robert Johnson',
+            role: 'Software Development Instructor',
+            photo: '/MUBUGA-TSS/assets/images/master.jpeg',
+            text: 'Teaching programming and web development with practical industry experience.',
+            category: 'teaching'
+        },
+        {
+            name: 'Sarah Williams',
+            role: 'Electrical Technology Instructor',
+            photo: '/MUBUGA-TSS/assets/images/master.jpeg',
+            text: 'Providing hands-on training in electrical installation and maintenance.',
+            category: 'teaching'
+        }
+    ];
+    
+    // Filter members by category
+    const filteredMembers = leadershipData.filter(member => member.category === category);
+    
+    // Generate HTML for filtered members
+    let membersHTML = '';
+    filteredMembers.forEach(member => {
+        membersHTML += `
+            <article class="leader-card">
+                <img src="${member.photo}" alt="${member.name}" class="leader-image">
+                <div class="leader-content">
+                    <h3>${member.name}</h3>
+                    <span class="leader-role">${member.role}</span>
+                    <p>${member.text}</p>
+                </div>
+            </article>
+        `;
+    });
+    
+    // Update the leadership members container
+    leadershipMembers.innerHTML = membersHTML;
+    
+    // Show the details section with animation
+    detailsSection.style.display = 'block';
+    detailsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function hideLeadershipDetails() {
+    const detailsSection = document.getElementById('leadership-details');
+    detailsSection.style.display = 'none';
+}
+</script>
+<script src="/MUBUGA-TSS/assets/js/site.js"></script>
 </body>
 </html>
-

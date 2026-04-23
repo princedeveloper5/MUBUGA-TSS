@@ -518,7 +518,7 @@ $galleryMore = array_slice($homepageGallery, 5, 4);
         </main>
 
         <div class="floating-actions">
-            <a href="/MUBUGA-TSS/pages/admissions.php" class="floating-link">Apply</a>
+            <a href="/MUBUGA-TSS/apply.php" class="floating-link">Apply</a>
             <a href="/MUBUGA-TSS/pages/contact.php" class="floating-link floating-link-secondary">Contact</a>
         </div>
         <button type="button" class="back-to-top" aria-label="Back to top">Top</button>
@@ -529,7 +529,7 @@ $galleryMore = array_slice($homepageGallery, 5, 4);
                         <p class="eyebrow">Mubuga TSS</p>
                         <h2>Technical training for a confident future.</h2>
                     </div>
-                    <a href="/MUBUGA-TSS/pages/admissions.php" class="button button-primary">Apply Now</a>
+                    <a href="/MUBUGA-TSS/apply.php" class="button button-primary">Apply Now</a>
                 </div>
                 <div class="footer-grid">
                     <!-- Brand Section -->

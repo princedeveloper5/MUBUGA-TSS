@@ -312,6 +312,16 @@ function renderSiteFooter(string $schoolName): void
                             <li><a href="/MUBUGA-TSS/pages/fees.php">Fees &amp; Requirements</a></li>
                             <li><a href="/MUBUGA-TSS/pages/registration.php">Student Registration</a></li>
                         </ul>
+                        <p class="footer-newsletter-desc">Get admissions and school updates.</p>
+                        <form class="footer-newsletter-form" method="post" action="/MUBUGA-TSS/backend/handlers/site_forms.php">
+                            <input type="hidden" name="form_action" value="newsletter_subscribe">
+                            <input type="hidden" name="source" value="footer">
+                            <input type="hidden" name="redirect_to" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? '/MUBUGA-TSS/'); ?>">
+                            <div class="newsletter-input-group">
+                                <input type="email" name="email" placeholder="Your email address" required aria-label="Email address">
+                                <button type="submit" aria-label="Subscribe to newsletter">Send</button>
+                            </div>
+                        </form>
                     </div>
 
                     <!-- Contact Info & Newsletter -->
@@ -336,17 +346,6 @@ function renderSiteFooter(string $schoolName): void
                             </div>
                         </div>
                         
-                        <h3 class="footer-heading footer-heading-newsletter">Newsletter</h3>
-                        <p class="footer-newsletter-desc">Get admissions and school updates.</p>
-                        <form class="footer-newsletter-form" method="post" action="/MUBUGA-TSS/backend/handlers/site_forms.php">
-                            <input type="hidden" name="form_action" value="newsletter_subscribe">
-                            <input type="hidden" name="source" value="footer">
-                            <input type="hidden" name="redirect_to" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? '/MUBUGA-TSS/'); ?>">
-                            <div class="newsletter-input-group">
-                                <input type="email" name="email" placeholder="Your email address" required aria-label="Email address">
-                                <button type="submit" aria-label="Subscribe to newsletter">Send</button>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>

@@ -3,6 +3,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/site_data.php';
 require_once __DIR__ . '/../includes/site_layout.php';
 require_once __DIR__ . '/../includes/admin_upload.php';
+require_once __DIR__ . '/../portal/header.php';
+require_once __DIR__ . '/../portal/footer.php';
 
 $message = '';
 $messageType = '';
@@ -385,7 +387,7 @@ renderInnerHero('ADMISSIONS', 'Your Path to Technical Excellence', 'Join Mubuga 
                 <p>Ready to join Mubuga TSS? Complete the application form below.</p>
                 <div class="cta-urgent">
                     <p><strong>Application Deadline: March 30</strong></p>
-                    <a href="#application" class="btn btn-primary btn-large">Apply Today</a>
+                    <a href="/MUBUGA-TSS/apply.php" class="btn btn-primary btn-large">Apply Today</a>
                 </div>
             </div>
             

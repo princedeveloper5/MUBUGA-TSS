@@ -192,8 +192,31 @@ if (isset($_GET['form_status']) && isset($_GET['form_message'])) {
             </div>
         </section>
 
-        
-        
+        <!-- Facilities Section -->
+        <section class="section facilities" id="facilities">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Facilities</h2>
+                    <p>Modern learning spaces for technical education</p>
+                </div>
+                
+                <div class="facilities-grid">
+                    <?php foreach ($facilities as $facility): ?>
+                        <article class="facility-card">
+                            <?php if (!empty($facility['image'])): ?>
+                                <img src="<?php echo htmlspecialchars($facility['image']); ?>" alt="<?php echo htmlspecialchars($facility['title']); ?>" class="facility-image">
+                            <?php endif; ?>
+                            <div class="facility-content">
+                                <h3><?php echo htmlspecialchars($facility['title']); ?></h3>
+                                <p><?php echo htmlspecialchars($facility['text']); ?></p>
+                                <a href="/MUBUGA-TSS/pages/facilities.php" class="button button-secondary">Learn More</a>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
+
                             <?php 
                     // Get gallery items after the first 3 highlights
                     $previousGalleryItems = array_slice($gallery ?? [], 3, 6);
@@ -211,35 +234,7 @@ if (isset($_GET['form_status']) && isset($_GET['form_message'])) {
                         </article>
                     <?php endforeach; ?>
                     
-                    <!-- Electrical Event Card -->
-                    <article class="previous-gallery-card">
-                        <div class="previous-gallery-image">
-                            <img src="/MUBUGA-TSS/assets/images/electrical technology 2.jpeg" alt="Electrical Technology Event">
-                        </div>
-                        <div class="previous-gallery-content">
-                            <h3>Electrical Technology Event</h3>
-                            <p>Students showcase their electrical installation and maintenance skills during our annual technology exhibition.</p>
-                            <span class="gallery-category">Electrical Event</span>
-                        </div>
-                    </article>
-                    
-                    <!-- Software Computer Lab Card -->
-                    <article class="previous-gallery-card">
-                        <div class="previous-gallery-image">
-                            <img src="/MUBUGA-TSS/assets/images/software development 4.jpeg" alt="Software Computer Lab">
-                        </div>
-                        <div class="previous-gallery-content">
-                            <h3>Software Computer Lab</h3>
-                            <p>Students develop programming skills and work on software projects in our modern computer laboratory.</p>
-                            <span class="gallery-category">Software Lab</span>
-                        </div>
-                    </article>
-                </div>
-                
-                <div class="section-more">
-                    <a href="/MUBUGA-TSS/pages/gallery.php" class="button button-primary">View Full Gallery</a>
-                </div>
-            </div>
+                    </div>
         </section>
 
         <!-- Leadership Section -->

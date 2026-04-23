@@ -1289,59 +1289,176 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
                         <p class="admin-eyebrow">Mubuga TSS</p>
                         <h1>Admin Panel</h1>
                     </div>
+                    <button type="button" class="dashboard-sidebar-toggle" data-dashboard-sidebar-toggle aria-label="Toggle sidebar" title="Toggle sidebar">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h11M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </button>
                 </div>
 
                 <nav class="dashboard-nav" aria-label="Dashboard navigation">
-                    <p class="dashboard-nav-section-label">Main</p>
-                    <a href="#dashboard-panel" class="dashboard-nav-link is-active" data-tooltip="Dashboard" title="Dashboard" aria-label="Dashboard">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h5A1.5 1.5 0 0 1 12 5.5v5A1.5 1.5 0 0 1 10.5 12h-5A1.5 1.5 0 0 1 4 10.5v-5zM4 15.5A1.5 1.5 0 0 1 5.5 14h5a1.5 1.5 0 0 1 1.5 1.5v3A1.5 1.5 0 0 1 10.5 20h-5A1.5 1.5 0 0 1 4 18.5v-3zM14 5.5A1.5 1.5 0 0 1 15.5 4h3A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 14 18.5v-13z" fill="currentColor"/></svg>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="#gallery-panel" class="dashboard-nav-link" data-tooltip="Media Library" title="Media Library" aria-label="Media Library">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5a2 2 0 0 0-2 2v10.5A2.5 2.5 0 0 0 5.5 20h13a2.5 2.5 0 0 0 2.5-2.5V7a2 2 0 0 0-2-2H5zm2.5 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm11.5 9.5H5.5a.5.5 0 0 1-.39-.813l3.254-4.067a1 1 0 0 1 1.53.017l1.617 2.055 2.75-3.261a1 1 0 0 1 1.55.047l3.58 4.299A.5.5 0 0 1 19 17.5z" fill="currentColor"/></svg>
-                        <span>Media Library</span>
-                    </a>
-                    <a href="#news-panel" class="dashboard-nav-link" data-tooltip="Announcements" title="Announcements" aria-label="Announcements">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 10.5 16.5 4v16L3 13.5v-3zm14.5 1.75h2.25a1.25 1.25 0 0 1 0 2.5H17.5v-2.5zM5.75 14.1h2.2l1.25 4.15H7.1L5.75 14.1z" fill="currentColor"/></svg>
-                        <span>Announcements</span>
-                    </a>
-                    <a href="#pages-panel" class="dashboard-nav-link" data-tooltip="Pages" title="Pages" aria-label="Pages">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 1 1 14 0H5zm14.5-9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM18 20c0-2.02-.76-3.86-2.01-5.26A6 6 0 0 1 22 20h-4z" fill="currentColor"/></svg>
-                        <span>Pages</span>
-                    </a>
-                    <a href="#settings-panel" class="dashboard-nav-link" data-tooltip="Settings" title="Settings" aria-label="Settings">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.23-1.13.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94L2.83 14.52a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.4 1.05.72 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.84a.5.5 0 0 0 .5-.42l.36-2.54c.58-.23 1.13-.54 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5z" fill="currentColor"/></svg>
-                        <span>Settings</span>
-                    </a>
-                    <a href="#activity-panel" class="dashboard-nav-link" data-tooltip="Activity Log" title="Activity Log" aria-label="Activity Log">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" stroke="currentColor" stroke-width="2"/></svg>
-                        <span>Activity Log</span>
-                    </a>
-                    <a href="#notifications-panel" class="dashboard-nav-link" data-tooltip="Notifications" title="Notifications" aria-label="Notifications">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3a4 4 0 0 0-4 4v2.1c0 .7-.24 1.39-.68 1.93L5.6 13.2A1 1 0 0 0 6.36 15h11.28a1 1 0 0 0 .76-1.8l-1.72-2.17A3 3 0 0 1 16 9.1V7a4 4 0 0 0-4-4Zm0 18a3 3 0 0 0 2.82-2H9.18A3 3 0 0 0 12 21Z" fill="currentColor"/></svg>
-                        <span>Notifications</span>
-                    </a>
-                    <p class="dashboard-nav-section-label dashboard-nav-section-label-secondary">More</p>
-                    <a href="#files-panel" class="dashboard-nav-link dashboard-nav-link-secondary" data-tooltip="File Manager" title="File Manager" aria-label="File Manager">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h3.59a2.5 2.5 0 0 1 1.77.73l1.41 1.41c.47.47 1.1.73 1.77.73H17.5A2.5 2.5 0 0 1 20 9.5v8A2.5 2.5 0 0 1 17.5 20h-11A2.5 2.5 0 0 1 4 17.5v-11Z" fill="currentColor"/></svg>
-                        <span>File Manager</span>
-                    </a>
-                    <a href="#programs-panel" class="dashboard-nav-link dashboard-nav-link-secondary" data-tooltip="Programs" title="Programs" aria-label="Programs">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13zM8 8h8v2H8zm0 4h8v2H8zm0 4h5v2H8z" fill="currentColor"/></svg>
-                        <span>Programs</span>
-                    </a>
-                    <a href="#staff-panel" class="dashboard-nav-link dashboard-nav-link-secondary" data-tooltip="Team" title="Team" aria-label="Team">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 1 1 14 0H5zm14.5-9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM18 20c0-2.02-.76-3.86-2.01-5.26A6 6 0 0 1 22 20h-4z" fill="currentColor"/></svg>
-                        <span>Team</span>
-                    </a>
-                    <a href="#security-panel" class="dashboard-nav-link dashboard-nav-link-secondary" data-tooltip="Security" title="Security" aria-label="Security">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 5 6v6c0 4.3 2.75 8.18 7 9.5 4.25-1.32 7-5.2 7-9.5V6l-7-3Z" fill="currentColor"/></svg>
-                        <span>Security</span>
-                    </a>
-                    <a href="#admissions-panel" class="dashboard-nav-link dashboard-nav-link-secondary" data-tooltip="Admissions" title="Admissions" aria-label="Admissions">
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5 4 6.5v5.8c0 4.8 3.12 9.18 8 10.7 4.88-1.52 8-5.9 8-10.7V6.5l-8-4zm-1 5h2v4h3v2h-5v-6z" fill="currentColor"/></svg>
-                        <span>Admissions</span>
-                    </a>
+                    <div class="dashboard-nav-section is-open" data-sidebar-section>
+                        <button type="button" class="dashboard-nav-section-trigger" data-sidebar-section-trigger aria-expanded="true">
+                            <span class="dashboard-nav-section-label">Core Workspace</span>
+                            <span class="dashboard-nav-section-icon" aria-hidden="true">
+                                <svg viewBox="0 0 20 20" fill="none"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                        </button>
+                        <div class="dashboard-nav-links" data-sidebar-section-content>
+                            <a href="#dashboard-panel" class="dashboard-nav-link is-active" data-tooltip="Dashboard" title="Dashboard" aria-label="Dashboard">
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h5A1.5 1.5 0 0 1 12 5.5v5A1.5 1.5 0 0 1 10.5 12h-5A1.5 1.5 0 0 1 4 10.5v-5zM4 15.5A1.5 1.5 0 0 1 5.5 14h5a1.5 1.5 0 0 1 1.5 1.5v3A1.5 1.5 0 0 1 10.5 20h-5A1.5 1.5 0 0 1 4 18.5v-3zM14 5.5A1.5 1.5 0 0 1 15.5 4h3A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 14 18.5v-13z" fill="currentColor"/></svg>
+                                <span>Dashboard</span>
+                            </a>
+                            <div class="dashboard-nav-item is-open" data-sidebar-item>
+                                <div class="dashboard-nav-item-row">
+                                    <a href="#gallery-panel" class="dashboard-nav-link" data-tooltip="Media Library" title="Media Library" aria-label="Media Library">
+                                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5a2 2 0 0 0-2 2v10.5A2.5 2.5 0 0 0 5.5 20h13a2.5 2.5 0 0 0 2.5-2.5V7a2 2 0 0 0-2-2H5zm2.5 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm11.5 9.5H5.5a.5.5 0 0 1-.39-.813l3.254-4.067a1 1 0 0 1 1.53.017l1.617 2.055 2.75-3.261a1 1 0 0 1 1.55.047l3.58 4.299A.5.5 0 0 1 19 17.5z" fill="currentColor"/></svg>
+                                        <span>Media Library</span>
+                                    </a>
+                                    <button type="button" class="dashboard-nav-item-toggle" data-sidebar-item-toggle aria-expanded="true" aria-label="Toggle Media Library menu">
+                                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </button>
+                                </div>
+                                <div class="dashboard-nav-sublinks" data-sidebar-item-content>
+                                    <a href="/MUBUGA-TSS/admin/dashboard.php?media_filter=all#gallery-panel" class="dashboard-nav-sublink">All Media</a>
+                                    <a href="/MUBUGA-TSS/admin/dashboard.php?media_filter=image#gallery-panel" class="dashboard-nav-sublink">Images</a>
+                                    <a href="/MUBUGA-TSS/admin/dashboard.php?media_filter=video#gallery-panel" class="dashboard-nav-sublink">Videos</a>
+                                    <a href="/MUBUGA-TSS/admin/dashboard.php?media_filter=image&media_new=image#gallery-panel" class="dashboard-nav-sublink">New Image</a>
+                                    <a href="/MUBUGA-TSS/admin/dashboard.php?media_filter=video&media_new=video#gallery-panel" class="dashboard-nav-sublink">New Video</a>
+                                </div>
+                            </div>
+                            <div class="dashboard-nav-item" data-sidebar-item>
+                                <div class="dashboard-nav-item-row">
+                                    <a href="#news-panel" class="dashboard-nav-link" data-tooltip="Announcements" title="Announcements" aria-label="Announcements">
+                                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 10.5 16.5 4v16L3 13.5v-3zm14.5 1.75h2.25a1.25 1.25 0 0 1 0 2.5H17.5v-2.5zM5.75 14.1h2.2l1.25 4.15H7.1L5.75 14.1z" fill="currentColor"/></svg>
+                                        <span>Announcements</span>
+                                    </a>
+                                    <button type="button" class="dashboard-nav-item-toggle" data-sidebar-item-toggle aria-expanded="false" aria-label="Toggle Announcements menu">
+                                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </button>
+                                </div>
+                                <div class="dashboard-nav-sublinks" data-sidebar-item-content hidden>
+                                    <a href="/MUBUGA-TSS/admin/dashboard.php?news_filter=all#news-panel" class="dashboard-nav-sublink">All Updates</a>
+                                    <a href="/MUBUGA-TSS/admin/dashboard.php?news_filter=published#news-panel" class="dashboard-nav-sublink">Published</a>
+                                    <a href="/MUBUGA-TSS/admin/dashboard.php?news_filter=draft#news-panel" class="dashboard-nav-sublink">Drafts</a>
+                                    <a href="/MUBUGA-TSS/admin/dashboard.php?compose=news#news-compose-panel" class="dashboard-nav-sublink">New Update</a>
+                                </div>
+                            </div>
+                            <div class="dashboard-nav-item" data-sidebar-item>
+                                <div class="dashboard-nav-item-row">
+                                    <a href="#pages-panel" class="dashboard-nav-link" data-tooltip="Pages" title="Pages" aria-label="Pages">
+                                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13zM8 8h8v2H8zm0 4h8v2H8zm0 4h5v2H8z" fill="currentColor"/></svg>
+                                        <span>Pages</span>
+                                    </a>
+                                    <button type="button" class="dashboard-nav-item-toggle" data-sidebar-item-toggle aria-expanded="false" aria-label="Toggle Pages menu">
+                                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </button>
+                                </div>
+                                <div class="dashboard-nav-sublinks" data-sidebar-item-content hidden>
+                                    <a href="#pages-panel" class="dashboard-nav-sublink">Site Pages</a>
+                                    <a href="#settings-panel" class="dashboard-nav-sublink">Branding</a>
+                                    <a href="/MUBUGA-TSS/admin/dashboard.php?compose=page#pages-compose-panel" class="dashboard-nav-sublink">New Page</a>
+                                </div>
+                            </div>
+                            <div class="dashboard-nav-item" data-sidebar-item>
+                                <div class="dashboard-nav-item-row">
+                                    <a href="#settings-panel" class="dashboard-nav-link" data-tooltip="Settings" title="Settings" aria-label="Settings">
+                                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.23-1.13.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94L2.83 14.52a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.4 1.05.72 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.84a.5.5 0 0 0 .5-.42l.36-2.54c.58-.23 1.13-.54 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5z" fill="currentColor"/></svg>
+                                        <span>Settings</span>
+                                    </a>
+                                    <button type="button" class="dashboard-nav-item-toggle" data-sidebar-item-toggle aria-expanded="false" aria-label="Toggle Settings menu">
+                                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </button>
+                                </div>
+                                <div class="dashboard-nav-sublinks" data-sidebar-item-content hidden>
+                                    <a href="#settings-panel" class="dashboard-nav-sublink">General</a>
+                                    <a href="#security-panel" class="dashboard-nav-sublink">Security</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-nav-section is-open" data-sidebar-section>
+                        <button type="button" class="dashboard-nav-section-trigger" data-sidebar-section-trigger aria-expanded="true">
+                            <span class="dashboard-nav-section-label">Monitoring</span>
+                            <span class="dashboard-nav-section-icon" aria-hidden="true">
+                                <svg viewBox="0 0 20 20" fill="none"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                        </button>
+                        <div class="dashboard-nav-links" data-sidebar-section-content>
+                            <a href="#activity-panel" class="dashboard-nav-link" data-tooltip="Activity Log" title="Activity Log" aria-label="Activity Log">
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" stroke="currentColor" stroke-width="2"/></svg>
+                                <span>Activity Log</span>
+                            </a>
+                            <a href="#notifications-panel" class="dashboard-nav-link" data-tooltip="Notifications" title="Notifications" aria-label="Notifications">
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3a4 4 0 0 0-4 4v2.1c0 .7-.24 1.39-.68 1.93L5.6 13.2A1 1 0 0 0 6.36 15h11.28a1 1 0 0 0 .76-1.8l-1.72-2.17A3 3 0 0 1 16 9.1V7a4 4 0 0 0-4-4Zm0 18a3 3 0 0 0 2.82-2H9.18A3 3 0 0 0 12 21Z" fill="currentColor"/></svg>
+                                <span>Notifications</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-nav-section dashboard-nav-section-secondary is-open" data-sidebar-section>
+                        <button type="button" class="dashboard-nav-section-trigger" data-sidebar-section-trigger aria-expanded="true">
+                            <span class="dashboard-nav-section-label dashboard-nav-section-label-secondary">Operations</span>
+                            <span class="dashboard-nav-section-icon" aria-hidden="true">
+                                <svg viewBox="0 0 20 20" fill="none"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                        </button>
+                        <div class="dashboard-nav-links" data-sidebar-section-content>
+                            <div class="dashboard-nav-item" data-sidebar-item>
+                                <div class="dashboard-nav-item-row">
+                                    <a href="#files-panel" class="dashboard-nav-link dashboard-nav-link-secondary" data-tooltip="File Manager" title="File Manager" aria-label="File Manager">
+                                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h3.59a2.5 2.5 0 0 1 1.77.73l1.41 1.41c.47.47 1.1.73 1.77.73H17.5A2.5 2.5 0 0 1 20 9.5v8A2.5 2.5 0 0 1 17.5 20h-11A2.5 2.5 0 0 1 4 17.5v-11Z" fill="currentColor"/></svg>
+                                        <span>File Manager</span>
+                                    </a>
+                                    <button type="button" class="dashboard-nav-item-toggle" data-sidebar-item-toggle aria-expanded="false" aria-label="Toggle File Manager menu">
+                                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </button>
+                                </div>
+                                <div class="dashboard-nav-sublinks" data-sidebar-item-content hidden>
+                                    <a href="#files-panel" class="dashboard-nav-sublink">All Files</a>
+                                    <a href="/MUBUGA-TSS/admin/submissions.php" class="dashboard-nav-sublink">Submissions</a>
+                                </div>
+                            </div>
+                            <div class="dashboard-nav-item" data-sidebar-item>
+                                <div class="dashboard-nav-item-row">
+                                    <a href="#programs-panel" class="dashboard-nav-link dashboard-nav-link-secondary" data-tooltip="Programs" title="Programs" aria-label="Programs">
+                                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13zM8 8h8v2H8zm0 4h8v2H8zm0 4h5v2H8z" fill="currentColor"/></svg>
+                                        <span>Programs</span>
+                                    </a>
+                                    <button type="button" class="dashboard-nav-item-toggle" data-sidebar-item-toggle aria-expanded="false" aria-label="Toggle Programs menu">
+                                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </button>
+                                </div>
+                                <div class="dashboard-nav-sublinks" data-sidebar-item-content hidden>
+                                    <a href="#programs-panel" class="dashboard-nav-sublink">All Programs</a>
+                                    <a href="/MUBUGA-TSS/admin/dashboard.php?compose=program#programs-compose-panel" class="dashboard-nav-sublink">New Program</a>
+                                </div>
+                            </div>
+                            <div class="dashboard-nav-item" data-sidebar-item>
+                                <div class="dashboard-nav-item-row">
+                                    <a href="#staff-panel" class="dashboard-nav-link dashboard-nav-link-secondary" data-tooltip="Team" title="Team" aria-label="Team">
+                                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 1 1 14 0H5zm14.5-9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM18 20c0-2.02-.76-3.86-2.01-5.26A6 6 0 0 1 22 20h-4z" fill="currentColor"/></svg>
+                                        <span>Team</span>
+                                    </a>
+                                    <button type="button" class="dashboard-nav-item-toggle" data-sidebar-item-toggle aria-expanded="false" aria-label="Toggle Team menu">
+                                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </button>
+                                </div>
+                                <div class="dashboard-nav-sublinks" data-sidebar-item-content hidden>
+                                    <a href="#staff-panel" class="dashboard-nav-sublink">Staff List</a>
+                                    <a href="#admissions-panel" class="dashboard-nav-sublink">Admissions</a>
+                                    <a href="/MUBUGA-TSS/admin/dashboard.php?compose=staff#staff-compose-panel" class="dashboard-nav-sublink">New Staff</a>
+                                </div>
+                            </div>
+                            <a href="#security-panel" class="dashboard-nav-link dashboard-nav-link-secondary" data-tooltip="Security" title="Security" aria-label="Security">
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 5 6v6c0 4.3 2.75 8.18 7 9.5 4.25-1.32 7-5.2 7-9.5V6l-7-3Z" fill="currentColor"/></svg>
+                                <span>Security</span>
+                            </a>
+                            <a href="#admissions-panel" class="dashboard-nav-link dashboard-nav-link-secondary" data-tooltip="Admissions" title="Admissions" aria-label="Admissions">
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5 4 6.5v5.8c0 4.8 3.12 9.18 8 10.7 4.88-1.52 8-5.9 8-10.7V6.5l-8-4zm-1 5h2v4h3v2h-5v-6z" fill="currentColor"/></svg>
+                                <span>Admissions</span>
+                            </a>
+                        </div>
+                    </div>
                 </nav>
             </div>
 
@@ -1574,34 +1691,70 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
                     </section>
 
                     <section class="dashboard-showcase-grid">
-                        <article class="panel dashboard-showcase-panel">
+                        <article class="panel dashboard-showcase-panel dashboard-history-panel">
                             <div class="panel-top dashboard-showcase-top">
                                 <div>
-                                    <h3>Latest Announcements</h3>
-                                    <p class="dashboard-panel-subtitle">Recent notices and school updates.</p>
+                                    <h3>Recent History</h3>
+                                    <p class="dashboard-panel-subtitle">A quick timeline of the latest admin actions and school updates.</p>
                                 </div>
                             </div>
-                            <div class="announcement-feed">
-                                <?php foreach (array_slice($announcementItems, 0, 3) as $item): ?>
-                                    <article class="announcement-feed-item">
-                                        <strong><?php echo htmlspecialchars((string) $item['title']); ?></strong>
-                                        <p><?php echo htmlspecialchars((string) ($item['summary'] ?? $item['content'] ?? 'School update.')); ?></p>
-                                    </article>
-                                <?php endforeach; ?>
-                                <?php if ($announcementItems === []): ?>
-                                    <article class="announcement-feed-item">
-                                        <strong>No announcements yet</strong>
-                                        <p>Use the announcements panel to publish the first school notice.</p>
-                                    </article>
-                                <?php endif; ?>
+                            <div class="dashboard-history-stack">
+                                <div class="dashboard-history-card">
+                                    <div class="dashboard-history-card-top">
+                                        <strong>Admin Activity</strong>
+                                        <span class="inline-meta"><?php echo count($activityLog); ?> recent actions</span>
+                                    </div>
+                                    <div class="dashboard-history-timeline">
+                                        <?php foreach (array_slice($activityLog, 0, 5) as $logItem): ?>
+                                            <article class="dashboard-history-item">
+                                                <span class="dashboard-history-dot"></span>
+                                                <div class="dashboard-history-copy">
+                                                    <strong><?php echo htmlspecialchars((string) ($logItem['title'] ?? 'Activity update')); ?></strong>
+                                                    <p><?php echo htmlspecialchars((string) ($logItem['description'] ?? 'Dashboard activity recorded.')); ?></p>
+                                                    <span><?php echo htmlspecialchars(ucfirst((string) ($logItem['action_type'] ?? 'update'))); ?> • <?php echo htmlspecialchars(adminRelativeTime((string) ($logItem['created_at'] ?? ''))); ?></span>
+                                                </div>
+                                            </article>
+                                        <?php endforeach; ?>
+                                        <?php if ($activityLog === []): ?>
+                                            <article class="dashboard-history-item is-empty">
+                                                <span class="dashboard-history-dot"></span>
+                                                <div class="dashboard-history-copy">
+                                                    <strong>No recent activity yet</strong>
+                                                    <p>Uploads, edits, and settings changes will appear here.</p>
+                                                </div>
+                                            </article>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
+                                <div class="dashboard-history-card dashboard-history-card-secondary">
+                                    <div class="dashboard-history-card-top">
+                                        <strong>Latest Announcements</strong>
+                                        <span class="inline-meta"><?php echo $announcementCount; ?> live</span>
+                                    </div>
+                                    <div class="announcement-feed announcement-feed-compact">
+                                        <?php foreach (array_slice($announcementItems, 0, 2) as $item): ?>
+                                            <article class="announcement-feed-item">
+                                                <strong><?php echo htmlspecialchars((string) $item['title']); ?></strong>
+                                                <p><?php echo htmlspecialchars((string) ($item['summary'] ?? $item['content'] ?? 'School update.')); ?></p>
+                                            </article>
+                                        <?php endforeach; ?>
+                                        <?php if ($announcementItems === []): ?>
+                                            <article class="announcement-feed-item">
+                                                <strong>No announcements yet</strong>
+                                                <p>Use the announcements panel to publish the first school notice.</p>
+                                            </article>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
                             </div>
                         </article>
 
-                        <article class="panel dashboard-showcase-panel">
+                        <article class="panel dashboard-showcase-panel dashboard-media-overview-panel">
                             <div class="panel-top dashboard-showcase-top">
                                 <div>
-                                    <h3>Media Uploads</h3>
-                                    <p class="dashboard-panel-subtitle">Quick access to your latest gallery content.</p>
+                                    <h3>Media Highlights</h3>
+                                    <p class="dashboard-panel-subtitle">Cleaner preview cards for the newest images and videos on the website.</p>
                                 </div>
                             </div>
                             <div class="dashboard-media-actions">
@@ -1609,51 +1762,72 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
                                 <a href="#gallery-panel" class="dashboard-media-action dashboard-media-action-video dashboard-card-link">Upload New Video</a>
                             </div>
 
-                            <div class="dashboard-media-gallery-wrapper">
-                                <!-- Video Gallery (Left Side) -->
-                                <div class="dashboard-media-group">
+                            <div class="dashboard-media-overview-grid">
+                                <div class="dashboard-media-column">
                                     <div class="dashboard-media-group-top">
-                                        <strong>Video Gallery</strong>
+                                        <strong>Featured Videos</strong>
+                                        <span class="inline-meta"><?php echo $videoCount; ?> total</span>
                                     </div>
-                                    <div class="dashboard-media-thumbs dashboard-media-thumbs-video">
+                                    <div class="dashboard-media-thumbs dashboard-media-thumbs-video dashboard-media-thumbs-featured">
                                         <?php foreach (array_slice($videoMediaItems, 0, 2) as $item): ?>
-                                            <div class="dashboard-thumb dashboard-thumb-video">
-                                                <div class="dashboard-thumb-video-overlay">&#9658;</div>
-                                                <?php if (adminIsVideoPath((string) $item['image_path'])): ?>
-                                                    <video muted playsinline preload="metadata" src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>"></video>
-                                                <?php else: ?>
-                                                    <img src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="photo-viewer">
-                                                <?php endif; ?>
-                                                <span><?php echo htmlspecialchars((string) $item['title']); ?></span>
-                                            </div>
+                                            <article class="dashboard-thumb dashboard-thumb-video dashboard-thumb-card">
+                                                <div class="dashboard-thumb-media">
+                                                    <div class="dashboard-thumb-video-overlay">&#9658;</div>
+                                                    <?php if (adminIsVideoPath((string) $item['image_path'])): ?>
+                                                        <video controls playsinline preload="metadata" src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>"></video>
+                                                    <?php else: ?>
+                                                        <img src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="photo-viewer">
+                                                    <?php endif; ?>
+                                                </div>
+                                                <div class="dashboard-thumb-copy">
+                                                    <strong><?php echo htmlspecialchars((string) $item['title']); ?></strong>
+                                                    <span><?php echo htmlspecialchars(ucfirst((string) ($item['category'] ?? 'general'))); ?> • <?php echo (int) ($item['view_count'] ?? 0); ?> views</span>
+                                                </div>
+                                            </article>
                                         <?php endforeach; ?>
                                         <?php if ($videoMediaItems === []): ?>
-                                            <div class="dashboard-thumb dashboard-thumb-video dashboard-thumb-video-empty">
-                                                <div class="dashboard-thumb-video-overlay">&#9658;</div>
-                                                <img src="/MUBUGA-TSS/assets/images/school view 5.jpg" alt="Video placeholder" class="photo-viewer">
-                                                <span>No videos yet</span>
-                                            </div>
-                                            <div class="dashboard-thumb dashboard-thumb-video dashboard-thumb-video-empty">
-                                                <div class="dashboard-thumb-video-overlay">&#9658;</div>
-                                                <img src="/MUBUGA-TSS/assets/images/school view 4.jpg" alt="Video placeholder" class="photo-viewer">
-                                                <span>Upload first video</span>
-                                            </div>
+                                            <article class="dashboard-thumb dashboard-thumb-video dashboard-thumb-card dashboard-thumb-empty-card">
+                                                <div class="dashboard-thumb-media">
+                                                    <div class="dashboard-thumb-video-overlay">&#9658;</div>
+                                                    <img src="/MUBUGA-TSS/assets/images/school view 5.jpg" alt="Video placeholder" class="photo-viewer">
+                                                </div>
+                                                <div class="dashboard-thumb-copy">
+                                                    <strong>No videos yet</strong>
+                                                    <span>Upload the first school video to improve this section.</span>
+                                                </div>
+                                            </article>
                                         <?php endif; ?>
                                     </div>
                                 </div>
 
-                                <!-- Image Gallery (Right Side) -->
-                                <div class="dashboard-media-group">
+                                <div class="dashboard-media-column">
                                     <div class="dashboard-media-group-top">
-                                        <strong>Image Gallery</strong>
+                                        <strong>Latest Photos</strong>
+                                        <span class="inline-meta"><?php echo $imageCount; ?> total</span>
                                     </div>
-                                    <div class="dashboard-media-thumbs">
+                                    <div class="dashboard-media-thumbs dashboard-media-thumbs-featured">
                                         <?php foreach (array_slice($imageMediaItems, 0, 3) as $item): ?>
-                                            <div class="dashboard-thumb">
-                                                <img src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="photo-viewer">
-                                                <span><?php echo htmlspecialchars((string) $item['title']); ?></span>
-                                            </div>
+                                            <article class="dashboard-thumb dashboard-thumb-card">
+                                                <div class="dashboard-thumb-media">
+                                                    <img src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="photo-viewer">
+                                                </div>
+                                                <div class="dashboard-thumb-copy">
+                                                    <strong><?php echo htmlspecialchars((string) $item['title']); ?></strong>
+                                                    <span><?php echo htmlspecialchars(ucfirst((string) ($item['category'] ?? 'general'))); ?> • <?php echo (int) ($item['view_count'] ?? 0); ?> views</span>
+                                                </div>
+                                            </article>
                                         <?php endforeach; ?>
+                                        <?php if ($imageMediaItems === []): ?>
+                                            <article class="dashboard-thumb dashboard-thumb-card dashboard-thumb-empty-card">
+                                                <div class="dashboard-thumb-media">
+                                                    <img src="/MUBUGA-TSS/assets/images/school view 4.jpg" alt="Image placeholder" class="photo-viewer">
+                                                </div>
+                                                <div class="dashboard-thumb-copy">
+                                                    <strong>No images yet</strong>
+                                                    <span>Upload the first school image to populate this section.</span>
+                                                </div>
+                                            </article>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -1748,7 +1922,7 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
                             <h2>File management and storage history</h2>
                         </div>
                     </div>
-                    <div class="management-section">
+                    <div class="management-section" id="news-compose-panel">
                         <div class="management-section-header">
                             <div>
                                 <strong>Storage locations</strong>
@@ -2051,10 +2225,10 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
                                     <button type="submit" name="action" value="bulk_delete_gallery" class="danger-button" data-gallery-bulk-delete>Delete Selected</button>
                                 </div>
                             </div>
-                            <div class="table-list">
+                            <div class="table-list gallery-media-grid">
                             <?php foreach ($filteredGallery as $galleryItem): ?>
                                 <div class="table-item gallery-card" data-gallery-item>
-                                    <div class="table-item-layout">
+                                    <div class="table-item-layout gallery-card-layout">
                                         <label class="gallery-card-check">
                                             <input type="checkbox" name="selected_gallery_ids[]" value="<?php echo (int) $galleryItem['id']; ?>" data-gallery-select>
                                         </label>
@@ -2073,6 +2247,7 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
                                                 data-media-date="<?php echo htmlspecialchars(date('d M Y, H:i', strtotime((string) ($galleryItem['created_at'] ?? 'now')))); ?>"
                                                 data-media-download="<?php echo htmlspecialchars((string) ($galleryItem['download_url'] ?? '#')); ?>">
                                                 <video class="table-thumb" muted playsinline preload="metadata" src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $galleryItem['image_path'])); ?>"></video>
+                                                <span class="gallery-card-type-badge">Video</span>
                                             </button>
                                         <?php else: ?>
                                             <button type="button" class="gallery-preview-trigger" data-gallery-preview-open
@@ -2089,10 +2264,12 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
                                                 data-media-date="<?php echo htmlspecialchars(date('d M Y, H:i', strtotime((string) ($galleryItem['created_at'] ?? 'now')))); ?>"
                                                 data-media-download="<?php echo htmlspecialchars((string) ($galleryItem['download_url'] ?? '#')); ?>">
                                                 <img src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $galleryItem['image_path'])); ?>" alt="" class="table-thumb photo-viewer">
+                                                <span class="gallery-card-type-badge">Image</span>
                                             </button>
                                         <?php endif; ?>
-                                        <div class="table-item-content">
-                                            <strong><?php echo htmlspecialchars((string) $galleryItem['title']); ?></strong>
+                                        <div class="table-item-content gallery-card-content">
+                                            <strong class="gallery-card-title"><?php echo htmlspecialchars(basename((string) ($galleryItem['image_path'] ?? (string) $galleryItem['title']))); ?></strong>
+                                            <span class="gallery-card-size"><?php echo htmlspecialchars((string) ($galleryItem['file_size_label'] ?? 'Unknown size')); ?></span>
                                             <div class="gallery-media-meta">
                                                 <span class="inline-meta"><?php echo htmlspecialchars(ucfirst((string) ($galleryItem['media_type'] ?? 'image'))); ?></span>
                                                 <span class="inline-meta"><?php echo htmlspecialchars(ucfirst((string) $galleryItem['category'])); ?></span>
@@ -2324,7 +2501,7 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
                             <?php endif; ?>
                             </div>
                         </div>
-                        <div class="management-section editor-form-card">
+                        <div class="management-section editor-form-card" id="pages-compose-panel">
                             <div class="management-section-header">
                                 <div>
                                     <strong><?php echo $editType === 'page' ? 'Update page content' : 'Create page content'; ?></strong>
@@ -2445,7 +2622,7 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
                         <?php endforeach; ?>
                         </div>
                     </div>
-                    <div class="management-section editor-form-card">
+                    <div class="management-section editor-form-card" id="programs-compose-panel">
                         <div class="management-section-header">
                             <div>
                                 <strong><?php echo $editType === 'program' ? 'Update program details' : 'Create new program'; ?></strong>
@@ -2528,7 +2705,7 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
                         <?php endforeach; ?>
                         </div>
                     </div>
-                    <div class="management-section editor-form-card">
+                    <div class="management-section editor-form-card" id="staff-compose-panel">
                         <div class="management-section-header">
                             <div>
                                 <strong><?php echo $editType === 'staff' ? 'Update team member' : 'Add team member'; ?></strong>

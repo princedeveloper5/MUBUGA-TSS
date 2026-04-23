@@ -625,6 +625,17 @@ button.success {
     margin-top: 18px;
 }
 
+/* Side-by-side gallery layout: Video left, Image right */
+.dashboard-media-gallery-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.dashboard-media-gallery-wrapper .dashboard-media-group + .dashboard-media-group {
+    margin-top: 0;
+}
+
 .dashboard-media-group-top {
     display: flex;
     align-items: center;
@@ -5115,6 +5126,10 @@ body:has(.dashboard-shell) {
     display: grid;
     place-items: center;
     padding: 28px 18px;
+}
+
+.admin-modal[hidden] {
+    display: none;
 }
 
 .admin-modal-backdrop {

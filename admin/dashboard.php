@@ -1609,48 +1609,52 @@ $imageMediaItems = array_values(array_filter($gallery, static function (array $i
                                 <a href="#gallery-panel" class="dashboard-media-action dashboard-media-action-video dashboard-card-link">Upload New Video</a>
                             </div>
 
-                            <div class="dashboard-media-group">
-                                <div class="dashboard-media-group-top">
-                                    <strong>Image Gallery</strong>
+                            <div class="dashboard-media-gallery-wrapper">
+                                <!-- Video Gallery (Left Side) -->
+                                <div class="dashboard-media-group">
+                                    <div class="dashboard-media-group-top">
+                                        <strong>Video Gallery</strong>
+                                    </div>
+                                    <div class="dashboard-media-thumbs dashboard-media-thumbs-video">
+                                        <?php foreach (array_slice($videoMediaItems, 0, 2) as $item): ?>
+                                            <div class="dashboard-thumb dashboard-thumb-video">
+                                                <div class="dashboard-thumb-video-overlay">&#9658;</div>
+                                                <?php if (adminIsVideoPath((string) $item['image_path'])): ?>
+                                                    <video muted playsinline preload="metadata" src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>"></video>
+                                                <?php else: ?>
+                                                    <img src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="photo-viewer">
+                                                <?php endif; ?>
+                                                <span><?php echo htmlspecialchars((string) $item['title']); ?></span>
+                                            </div>
+                                        <?php endforeach; ?>
+                                        <?php if ($videoMediaItems === []): ?>
+                                            <div class="dashboard-thumb dashboard-thumb-video dashboard-thumb-video-empty">
+                                                <div class="dashboard-thumb-video-overlay">&#9658;</div>
+                                                <img src="/MUBUGA-TSS/assets/images/school view 5.jpg" alt="Video placeholder" class="photo-viewer">
+                                                <span>No videos yet</span>
+                                            </div>
+                                            <div class="dashboard-thumb dashboard-thumb-video dashboard-thumb-video-empty">
+                                                <div class="dashboard-thumb-video-overlay">&#9658;</div>
+                                                <img src="/MUBUGA-TSS/assets/images/school view 4.jpg" alt="Video placeholder" class="photo-viewer">
+                                                <span>Upload first video</span>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
-                                <div class="dashboard-media-thumbs">
-                                    <?php foreach (array_slice($imageMediaItems, 0, 3) as $item): ?>
-                                        <div class="dashboard-thumb">
-                                            <img src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="photo-viewer">
-                                            <span><?php echo htmlspecialchars((string) $item['title']); ?></span>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
 
-                            <div class="dashboard-media-group">
-                                <div class="dashboard-media-group-top">
-                                    <strong>Video Gallery</strong>
-                                </div>
-                                <div class="dashboard-media-thumbs dashboard-media-thumbs-video">
-                                    <?php foreach (array_slice($videoMediaItems, 0, 2) as $item): ?>
-                                        <div class="dashboard-thumb dashboard-thumb-video">
-                                            <div class="dashboard-thumb-video-overlay">&#9658;</div>
-                                            <?php if (adminIsVideoPath((string) $item['image_path'])): ?>
-                                                <video muted playsinline preload="metadata" src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>"></video>
-                                            <?php else: ?>
+                                <!-- Image Gallery (Right Side) -->
+                                <div class="dashboard-media-group">
+                                    <div class="dashboard-media-group-top">
+                                        <strong>Image Gallery</strong>
+                                    </div>
+                                    <div class="dashboard-media-thumbs">
+                                        <?php foreach (array_slice($imageMediaItems, 0, 3) as $item): ?>
+                                            <div class="dashboard-thumb">
                                                 <img src="<?php echo htmlspecialchars(adminResolveMediaUrl((string) $item['image_path'])); ?>" alt="<?php echo htmlspecialchars((string) $item['title']); ?>" class="photo-viewer">
-                                            <?php endif; ?>
-                                            <span><?php echo htmlspecialchars((string) $item['title']); ?></span>
-                                        </div>
-                                    <?php endforeach; ?>
-                                    <?php if ($videoMediaItems === []): ?>
-                                        <div class="dashboard-thumb dashboard-thumb-video dashboard-thumb-video-empty">
-                                            <div class="dashboard-thumb-video-overlay">&#9658;</div>
-                                            <img src="/MUBUGA-TSS/assets/images/school view 5.jpg" alt="Video placeholder" class="photo-viewer">
-                                            <span>No videos yet</span>
-                                        </div>
-                                        <div class="dashboard-thumb dashboard-thumb-video dashboard-thumb-video-empty">
-                                            <div class="dashboard-thumb-video-overlay">&#9658;</div>
-                                            <img src="/MUBUGA-TSS/assets/images/school view 4.jpg" alt="Video placeholder" class="photo-viewer">
-                                            <span>Upload first video</span>
-                                        </div>
-                                    <?php endif; ?>
+                                                <span><?php echo htmlspecialchars((string) $item['title']); ?></span>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
                                 </div>
                             </div>
                         </article>

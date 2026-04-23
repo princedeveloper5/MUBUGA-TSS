@@ -445,7 +445,7 @@ if ($pdo instanceof PDO) {
         $heroSlides[0]['title'] = $settings['school_motto'];
     }
 
-    $programRows = $pdo->query('SELECT title, short_description, cover_image FROM programs WHERE status = "active" ORDER BY id ASC')->fetchAll();
+    $programRows = $pdo->query("SELECT title, short_description, cover_image FROM programs WHERE status = 'active' ORDER BY id ASC")->fetchAll();
     if ($programRows) {
         $programImages = [
             'Software Development' => $imageSet['software_primary'],
@@ -467,7 +467,7 @@ if ($pdo instanceof PDO) {
         }, $programRows);
     }
 
-    $staffRows = $pdo->query('SELECT full_name, job_title, bio, photo FROM staff WHERE status = "active" ORDER BY is_featured DESC, display_order ASC, id ASC LIMIT 6')->fetchAll();
+    $staffRows = $pdo->query("SELECT full_name, job_title, bio, photo FROM staff WHERE status = 'active' ORDER BY is_featured DESC, display_order ASC, id ASC LIMIT 6")->fetchAll();
     if ($staffRows) {
         $leadership = array_map(function (array $row) use ($imageSet): array {
             return [
@@ -494,7 +494,7 @@ if ($pdo instanceof PDO) {
             COALESCE(news_admin_meta.view_count, 0) AS view_count
         FROM news
         LEFT JOIN news_admin_meta ON news_admin_meta.news_id = news.id
-        WHERE news.status = "published"
+        WHERE news.status = 'published'
           AND COALESCE(news_admin_meta.scheduled_for, news.published_at, NOW()) <= NOW()
         ORDER BY COALESCE(news_admin_meta.is_pinned, 0) DESC,
                  COALESCE(news_admin_meta.scheduled_for, news.published_at) DESC,

@@ -192,42 +192,9 @@ if (isset($_GET['form_status']) && isset($_GET['form_message'])) {
             </div>
         </section>
 
-        <!-- Facilities Section -->
-        <section class="section facilities" id="facilities">
-            <div class="container">
-                <div class="section-heading">
-                    <h2>Facilities</h2>
-                    <p>Modern learning spaces for technical education</p>
-                </div>
-                
-                <div class="facilities-grid">
-                    <?php foreach ($facilities as $facility): ?>
-                        <article class="facility-card">
-                            <?php if (!empty($facility['image'])): ?>
-                                <img src="<?php echo htmlspecialchars($facility['image']); ?>" alt="<?php echo htmlspecialchars($facility['title']); ?>" class="facility-image">
-                            <?php endif; ?>
-                            <div class="facility-content">
-                                <h3><?php echo htmlspecialchars($facility['title']); ?></h3>
-                                <p><?php echo htmlspecialchars($facility['text']); ?></p>
-                                <a href="/MUBUGA-TSS/pages/facilities.php" class="button button-secondary">Learn More</a>
-                            </div>
-                        </article>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </section>
-
         
-        <!-- Previous Gallery Section -->
-        <section class="section previous-gallery" id="previous-gallery">
-            <div class="container">
-                <div class="section-heading">
-                    <h2>Previous Gallery</h2>
-                    <p>More moments from Mubuga TSS</p>
-                </div>
-                
-                <div class="previous-gallery-grid">
-                    <?php 
+        
+                            <?php 
                     // Get gallery items after the first 3 highlights
                     $previousGalleryItems = array_slice($gallery ?? [], 3, 6);
                     foreach ($previousGalleryItems as $item): 

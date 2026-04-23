@@ -17,6 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const notificationDropdown = document.querySelector('[data-notification-dropdown]');
     const adminModals = document.querySelectorAll('[data-admin-modal]');
     const initialDashboardView = document.body.dataset.dashboardInitial || 'dashboard-panel';
+    const dashboardShell = document.querySelector('.dashboard-shell');
+    const dashboardSidebarToggle = document.querySelector('[data-dashboard-sidebar-toggle]');
+    const sidebarPreferenceKey = 'mubuga-dashboard-sidebar-collapsed';
+    const sidebarSections = document.querySelectorAll('[data-sidebar-section]');
+    const sidebarItems = document.querySelectorAll('[data-sidebar-item]');
+    const sidebarSublinks = document.querySelectorAll('.dashboard-nav-sublink');
+    const currentUrl = new URL(window.location.href);
+    const currentSearchParams = currentUrl.searchParams;
 
     const openModal = (modalId) => {
         const modal = document.getElementById(modalId);
@@ -94,8 +102,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (dashboardViews.length > 0 && (dashboardLinks.length > 0 || dashboardCardLinks.length > 0)) {
+        const resolveDashboardView = (viewId) => {
+            if (viewId && document.getElementById(viewId)) {
+                const directView = document.getElementById(viewId);
+                if (directView && directView.hasAttribute('data-dashboard-view')) {
+                    return { viewId, anchorId: viewId };
+                }
+
+                const parentView = directView ? directView.closest('[data-dashboard-view]') : null;
+                if (parentView) {
+                    return { viewId: parentView.id, anchorId: viewId };
+                }
+            }
+
+            return { viewId: initialDashboardView, anchorId: '' };
+        };
+
         const showDashboardView = (viewId) => {
-            const targetId = viewId && document.getElementById(viewId) ? viewId : initialDashboardView;
+            const resolved = resolveDashboardView(viewId);
+            const targetId = resolved.viewId;
 
             dashboardViews.forEach((view) => {
                 view.classList.toggle('is-active', view.id === targetId);
@@ -105,6 +130,55 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isActive = link.getAttribute('href') === `#${targetId}`;
                 link.classList.toggle('is-active', isActive);
             });
+
+            dashboardCardLinks.forEach((link) => {
+                const isActive = link.getAttribute('href') === `#${targetId}`;
+                link.classList.toggle('is-active', isActive);
+            });
+
+            sidebarSections.forEach((section) => {
+                const trigger = section.querySelector('[data-sidebar-section-trigger]');
+                const content = section.querySelector('[data-sidebar-section-content]');
+                const hasActiveLink = !!section.querySelector(`.dashboard-nav-link[href="#${targetId}"]`);
+
+                if (!trigger || !content) {
+                    return;
+                }
+
+                if (hasActiveLink) {
+                    section.classList.add('is-open');
+                    trigger.setAttribute('aria-expanded', 'true');
+                    content.hidden = false;
+                }
+            });
+
+            sidebarItems.forEach((item) => {
+                const trigger = item.querySelector('[data-sidebar-item-toggle]');
+                const content = item.querySelector('[data-sidebar-item-content]');
+                const mainLink = item.querySelector('.dashboard-nav-link[href^="#"]');
+
+                if (!trigger || !content || !mainLink) {
+                    return;
+                }
+
+                const isCurrentItem = mainLink.getAttribute('href') === `#${targetId}`;
+                item.classList.toggle('is-current', isCurrentItem);
+
+                if (isCurrentItem) {
+                    item.classList.add('is-open');
+                    trigger.setAttribute('aria-expanded', 'true');
+                    content.hidden = false;
+                }
+            });
+
+            if (resolved.anchorId && resolved.anchorId !== targetId) {
+                window.setTimeout(() => {
+                    const anchorTarget = document.getElementById(resolved.anchorId);
+                    if (anchorTarget) {
+                        anchorTarget.scrollIntoView({ block: 'start', behavior: 'smooth' });
+                    }
+                }, 60);
+            }
         };
 
         dashboardLinks.forEach((link) => {
@@ -139,6 +213,131 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const hashView = window.location.hash.replace('#', '');
         showDashboardView(hashView || initialDashboardView);
+        window.addEventListener('hashchange', () => {
+            showDashboardView(window.location.hash.replace('#', '') || initialDashboardView);
+        });
+    }
+
+    if (sidebarSublinks.length > 0) {
+        const normalizePath = (path) => path.replace(/\/+$/, '');
+        const currentPath = normalizePath(currentUrl.pathname);
+        const currentHash = currentUrl.hash || '';
+        const currentCompose = currentSearchParams.get('compose') || '';
+        const currentMediaFilter = currentSearchParams.get('media_filter') || '';
+        const currentMediaNew = currentSearchParams.get('media_new') || '';
+        const currentNewsFilter = currentSearchParams.get('news_filter') || '';
+
+        sidebarSublinks.forEach((link) => {
+            let isActive = false;
+
+            try {
+                const targetUrl = new URL(link.getAttribute('href'), currentUrl.origin);
+                const targetPath = normalizePath(targetUrl.pathname);
+                const targetHash = targetUrl.hash || '';
+                const targetCompose = targetUrl.searchParams.get('compose') || '';
+                const targetMediaFilter = targetUrl.searchParams.get('media_filter') || '';
+                const targetMediaNew = targetUrl.searchParams.get('media_new') || '';
+                const targetNewsFilter = targetUrl.searchParams.get('news_filter') || '';
+
+                if (targetCompose !== '') {
+                    isActive = currentPath === targetPath && currentCompose === targetCompose && currentHash === targetHash;
+                } else if (targetMediaNew !== '') {
+                    isActive = currentPath === targetPath
+                        && currentHash === '#gallery-panel'
+                        && currentMediaNew === targetMediaNew;
+                } else if (targetMediaFilter !== '') {
+                    isActive = currentPath === targetPath
+                        && currentHash === '#gallery-panel'
+                        && currentMediaFilter === targetMediaFilter
+                        && currentMediaNew === '';
+                } else if (targetNewsFilter !== '') {
+                    isActive = currentPath === targetPath
+                        && currentHash === '#news-panel'
+                        && currentNewsFilter === targetNewsFilter;
+                } else {
+                    isActive = currentPath === targetPath && currentHash === targetHash;
+                }
+            } catch (error) {
+                isActive = false;
+            }
+
+            link.classList.toggle('is-active', isActive);
+        });
+    }
+
+    if (dashboardShell && dashboardSidebarToggle) {
+        const applySidebarState = (collapsed) => {
+            dashboardShell.classList.toggle('is-sidebar-collapsed', collapsed);
+            dashboardSidebarToggle.setAttribute('aria-pressed', collapsed ? 'true' : 'false');
+        };
+
+        const desktopMediaQuery = window.matchMedia('(min-width: 1101px)');
+        const storedPreference = window.localStorage.getItem(sidebarPreferenceKey);
+
+        if (desktopMediaQuery.matches && storedPreference === '1') {
+            applySidebarState(true);
+        }
+
+        dashboardSidebarToggle.addEventListener('click', () => {
+            if (!desktopMediaQuery.matches) {
+                dashboardShell.scrollIntoView({ block: 'start', behavior: 'smooth' });
+                return;
+            }
+
+            const collapsed = !dashboardShell.classList.contains('is-sidebar-collapsed');
+            applySidebarState(collapsed);
+            window.localStorage.setItem(sidebarPreferenceKey, collapsed ? '1' : '0');
+        });
+
+        const syncSidebarOnResize = (event) => {
+            if (!event.matches) {
+                applySidebarState(false);
+            } else if (window.localStorage.getItem(sidebarPreferenceKey) === '1') {
+                applySidebarState(true);
+            }
+        };
+
+        if (typeof desktopMediaQuery.addEventListener === 'function') {
+            desktopMediaQuery.addEventListener('change', syncSidebarOnResize);
+        } else if (typeof desktopMediaQuery.addListener === 'function') {
+            desktopMediaQuery.addListener(syncSidebarOnResize);
+        }
+    }
+
+    if (sidebarSections.length > 0) {
+        sidebarSections.forEach((section) => {
+            const trigger = section.querySelector('[data-sidebar-section-trigger]');
+            const content = section.querySelector('[data-sidebar-section-content]');
+
+            if (!trigger || !content) {
+                return;
+            }
+
+            trigger.addEventListener('click', () => {
+                const isOpen = section.classList.contains('is-open');
+                section.classList.toggle('is-open', !isOpen);
+                trigger.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+                content.hidden = isOpen;
+            });
+        });
+    }
+
+    if (sidebarItems.length > 0) {
+        sidebarItems.forEach((item) => {
+            const trigger = item.querySelector('[data-sidebar-item-toggle]');
+            const content = item.querySelector('[data-sidebar-item-content]');
+
+            if (!trigger || !content) {
+                return;
+            }
+
+            trigger.addEventListener('click', () => {
+                const isOpen = item.classList.contains('is-open');
+                item.classList.toggle('is-open', !isOpen);
+                trigger.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+                content.hidden = isOpen;
+            });
+        });
     }
 
     editors.forEach((textarea) => {
@@ -661,6 +860,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (window.location.hash === '#gallery-panel' && window.location.search.includes('edit=gallery')) {
+        openModal('gallery-upload-modal');
+    }
+
+    const requestedMediaType = currentSearchParams.get('media_new');
+    if (requestedMediaType && window.location.hash === '#gallery-panel') {
+        const mediaTypeSelect = document.querySelector('#gallery-upload-modal select[name="media_type"]');
+        if (mediaTypeSelect && (requestedMediaType === 'image' || requestedMediaType === 'video')) {
+            mediaTypeSelect.value = requestedMediaType;
+        }
         openModal('gallery-upload-modal');
     }
 
